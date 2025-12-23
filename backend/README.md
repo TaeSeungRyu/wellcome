@@ -1,6 +1,8 @@
 ## ⚙️ 기술 스택
 
 - **Nestjs**
+- **mongoose**
+- **passport**
 
 ---
 
