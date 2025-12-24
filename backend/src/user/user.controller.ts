@@ -15,17 +15,14 @@ export class UserController {
   }
 
   @Post('create')
-  async create(@Body() userData: Partial<UserDto>): Promise<ResponseDto> {
+  async create(@Body() userData: UserDto): Promise<ResponseDto> {
     const user = await this.userService.createUser(userData);
     return user;
   }
 
   @Post('update')
-  async update(
-    @Body('username') username: string,
-    @Body() updateData: Partial<UserDto>,
-  ): Promise<ResponseDto> {
-    const user = await this.userService.updateUser(username, updateData);
+  async update(@Body() updateData: UserDto): Promise<ResponseDto> {
+    const user = await this.userService.updateUser(updateData);
     return user;
   }
 }

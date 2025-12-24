@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { Request } from 'express';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -20,14 +19,16 @@ export class UserService {
       .select('-password')
       .exec();
     if (!user) {
-      return new Promise((resolve) => {
-        resolve(
-          new ResponseDto(
-            {
-              success: false,
-            },
-            'user_not_found',
-            '해당 사용자를 찾을 수 없습니다.',
+      return new Promise((_, error) => {
+        error(
+          new BadRequestException(
+            new ResponseDto(
+              {
+                success: false,
+              },
+              'user_not_found',
+              '해당 사용자를 찾을 수 없습니다.',
+            ),
           ),
         );
       });
@@ -41,20 +42,22 @@ export class UserService {
           },
           '',
           '사용자 정보를 성공적으로 조회했습니다.',
+          200,
         ),
       );
     });
   }
 
-  async createUser(userData: Partial<UserDto>): Promise<ResponseDto> {
+  async createUser(userData: UserDto): Promise<ResponseDto> {
     try {
       // 1. 중복 체크
-      const check = await this.findByUsername(userData.username as string);
+      const check = await this.findByUsername(userData.username);
       if (check.result?.success) {
         return new ResponseDto(
           { success: false },
           'user_already_exists',
           '이미 존재하는 사용자 이름입니다.',
+          200,
         );
       }
 
@@ -67,25 +70,26 @@ export class UserService {
           { success: true, data: result },
           '',
           '사용자 생성에 성공했습니다.',
+          200,
         );
       }
       throw new Error('Save failed');
     } catch (error) {
-      return new ResponseDto(
-        { success: false },
-        'save_error',
-        error instanceof Error
-          ? error.message
-          : '사용자 생성 중 오류가 발생했습니다.',
+      throw new BadRequestException(
+        new ResponseDto(
+          { success: false },
+          'save_error',
+          error instanceof Error
+            ? error.message
+            : '사용자 생성 중 오류가 발생했습니다.',
+        ),
       );
     }
   }
 
-  async updateUser(
-    username: string,
-    updateData: Partial<UserDto>,
-  ): Promise<ResponseDto> {
+  async updateUser(updateData: UserDto): Promise<ResponseDto> {
     try {
+      const { username } = updateData;
       const updateResult = await this.userModel
         .findOneAndUpdate({ username }, updateData, {
           new: true, // 업데이트 후의 문서를 반환
@@ -94,25 +98,70 @@ export class UserService {
         .select('-password') // 비밀번호 필드 제외
         .exec();
       if (!updateResult) {
-        return new ResponseDto(
-          { success: false },
-          'user_not_found',
-          '해당 사용자를 찾을 수 없습니다.',
+        throw new BadRequestException(
+          new ResponseDto(
+            { success: false },
+            'user_not_found',
+            '해당 사용자를 찾을 수 없습니다.',
+          ),
         );
       }
       return new ResponseDto(
         { success: true, data: updateResult },
         '',
         '사용자 정보가 성공적으로 업데이트되었습니다.',
+        200,
       );
     } catch (error) {
       // DB 에러 또는 유효성 검사 실패 시
+      throw new BadRequestException(
+        new ResponseDto(
+          { success: false },
+          'update_error',
+          error instanceof Error
+            ? error.message
+            : '사용자 생성 중 오류가 발생했습니다.',
+        ),
+      );
+    }
+  }
+
+  async deleteUser(username: string): Promise<ResponseDto> {
+    try {
+      // 1. 사용자 삭제 시도
+      const deletedUser = await this.userModel
+        .findOneAndDelete({ username })
+        .exec();
+
+      // 2. 삭제할 사용자가 없는 경우
+      if (!deletedUser) {
+        throw new BadRequestException(
+          new ResponseDto(
+            { success: false },
+            'user_not_found',
+            '삭제하려는 사용자를 찾을 수 없습니다.',
+            400,
+          ),
+        );
+      }
+
+      // 3. 삭제 성공 응답
       return new ResponseDto(
-        { success: false },
-        'update_error',
-        error instanceof Error
-          ? error.message
-          : '사용자 생성 중 오류가 발생했습니다.',
+        { success: true, data: deletedUser },
+        '',
+        '사용자가 성공적으로 삭제되었습니다.',
+      );
+    } catch (error) {
+      // 이미 BadRequestException인 경우는 그대로 던지고, 그 외 DB 에러 등은 새로 정의
+      if (error instanceof BadRequestException) throw error;
+
+      throw new BadRequestException(
+        new ResponseDto(
+          { success: false },
+          'delete_error',
+          '사용자 삭제 중 오류가 발생했습니다.',
+          400,
+        ),
       );
     }
   }
