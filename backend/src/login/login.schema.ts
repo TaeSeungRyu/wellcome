@@ -19,6 +19,9 @@ export class LoginUser {
 
   @Prop()
   accessDate?: string;
+
+  @Prop({ type: [String], default: [] })
+  roles: string[];
 }
 
 export const LoginSchema = SchemaFactory.createForClass(LoginUser);

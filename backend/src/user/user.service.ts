@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { User, UserDocument } from './user.schema';
 import { ResponseDto } from 'src/common/common.dto';
 import { UserDto } from './user.dto';
+import { hashPassword } from 'src/common/util';
 
 @Injectable()
 export class UserService {
@@ -48,11 +49,60 @@ export class UserService {
     });
   }
 
+  async findAll(page: number = 1, limit: number = 10): Promise<ResponseDto> {
+    try {
+      // 1. skip 계산 (예: 2페이지이고 limit이 10이면 앞에 10개를 건너뜀)
+      const skip = (page - 1) * limit;
+
+      // 2. 데이터 조회와 전체 개수 파악을 동시에 실행 (성능 최적화)
+      const [users, total] = await Promise.all([
+        this.userModel
+          .find()
+          .select('-password') // 비밀번호 제외
+          .skip(skip)
+          .limit(limit)
+          .sort({ createdAt: -1 }) // 최신순 정렬
+          .exec(),
+        this.userModel.countDocuments().exec(), // 전체 사용자 수
+      ]);
+
+      // 3. 응답 데이터 구성 (현재 페이지, 전체 페이지 등 추가 정보 제공)
+      const paginationData = {
+        users,
+        totalCount: total,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+      };
+
+      return new ResponseDto(
+        {
+          success: true,
+          data: paginationData,
+        },
+        '',
+        '사용자 목록을 성공적으로 조회했습니다.',
+        200,
+      );
+    } catch (error) {
+      throw new BadRequestException(
+        new ResponseDto(
+          { success: false },
+          'save_error',
+          error instanceof Error
+            ? error.message
+            : '사용자 생성 중 오류가 발생했습니다.',
+        ),
+      );
+    }
+  }
+
   async createUser(userData: UserDto): Promise<ResponseDto> {
     try {
       // 1. 중복 체크
-      const check = await this.findByUsername(userData.username);
-      if (check.result?.success) {
+      const check = await this.findByUsername(userData.username).catch(
+        () => null,
+      );
+      if (check?.result?.success) {
         return new ResponseDto(
           { success: false },
           'user_already_exists',
@@ -60,6 +110,9 @@ export class UserService {
           200,
         );
       }
+
+      // 2. 비밀번호 해싱
+      userData.password = await hashPassword(userData.password);
 
       const newUser = new this.userModel(userData);
       const result = await newUser.save();
@@ -89,7 +142,12 @@ export class UserService {
 
   async updateUser(updateData: UserDto): Promise<ResponseDto> {
     try {
-      const { username } = updateData;
+      const { username, password } = updateData;
+
+      if (password) {
+        updateData.password = await hashPassword(password);
+      }
+
       const updateResult = await this.userModel
         .findOneAndUpdate({ username }, updateData, {
           new: true, // 업데이트 후의 문서를 반환

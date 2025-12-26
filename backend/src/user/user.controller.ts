@@ -1,17 +1,57 @@
 // auth.controller.ts
-import { Controller, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Delete,
+  Put,
+  Get,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ResponseDto } from 'src/common/common.dto';
 import { UserService } from './user.service';
 import { UserDto } from './user.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { Roles } from 'src/auth/roles.decorator';
 
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Post('find')
-  async find(@Body('username') username: string): Promise<ResponseDto> {
+  @Get('find')
+  async find(@Query('username') username: string): Promise<ResponseDto> {
     const user = await this.userService.findByUsername(username);
     return user;
+  }
+
+  @Get('list')
+  async list(
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ): Promise<ResponseDto> {
+    const users = await this.userService.findAll(page, limit);
+    return users;
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('guard-test-list')
+  async guardTestlist(
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ): Promise<ResponseDto> {
+    const users = await this.userService.findAll(page, limit);
+    return users;
+  }
+
+  @Roles('admin', 'super', 'manager')
+  @Get('role-guard-test-list')
+  async roleGuardTestlist(
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ): Promise<ResponseDto> {
+    const users = await this.userService.findAll(page, limit);
+    return users;
   }
 
   @Post('create')
@@ -20,9 +60,15 @@ export class UserController {
     return user;
   }
 
-  @Post('update')
+  @Put('update')
   async update(@Body() updateData: UserDto): Promise<ResponseDto> {
     const user = await this.userService.updateUser(updateData);
+    return user;
+  }
+
+  @Delete('delete')
+  async delete(@Body('username') username: string): Promise<ResponseDto> {
+    const user = await this.userService.deleteUser(username);
     return user;
   }
 }

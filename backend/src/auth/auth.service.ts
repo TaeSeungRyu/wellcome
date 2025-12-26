@@ -5,6 +5,7 @@ import { ResponseDto } from 'src/common/common.dto';
 import { LoginDocument, LoginUser } from 'src/login/login.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { comparePassword } from 'src/common/util';
 
 @Injectable()
 export class AuthService {
@@ -18,17 +19,22 @@ export class AuthService {
     username: string,
     password: string,
   ): Promise<LoginUser | null> {
-    return this.loginModel.findOne({ username, password }).exec();
+    const user = await this.loginModel.findOne({ username }).exec();
+    if (!user) {
+      return null;
+    }
+    const isPasswordValid = await comparePassword(password, user.password);
+    if (!isPasswordValid) {
+      return null;
+    }
+    return user;
   }
 
   async generateTokens(
     username: string,
     passowrd: string,
   ): Promise<ResponseDto> {
-    //TODO : db조회하고나서 아래 페이로드 완성
-    console.log('generateTokens', username, passowrd);
     const user = await this.findByUsername(username, passowrd);
-    console.log('generateTokens', user);
     if (!user) {
       return new Promise((resolve) => {
         resolve(
@@ -45,7 +51,7 @@ export class AuthService {
       });
     }
 
-    const payload = { username: username, roles: ['super', 'admin'] };
+    const payload = { username: username, roles: user.roles };
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload),
       this.jwtService.signAsync(payload, { expiresIn: '1d' }),

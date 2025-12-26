@@ -1,0 +1,8 @@
+{
+    "username":"admin",
+    "password":"$2b$10$F.ZE1iF.LrOevERhZhdheeFhtoC6.9V6Kg69BUUk8iAHzjeEiQ/y.",    
+    "name":"adminName",
+    "role":["admin"],
+    "email":"admin@ts.kr",
+    "phone":"010-1234-1111"
+}

@@ -3,7 +3,8 @@
 - **Nestjs**
 - **mongoose**
 - **passport**
-
+- **bcrypt**
+- **class-validator**
 ---
 
 ## 📁 프로젝트 구조(요약)

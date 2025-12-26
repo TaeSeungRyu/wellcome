@@ -10,20 +10,22 @@ export class RolesGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const roles = this.reflector.get<string[]>('roles', context.getHandler());
+    const rolesFromController = this.reflector.get<string[]>(
+      'roles',
+      context.getHandler(),
+    );
     const request: Request = context.switchToHttp().getRequest();
     const user = request?.user;
-    const savedRoles: Array<Record<string, any>> = [];
+    const savedRoles: Array<string> = [];
     if (user?.roles && Array.isArray(user.roles)) {
-      savedRoles.push(...(user.roles as Array<Record<string, any>>));
+      savedRoles.push(...(user.roles as Array<string>));
     }
-    if (!roles || !user || savedRoles === undefined) {
+
+    if (!rolesFromController || !user || savedRoles === undefined) {
       return false;
     }
     const hasRole = () =>
-      savedRoles.some((role: Record<string, any>) =>
-        roles.includes(role.authcode as string),
-      );
+      savedRoles.some((role: string) => rolesFromController.includes(role));
     if (!hasRole()) {
       return false;
     }
