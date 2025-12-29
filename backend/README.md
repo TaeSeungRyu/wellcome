@@ -5,6 +5,7 @@
 - **passport**
 - **bcrypt**
 - **class-validator**
+- **nest-winston**
 ---
 
 ## 📁 프로젝트 구조(요약)
