@@ -6,6 +6,7 @@
 - **bcrypt**
 - **class-validator**
 - **nest-winston**
+- **@nestjs/schedule**
 ---
 
 ## 📁 프로젝트 구조(요약)

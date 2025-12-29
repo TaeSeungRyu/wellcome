@@ -16,5 +16,11 @@ services:
       MONGO_INITDB_DATABASE: appdb
     volumes:
       - "./database-files:/data/db"
+    networks:
+      - nest-network
 volumes:
   mongo_data:
+
+networks:
+  nest-network:
+    driver: bridge
