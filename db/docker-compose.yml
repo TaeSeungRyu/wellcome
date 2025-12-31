@@ -23,4 +23,4 @@ volumes:
 
 networks:
   nest-network:
-    driver: bridge
+    external: true # 🔥 중요

@@ -10,6 +10,8 @@ import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './init';
 import { WinstonModule } from 'nest-winston';
 import { winstonOptions } from './init/logger.config';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksModule } from './schedule/tasks.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { winstonOptions } from './init/logger.config';
     AuthModule,
     LoginModule,
     UserModule,
+    ScheduleModule.forRoot(),
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [

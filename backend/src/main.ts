@@ -6,13 +6,19 @@ import { winstonOptions } from './init/logger.config';
 import { WinstonModule } from 'nest-winston';
 
 async function bootstrap() {
+  const isSchedulerOnly = process.env.SCHEDULER_ONLY === 'true';
+
   const app = await NestFactory.create(AppModule);
   if (app) {
     app.use(cookieParser());
     app.useGlobalPipes(getValidationPipe());
     app.useLogger(WinstonModule.createLogger(winstonOptions));
   }
-  await app.listen(process.env.PORT ?? 8080);
+  if (!isSchedulerOnly) {
+    await app.listen(process.env.PORT ?? 8080);
+  } else {
+    await NestFactory.createApplicationContext(AppModule);
+  }
 }
 bootstrap().catch((err) => {
   console.error('Error during app bootstrap:', err);

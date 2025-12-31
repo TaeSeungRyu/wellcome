@@ -1,0 +1,24 @@
+# docker compose stop
+# docker compose down
+# docker compose up -d --build
+# docker compose restart
+version: '3.8'
+
+services:
+  nest-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nest-api
+    container_name: nest-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - '3000:3000'
+    networks:
+      - nest-network
+
+networks:
+  nest-network:
+    external: true
