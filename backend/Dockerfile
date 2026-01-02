@@ -1,6 +1,6 @@
 
 #docker build -t nest-api .
-#docker run -d --name nest-api --network nest-network --env-file .env -p 3000:3000 nest-api
+#docker run -d --name nest-api --network nest-network --env-file .env -p 8080:8080 nest-api
 
 FROM node:22.9.0-alpine AS build-stage
 
@@ -30,7 +30,7 @@ COPY ecosystem.config.js ./ecosystem.config.js
 
 RUN mkdir -p logs
 
-EXPOSE 3000
+EXPOSE 8080
 
 # ⭐ PM2 Runtime 사용 (중요)
 CMD ["pm2-runtime", "ecosystem.config.js"]

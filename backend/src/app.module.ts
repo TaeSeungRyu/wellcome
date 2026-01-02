@@ -12,6 +12,7 @@ import { WinstonModule } from 'nest-winston';
 import { winstonOptions } from './init/logger.config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksModule } from './schedule/tasks.module';
+import { SseModule } from './sse/sse.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { TasksModule } from './schedule/tasks.module';
     UserModule,
     ScheduleModule.forRoot(),
     TasksModule,
+    SseModule,
   ],
   controllers: [AppController],
   providers: [

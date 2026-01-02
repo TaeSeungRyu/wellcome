@@ -13,7 +13,7 @@ import { ResponseDto } from 'src/common/common.dto';
 import { UserService } from './user.service';
 import { UserDto } from './user.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { Roles } from 'src/auth/roles.decorator';
+import { Role } from 'src/auth/role.decorator';
 
 @Controller('user')
 export class UserController {
@@ -44,7 +44,7 @@ export class UserController {
     return users;
   }
 
-  @Roles('admin', 'super', 'manager')
+  @Role('admin', 'super', 'manager')
   @Get('role-guard-test-list')
   async roleGuardTestlist(
     @Query('page') page: number,

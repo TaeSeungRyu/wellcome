@@ -51,7 +51,8 @@ export class AuthService {
         ),
       );
     }
-    const payload = { username: username, roles: user.roles };
+
+    const payload = { username: username, role: user.role };
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload),
       this.jwtService.signAsync(payload, { expiresIn: '1d' }),
@@ -106,7 +107,7 @@ export class AuthService {
     const payload: Record<string, any> = this.jwtService.decode(refreshToken);
     const accessToken = await this.jwtService.signAsync({
       username: payload.username as string,
-      roles: payload.roles as string[],
+      role: payload.role as string[],
     });
     //TODO : db조회하고나서 아래
     return new Promise((resolve) => {
