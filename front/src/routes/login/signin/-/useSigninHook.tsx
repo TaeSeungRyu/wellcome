@@ -9,6 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 const useSigninHook = () => {
   const { login } = useAuth();
   const [result, setResult] = useState<string | null>(null);
+  const [errorString, setErrorString] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const { mutateAsync, isPending } = useMutation({
@@ -20,25 +21,30 @@ const useSigninHook = () => {
       password: string;
     }) => requestSignin(username, password),
     onSuccess: (response) => {
-      if (response.success) {
-        const { accessToken, refreshToken } = response.data;
+      console.log("Signin Response:", response);
+      if (response.result?.success == true) {
+        const { accessToken, refreshToken } = response.result;
         login(accessToken, refreshToken);
-        setResult("Signin successful");
+        setResult("successful");
         setError(null);
+        setErrorString;
+        null;
       } else {
         setResult(null);
-        setError("Signin failed");
+        setError(Math.random().toString());
+        setErrorString(response?.message || "Signin failed");
       }
     },
     onError: (error: Error) => {
       setResult(null);
-      setError(error.message);
+      setError(Math.random().toString());
+      setErrorString(error.message);
     },
   });
 
   const signin = (username: string, password: string) => {
     return mutateAsync({ username, password });
   };
-  return { result, isPending, signin, error };
+  return { result, isPending, signin, error, errorString };
 };
 export default useSigninHook;

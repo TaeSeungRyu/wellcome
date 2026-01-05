@@ -8,7 +8,7 @@ import tailwindcss from "@tailwindcss/vite";
 const proxy = {
   "/api": {
     target: "http://localhost:8080",
-    changeOrigin: false,
+    changeOrigin: true,
     rewrite: (path: string) => path.replace(/^\/api/, ""),
   },
 };

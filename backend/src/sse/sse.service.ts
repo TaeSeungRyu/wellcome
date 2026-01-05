@@ -29,13 +29,16 @@ export class SseService implements OnModuleDestroy, OnModuleInit {
   }
 
   pintRunner() {
-    this.intervalId = setInterval(() => {
-      this.publishEvent({
-        event: 'ping',
-        data: {},
-        id: '',
-      });
-    }, 60000); // 10초마다 ping 이벤트 발행
+    this.intervalId = setInterval(
+      () => {
+        this.publishEvent({
+          event: 'ping',
+          data: {},
+          id: '',
+        });
+      },
+      1000 * 10 * 6,
+    ); // 1분마다 ping 이벤트 발행
   }
 
   /**
