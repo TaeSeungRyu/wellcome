@@ -12,8 +12,12 @@ export default function AuthGuard() {
   const router = useRouter();
   useEffect(() => {
     const unsub = router.subscribe("onResolved", (_) => {
-      //auth.token 값과 pathname에 따른 리다이렉트 처리 가능
-      console.log("모든 이동 감지:", location.pathname);
+      //console.log("모든 이동 감지:", location.pathname, auth.token);
+      if (!auth.token) {
+        router.navigate({
+          to: "/login/signin",
+        });
+      }
     });
     return () => unsub();
   }, [router]);

@@ -21,7 +21,7 @@ export default function InputSelect({
 
   const displayLabel = selectedItem?.label ?? placeholder;
 
-  const onSelect = (item: any) => {
+  const onSelect = (item: any, e: React.ChangeEvent<any>) => {
     if (option?.disabled) return;
     if (setValue) {
       // 선택한 항목만 selected: true 로 업데이트
@@ -32,6 +32,7 @@ export default function InputSelect({
       setValue(name, updated, { shouldValidate: true });
     }
     setOpen(false);
+    register(name).onChange(e);
   };
 
   return (
@@ -75,8 +76,8 @@ export default function InputSelect({
             <div
               key={v.value}
               className="p-2 hover:bg-gray-100 cursor-pointer"
-              onClick={() => {
-                onSelect(v);
+              onClick={(e) => {
+                onSelect(v, e);
               }}
             >
               {v.label}
@@ -85,7 +86,7 @@ export default function InputSelect({
         </div>
       )}
       {/* RHF hidden input → register 동작 연결 */}
-      <input type="hidden" {...register} readOnly />
+      <input type="hidden" {...register(name)} readOnly />
       {/* Error */}
       {errors?.[name]?.message && !option?.offErrorMessage && (
         <p className="text-red-500 text-sm mt-1">

@@ -19,6 +19,7 @@ export default function InputText({
     if (setValue) {
       setValue(name, raw);
     }
+    register(name).onChange(e);
   };
 
   const removeValue = () => {
@@ -39,7 +40,7 @@ export default function InputText({
         </div>
       )}
       <input
-        {...register}
+        {...register(name)}
         value={innerValue}
         placeholder={placeholder}
         onChange={handleChange}

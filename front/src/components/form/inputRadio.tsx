@@ -11,7 +11,7 @@ export default function InputRadio({
 }: InputFieldProps) {
   const list = watch?.(name) || [];
 
-  const onSelect = (item: any) => {
+  const onSelect = (item: any, e: React.ChangeEvent<any>) => {
     if (option?.disabled) return;
     if (setValue) {
       const updated = list.map((v: any) => ({
@@ -20,6 +20,7 @@ export default function InputRadio({
       }));
       setValue(name, updated, { shouldValidate: true });
     }
+    register(name).onChange(e);
   };
 
   return (
@@ -40,7 +41,7 @@ export default function InputRadio({
         {list.map((v: any) => (
           <div
             key={v.value}
-            onClick={() => onSelect(v)}
+            onClick={(e) => onSelect(v, e)}
             className={`
               px-3 py-2 flex items-center gap-2
               ${option?.className ?? ""}
@@ -63,7 +64,7 @@ export default function InputRadio({
         ))}
       </div>
       {/* RHF 연결용 hidden input */}
-      <input type="hidden" {...register} readOnly />
+      <input type="hidden" {...register(name)} readOnly />
       {/* Error */}
       {errors?.[name]?.message && !option?.offErrorMessage && (
         <p className="text-red-500 text-sm mt-1">

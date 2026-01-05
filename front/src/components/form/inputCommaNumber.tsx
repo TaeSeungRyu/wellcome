@@ -29,6 +29,7 @@ export default function InputCommaNumber({
       const numberValue = raw.replace(/[^\d]/g, "");
       setValue(name, numberValue === "" ? "" : Number(numberValue));
     }
+    register(name).onChange(e);
   };
 
   const removeValue = () => {
@@ -50,7 +51,7 @@ export default function InputCommaNumber({
         </div>
       )}
       <input
-        {...register}
+        {...register(name)}
         value={innerValue}
         placeholder={placeholder}
         onChange={handleChange}

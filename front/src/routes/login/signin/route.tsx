@@ -18,25 +18,20 @@ function RouteComponent() {
   const { result, signin, isPending, error, errorString } = useSigninHook();
   const router = useRouter();
   const schema = z.object({
-    myText: z.string().min(1, "값을 입력하세요"),
-    myPassword: z.string().min(6, "비밀번호는 최소 6자 이상이어야 합니다."),
+    myText: z.string().min(3, "텍스트는 최소 3자 이상이어야 합니다."),
+    myPassword: z.string().min(3, "비밀번호는 최소 3자 이상이어야 합니다."),
   });
   const {
     register,
     formState: { errors },
     setValue,
     getValues,
+    handleSubmit,
   } = useForm({
     resolver: zodResolver(schema),
+    mode: "all",
     defaultValues: {},
   });
-
-  const runSignIn = async () => {
-    console.log("Sign In Clicked");
-    const username = getValues("myText");
-    const password = getValues("myPassword");
-    await signin(username, password);
-  };
 
   const [option, _] = useState<InputOption>({
     style: {},
@@ -45,20 +40,30 @@ function RouteComponent() {
   });
 
   useEffect(() => {
+    console.log("Form Errors:", errors);
+  }, [errors]);
+  const onSubmit = async (data: any) => {
+    console.log("입력값:", data);
+    console.log("Sign In Clicked");
+    const username = getValues("myText");
+    const password = getValues("myPassword");
+    await signin(username, password);
+  };
+  useEffect(() => {
     console.log(error);
     if (error) {
       showToast(errorString || "데이터를 확인하여 주세요.", { type: "error" });
     } else if (result) {
       console.log("Signin Result:", result, " Error:", error);
-      // router.navigate({
-      //   to: "/home/dashboard",
-      // });
+      router.navigate({
+        to: "/home/dashboard",
+      });
     }
   }, [result, error]);
 
   return (
     <>
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <InputText
           name="myText"
           label="my text 입력 테스트"
@@ -78,7 +83,12 @@ function RouteComponent() {
           errors={errors}
         />
 
-        <button type="submit">제출</button>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+          type="submit"
+        >
+          제출
+        </button>
       </form>
 
       <div className="my-2"></div>
@@ -87,12 +97,6 @@ function RouteComponent() {
         Hello "/login/signin"! -- {result} --{" "}
       </div>
       <div>is pending : {isPending ? "Yes" : "No"}</div>
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded"
-        onClick={runSignIn}
-      >
-        Sign In
-      </button>
     </>
   );
 }

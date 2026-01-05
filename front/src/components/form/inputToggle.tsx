@@ -15,7 +15,7 @@ export default function InputToggle({
     rightLabel: "",
   };
 
-  const onToggle = () => {
+  const onToggle = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (option?.disabled) {
       return;
     }
@@ -26,6 +26,7 @@ export default function InputToggle({
       };
       setValue(name, updated, { shouldValidate: true });
     }
+    register(name).onChange(e as any);
   };
 
   return (
@@ -82,7 +83,7 @@ export default function InputToggle({
       </div>
 
       {/* RHF hidden */}
-      <input type="hidden" {...register} readOnly />
+      <input type="hidden" {...register(name)} readOnly />
       {/* Error */}
       {errors?.[name]?.message && !option?.offErrorMessage && (
         <p className="text-red-500 text-sm mt-1">
