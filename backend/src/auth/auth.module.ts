@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { LoginSchema, LoginUser } from 'src/login/login.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RedisModule } from 'src/redis/redis.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
     }),
     MongooseModule.forFeature([{ name: LoginUser.name, schema: LoginSchema }]),
+    RedisModule,
   ],
   providers: [JwtStrategy, AuthService],
   exports: [JwtModule, AuthService],

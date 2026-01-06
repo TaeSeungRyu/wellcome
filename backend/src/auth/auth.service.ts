@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
 import { ResponseDto } from 'src/common/common.dto';
@@ -6,10 +11,12 @@ import { LoginDocument, LoginUser } from 'src/login/login.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { comparePassword } from 'src/common/util';
+import Redis from 'ioredis';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject('REDIS') private readonly redis: Redis,
     private readonly jwtService: JwtService,
     @InjectModel(LoginUser.name)
     private loginModel: Model<LoginDocument>,
@@ -57,6 +64,15 @@ export class AuthService {
       this.jwtService.signAsync(payload),
       this.jwtService.signAsync(payload, { expiresIn: '1d' }),
     ]);
+
+    // 🔑 Redis 저장
+    await this.redis.set(
+      `refresh:${user.username}`,
+      refreshToken,
+      'EX',
+      60 * 60 * 24 * 7,
+    );
+
     return new Promise((resolve) => {
       resolve(
         new ResponseDto(
@@ -79,7 +95,7 @@ export class AuthService {
         secure: false, // 로컬/Postman → false
         sameSite: 'lax',
         path: '/',
-        maxAge: 1000 * 60 * 60 * 24 * 7, // 7일
+        maxAge: 1000 * 60 * 60 * 24 * 1, // 1일
       });
     } else {
       res.clearCookie(process.env.JWT_REFRESH_SECRET as string);
@@ -89,9 +105,10 @@ export class AuthService {
   async refreshToken(req: Request): Promise<ResponseDto> {
     const key = process.env.JWT_REFRESH_SECRET as string;
     const refreshToken = req.cookies[key] as string;
-
-    if (!refreshToken) {
-      throw new BadRequestException(
+    const payload: Record<string, any> = this.jwtService.decode(refreshToken);
+    const savedToken = await this.redis.get(`refresh:${payload.username}`);
+    if (!refreshToken || !savedToken || savedToken !== refreshToken) {
+      throw new UnauthorizedException(
         new ResponseDto(
           {
             accessToken: '',
@@ -103,8 +120,6 @@ export class AuthService {
         ),
       );
     }
-
-    const payload: Record<string, any> = this.jwtService.decode(refreshToken);
     const accessToken = await this.jwtService.signAsync({
       username: payload.username as string,
       role: payload.role as string[],
