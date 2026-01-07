@@ -1,0 +1,22 @@
+# docker compose stop
+# docker compose down
+# docker compose up -d
+# docker compose restart
+version: "3.9"
+
+services:
+  front-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: front-react-tanstack
+    container_name: front-react-tanstack-container
+    ports:
+      - "80:80"
+    networks:
+      - nest-network
+    restart: unless-stopped
+
+networks:
+  nest-network:
+    external: true

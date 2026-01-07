@@ -1,5 +1,5 @@
-#docker build -t prepay-front-dev .
-#docker stop prepay-front-dev; docker rm prepay-front-dev; docker run -d --name prepay-front-dev -p 35175:80 prepay-front-dev 
+#docker build -t front-react-tanstack .
+#docker stop front-react-tanstack; docker rm front-react-tanstack; docker run -d --name front-react-tanstack -p 35175:80 front-react-tanstack 
 # 39091
 FROM node:24-alpine AS build-stage
 
