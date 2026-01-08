@@ -12,6 +12,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { comparePassword } from 'src/common/util';
 import Redis from 'ioredis';
+import { LoginDto } from 'src/login/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -38,11 +39,11 @@ export class AuthService {
   }
 
   async generateTokens(
-    username: string,
-    passowrd: string,
+    loginDto: LoginDto,
     res: Response,
   ): Promise<ResponseDto> {
-    const user = await this.findByUsername(username, passowrd);
+    const { username, password } = loginDto;
+    const user = await this.findByUsername(username, password);
     if (!user) {
       this.setRefreshToken(res, ''); // 쿠키 삭제
 

@@ -7,6 +7,8 @@
 - **class-validator**
 - **nest-winston**
 - **@nestjs/schedule**
+- **@nestjs/swagger**
+
 ---
 
 ## 📁 프로젝트 구조(요약)

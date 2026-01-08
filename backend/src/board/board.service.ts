@@ -59,8 +59,24 @@ export class BoardService {
     }
   }
 
-  async update(updateData: UpdateBoardDto): Promise<ResponseDto> {
+  async isYourBoard(boardId: string, username: string): Promise<boolean> {
+    const board = await this.boardModel.findById(boardId);
+    if (!board) {
+      throw new Error('게시판 글을 찾을 수 없습니다.');
+    }
+    return board.username === username;
+  }
+
+  async update(
+    updateData: UpdateBoardDto,
+    usernameInAuth: string,
+  ): Promise<ResponseDto> {
     try {
+      const isOwner = await this.isYourBoard(updateData._id, usernameInAuth);
+      if (!isOwner) {
+        throw new Error('게시판 글 수정 권한이 없습니다.');
+      }
+
       const { _id } = updateData;
       updateData.updateDate = dayjs().format('YYYY-MM-DD HH:mm:ss');
       const updatedBoard = await this.boardModel.findByIdAndUpdate(
@@ -89,8 +105,13 @@ export class BoardService {
     }
   }
 
-  async delete(boardId: string): Promise<ResponseDto> {
+  async delete(boardId: string, usernameInAuth: string): Promise<ResponseDto> {
     try {
+      const isOwner = await this.isYourBoard(boardId, usernameInAuth);
+      if (!isOwner) {
+        throw new Error('게시판 글 삭제 권한이 없습니다.');
+      }
+
       const deletedBoard = await this.boardModel.findByIdAndDelete(boardId);
       if (!deletedBoard) {
         throw new Error('게시판 글을 찾을 수 없습니다.');
@@ -167,17 +188,23 @@ export class BoardService {
   async removeComment(
     boardId: string,
     commentId: string,
+    usernameInAuth: string,
   ): Promise<ResponseDto> {
     try {
       const board = await this.boardModel.findById(boardId);
       if (!board) {
         throw new Error('게시판 글을 찾을 수 없습니다.');
       }
-
+      board.comments.find((comment) => {
+        if (comment._id?.toString() === commentId) {
+          if (comment.username !== usernameInAuth) {
+            throw new Error('댓글 삭제 권한이 없습니다.');
+          }
+        }
+      });
       board.comments = board.comments.filter(
         (comment) => comment?._id?.toString() !== commentId,
       );
-
       const updatedBoard = await board.save();
       return new ResponseDto(
         {
