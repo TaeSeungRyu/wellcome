@@ -1,9 +1,6 @@
 import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class BoardDto {
-  @IsString()
-  _id: string;
-
   @IsNotEmpty()
   @IsString()
   username: string;
@@ -25,9 +22,16 @@ export class BoardDto {
   updateDate?: string;
 }
 
-export class CommentDto {
+export class UpdateBoardDto extends BoardDto {
+  @IsNotEmpty()
   @IsString()
   _id: string;
+}
+
+export class CommentDto {
+  @IsNotEmpty()
+  @IsString()
+  boardId: string;
 
   @IsNotEmpty()
   @IsString()
@@ -37,7 +41,7 @@ export class CommentDto {
   @IsString()
   comment: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   date: string;
 }

@@ -3,7 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Board, BoardDocument } from './board.schema';
 import { Model } from 'mongoose';
 import { ResponseDto } from 'src/common/common.dto';
-import { BoardDto, CommentDto } from './board.dto';
+import { BoardDto, CommentDto, UpdateBoardDto } from './board.dto';
+import dayjs from 'dayjs';
 
 @Injectable()
 export class BoardService {
@@ -37,6 +38,7 @@ export class BoardService {
 
   async create(boardData: BoardDto): Promise<ResponseDto> {
     try {
+      boardData.createDate = dayjs().format('YYYY-MM-DD HH:mm:ss');
       const newBoard = new this.boardModel(boardData);
       const savedBoard = await newBoard.save();
       return new ResponseDto(
@@ -57,9 +59,10 @@ export class BoardService {
     }
   }
 
-  async update(updateData: BoardDto): Promise<ResponseDto> {
+  async update(updateData: UpdateBoardDto): Promise<ResponseDto> {
     try {
       const { _id } = updateData;
+      updateData.updateDate = dayjs().format('YYYY-MM-DD HH:mm:ss');
       const updatedBoard = await this.boardModel.findByIdAndUpdate(
         _id,
         updateData,
@@ -134,15 +137,13 @@ export class BoardService {
     }
   }
 
-  async addComment(
-    boardId: string,
-    commentData: CommentDto,
-  ): Promise<ResponseDto> {
+  async addComment(commentData: CommentDto): Promise<ResponseDto> {
     try {
-      const board = await this.boardModel.findById(boardId);
+      const board = await this.boardModel.findById(commentData.boardId);
       if (!board) {
         throw new Error('게시판 글을 찾을 수 없습니다.');
       }
+      commentData.date = dayjs().format('YYYY-MM-DD HH:mm:ss');
       board.comments.push(commentData);
       const updatedBoard = await board.save();
       return new ResponseDto(
@@ -172,9 +173,11 @@ export class BoardService {
       if (!board) {
         throw new Error('게시판 글을 찾을 수 없습니다.');
       }
+
       board.comments = board.comments.filter(
-        (comment) => comment._id.toString() !== commentId,
+        (comment) => comment?._id?.toString() !== commentId,
       );
+
       const updatedBoard = await board.save();
       return new ResponseDto(
         {
