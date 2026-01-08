@@ -86,7 +86,7 @@ export class UserService {
           'save_error',
           error instanceof Error
             ? error.message
-            : '사용자 생성 중 오류가 발생했습니다.',
+            : '사용자 조회 중 오류가 발생했습니다.',
         ),
       );
     }
