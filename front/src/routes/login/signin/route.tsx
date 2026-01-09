@@ -39,22 +39,15 @@ function RouteComponent() {
     disabled: false,
   });
 
-  useEffect(() => {
-    console.log("Form Errors:", errors);
-  }, [errors]);
-  const onSubmit = async (data: any) => {
-    console.log("입력값:", data);
-    console.log("Sign In Clicked");
+  const onSubmit = async (_: any) => {
     const username = getValues("myText");
     const password = getValues("myPassword");
     await signin(username, password);
   };
   useEffect(() => {
-    console.log(error);
     if (error) {
       showToast(errorString || "데이터를 확인하여 주세요.", { type: "error" });
     } else if (result) {
-      console.log("Signin Result:", result, " Error:", error);
       router.navigate({
         to: "/home/dashboard",
       });
