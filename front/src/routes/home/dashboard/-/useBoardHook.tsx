@@ -1,28 +1,37 @@
 import { useQuery } from "@tanstack/react-query";
 import { requestBoardList } from "./boardRepository";
+import { useForm } from "react-hook-form";
+import { boardSchema } from "./board.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const queryKey = ["useBoardListHook"];
-const boardListFetch = (page: number, limit: number) => {
-  const {
-    data: result,
-    refetch: search,
-    isPending,
-    error,
-  } = useQuery({
-    queryKey,
+const _boardListFetch = (page: number, limit: number) => {
+  return useQuery({
+    queryKey: [...queryKey, page, limit],
     queryFn: async () => {
       return await requestBoardList(page, limit);
     },
     enabled: false,
+    gcTime: 0,
+    staleTime: 0,
     select(data) {
       return data?.result ?? null;
     },
+    placeholderData: (prev) => prev,
   });
-  return { result, isPending, search, error };
 };
 
-const useBoardListHook = (page: number, limit: number) => {
-  return boardListFetch(page, limit);
+export const useBoardListHook = (page: number, limit: number) => {
+  return _boardListFetch(page, limit);
 };
 
-export default useBoardListHook;
+export const useBoardForm = () => {
+  return useForm({
+    resolver: zodResolver(boardSchema),
+    mode: "all",
+    defaultValues: {
+      title: "",
+      contents: "",
+    },
+  });
+};

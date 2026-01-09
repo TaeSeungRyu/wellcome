@@ -10,8 +10,6 @@ interface ModalProps {
   closeOnEsc?: boolean;
 }
 
-const ANIMATION_DURATION = 200; // ms
-
 export default function Modal({
   open,
   onClose,
@@ -26,16 +24,12 @@ export default function Modal({
   useEffect(() => {
     if (open) {
       setVisible(true);
-    } else {
-      const timer = setTimeout(() => setVisible(false), ANIMATION_DURATION);
-      return () => clearTimeout(timer);
     }
   }, [open]);
 
   // ESC (Top 모달만)
   useEffect(() => {
     if (!open || !isTop) return;
-
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         if (closeOnEsc) {
@@ -43,7 +37,6 @@ export default function Modal({
         }
       }
     };
-
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open, isTop, onClose]);

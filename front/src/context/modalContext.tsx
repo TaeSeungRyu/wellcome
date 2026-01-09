@@ -4,6 +4,7 @@ import { createContext, useContext } from "react";
 export interface ModalOptions {
   closeOnOverlay?: boolean;
   closeOnEsc?: boolean;
+  afterClose?: Function;
 }
 
 export interface OpenModalArgs {

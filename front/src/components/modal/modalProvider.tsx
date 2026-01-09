@@ -23,6 +23,7 @@ export default function ModalProvider({
         options: {
           closeOnOverlay: true,
           closeOnEsc: true,
+          afterClose: options?.afterClose,
           ...options,
         },
       },
@@ -30,7 +31,11 @@ export default function ModalProvider({
   }, []);
 
   const closeTopModal = useCallback(() => {
-    setStack((prev) => prev.slice(0, -1));
+    setStack((prev) => {
+      const top = prev[prev.length - 1];
+      top?.options?.afterClose?.(); // ✅ 단 한 번
+      return prev.slice(0, -1);
+    });
   }, []);
 
   return (
