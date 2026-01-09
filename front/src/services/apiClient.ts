@@ -38,11 +38,11 @@ const _refreshAccessToken = async (): Promise<string> => {
     throw new Error("No refresh token available.");
   }
   const res = await fetch(API.LOGIN_REFRESH, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ token: currentRefreshToken }),
+    method: "get",
+    // headers: {
+    //   "Content-Type": "application/json",
+    // },
+    //body: JSON.stringify({ token: currentRefreshToken }),
   });
   const { data, success } = await res.json();
   setAccessToken(data?.accessToken);
@@ -67,12 +67,16 @@ export class ApiClient {
   // HTTP 요청을 수행하는 핵심 메서드
   public async request<T = any>(
     url: string,
-    options: RequestInit = {}
+    options: Record<string, any>
   ): Promise<T> {
     // 요청을 수행하고 401 에러를 처리하는 내부 헬퍼 함수
     try {
       // 1. 첫 번째 요청 시도 (로컬 스토리지의 현재 토큰 사용)
       const currentToken = getAccessToken();
+      if (options.query) {
+        const queryParams = new URLSearchParams(options.query).toString();
+        url += `?${queryParams}`;
+      }
       return await _performFetch(url, options, currentToken);
     } catch (err: any) {
       if (err.message.includes("401")) {

@@ -11,7 +11,11 @@ import { LoginDto } from './login.dto';
 export class LoginController {
   constructor(private authService: AuthService) {}
 
-  @ApiOperation({ summary: '로그인' })
+  @ApiOperation({
+    summary: '로그인',
+    description:
+      '아이디와 비밀번호로 로그인하고 Access / Refresh Token을 발급합니다.',
+  })
   @ApiBody({
     type: LoginDto,
     description: '로그인 요청 정보',
@@ -30,7 +34,11 @@ export class LoginController {
     return user;
   }
 
-  @ApiOperation({ summary: '리프레시' })
+  @ApiOperation({
+    summary: '리프레시',
+    description:
+      '저장된 쿠키의 Refresh Token으로 Access / Refresh Token을 재발급합니다.',
+  })
   @ApiResponse({ status: 201, type: ResponseDto })
   @Get('refresh')
   async refreshToken(@Req() req: Request): Promise<ResponseDto> {
