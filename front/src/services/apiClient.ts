@@ -2,7 +2,6 @@ import { API } from "@/const";
 import {
   clearTokens,
   getAccessToken,
-  REFRESH_TOKEN_KEY,
   setAccessToken,
 } from "@/context/authContext";
 
@@ -33,23 +32,15 @@ const _performFetch = async (
 
 // 2. 토큰을 리프레시하는 함수
 const _refreshAccessToken = async (): Promise<string> => {
-  const currentRefreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
-  if (!currentRefreshToken) {
-    throw new Error("No refresh token available.");
-  }
   const res = await fetch(API.LOGIN_REFRESH, {
     method: "get",
-    // headers: {
-    //   "Content-Type": "application/json",
-    // },
-    //body: JSON.stringify({ token: currentRefreshToken }),
   });
-  const { data, success } = await res.json();
-  setAccessToken(data?.accessToken);
-  if (!success) {
+  const { result } = await res.json();
+  setAccessToken(result?.accessToken);
+  if (!result.success) {
     throw new Error("Failed to refresh token.");
   }
-  return data?.accessToken;
+  return result?.accessToken;
 };
 
 // 3. ApiClient 클래스
