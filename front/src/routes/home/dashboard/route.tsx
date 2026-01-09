@@ -6,6 +6,8 @@ import { useModal } from "@/context/modalContext";
 import InputText from "@/components/form/inputText";
 import { type BoardForm } from "./-/board.schema";
 import { BoardModalComponent } from "./-/board.modal";
+import { FormProvider } from "react-hook-form";
+import { BoardModalComponent222 } from "./-/board.modal2";
 
 export const Route = createFileRoute("/home/dashboard")({
   component: RouteComponent,
@@ -39,19 +41,39 @@ function RouteComponent() {
     }
   }, [result?.data]);
 
-  const { openModal } = useModal();
+  const { openModal, closeTopModal } = useModal();
+  const methods = useBoardForm();
+  const [testShow, setTestShow] = useState(false);
 
   return (
     <div>
       <div>Dashboard Page</div>
       <button
         className="px-3 py-1 bg-blue-500 text-white rounded"
+        onClick={() => setTestShow(!testShow)}
+      >
+        {testShow ? "Hide" : "Show"}
+      </button>
+      {testShow && (
+        <div className="m-3">
+          <FormProvider {...methods}>
+            <BoardModalComponent222></BoardModalComponent222>
+          </FormProvider>
+        </div>
+      )}
+
+      <button
+        className="px-3 py-1 bg-blue-500 text-white rounded my-3 mx-2"
         onClick={() => {
           openModal({
             options: {
               afterClose: () => {},
             },
-            content: <BoardModalComponent></BoardModalComponent>,
+            content: (
+              <BoardModalComponent
+                closeTopModal={closeTopModal}
+              ></BoardModalComponent>
+            ),
           });
         }}
       >

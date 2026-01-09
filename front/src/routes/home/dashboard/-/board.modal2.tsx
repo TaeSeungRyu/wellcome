@@ -1,23 +1,17 @@
 import InputText from "@/components/form/inputText";
 import type { BoardForm } from "./board.schema";
-import { useBoardForm } from "./useBoardHook";
+import { useFormContext } from "react-hook-form";
 
-export function BoardModalComponent({
-  closeTopModal,
-}: {
-  closeTopModal: () => void;
-}) {
+export function BoardModalComponent222() {
   const fields: (keyof BoardForm)[] = ["title", "contents"];
   const {
     register,
-    handleSubmit,
-    setValue,
     formState: { errors },
-  } = useBoardForm();
-
+    setValue,
+    handleSubmit,
+  } = useFormContext();
   const onSubmit = (data: any) => {
     console.log("Form Data Submitted:", data);
-    closeTopModal();
   };
 
   return (
@@ -33,6 +27,7 @@ export function BoardModalComponent({
             setValue={setValue}
             errors={errors}
           />
+
           <InputText
             name={fields[1]}
             label="내용"
@@ -41,6 +36,7 @@ export function BoardModalComponent({
             setValue={setValue}
             errors={errors}
           />
+
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded"
             type="submit"
