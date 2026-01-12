@@ -1,5 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  requestBoardDelete,
+  requestBoardDetail,
   requestBoardInsert,
   requestBoardList,
   requestBoardUpdate,
@@ -7,8 +9,9 @@ import {
 import { useForm } from "react-hook-form";
 import { boardSchema } from "./board.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 
-const queryKey = ["useBoardListHook", "useBoardAlter"];
+const queryKey = ["useBoardListHook", "useBoardAlter", "useBoardForm"];
 //BOARD LIST 조회용 HOOK
 export const useBoardListHook = (page: number, limit: number) => {
   return useQuery({
@@ -27,8 +30,8 @@ export const useBoardListHook = (page: number, limit: number) => {
 };
 
 //BOARD FORM용 HOOK
-export const useBoardForm = () => {
-  return useForm({
+export const useBoardForm = (_id?: string) => {
+  const form = useForm({
     resolver: zodResolver(boardSchema),
     mode: "all",
     defaultValues: {
@@ -36,6 +39,23 @@ export const useBoardForm = () => {
       contents: "",
     },
   });
+  const { reset } = form;
+  // 수정 모드일 때만 데이터 조회 및 폼 채우기
+  const { isFetching, data, isError } = useQuery({
+    queryKey: [...queryKey[2], _id],
+    queryFn: () => requestBoardDetail(_id!),
+    enabled: !!_id,
+  });
+  // 데이터가 로드되면 폼 값을 한 번에 업데이트
+  useEffect(() => {
+    if (data?.result?.data) {
+      reset({
+        title: data.result.data.title,
+        contents: data.result.data.contents,
+      });
+    }
+  }, [data, reset]);
+  return { ...form, isFetching, isError };
 };
 
 //BOARD 등록/수정용 HOOK
@@ -46,12 +66,16 @@ export const useBoardAlter = () => {
       title,
       contents,
       _id,
+      isDelete,
     }: {
       title: string;
       contents: string;
       _id?: string;
+      isDelete?: boolean;
     }) => {
-      if (_id) {
+      if (isDelete && _id) {
+        return await requestBoardDelete(_id);
+      } else if (_id) {
         return await requestBoardUpdate(_id, title, contents);
       } else {
         return await requestBoardInsert(title, contents);

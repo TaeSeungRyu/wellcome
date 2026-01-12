@@ -13,8 +13,6 @@ export const Route = createFileRoute("/home/dashboard")({
 });
 
 function RouteComponent() {
-  //const router = useRouter();
-
   const { openModal, closeTopModal } = useModal();
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -36,7 +34,7 @@ function RouteComponent() {
     {
       key: "title",
       header: "제목",
-      render(value, row) {
+      render(value) {
         return <strong className="text-red-300">{value}</strong>;
       },
     },
@@ -52,7 +50,6 @@ function RouteComponent() {
   ];
   const [data, setData] = useState<Board[]>([]);
   const onRowClick = (row: Board) => {
-    //console.log("Row clicked:", row);
     runModal(row._id);
   };
 

@@ -53,9 +53,21 @@ const requestBoardUpdate = async (
   return apiClient.request(API.BOARD_UPDATE, params);
 };
 
+const requestBoardDelete = async (_id: string) => {
+  const apiClient = ApiClient.getInstance();
+  const params = {
+    method: "delete",
+    query: {
+      boardId: _id,
+    },
+  };
+  return apiClient.request(API.BOARD_DELETE, params);
+};
+
 export {
   requestBoardList,
   requestBoardInsert,
   requestBoardUpdate,
   requestBoardDetail,
+  requestBoardDelete,
 };
