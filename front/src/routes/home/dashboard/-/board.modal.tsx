@@ -2,7 +2,7 @@ import InputText from "@/components/form/inputText";
 import type { BoardForm } from "./board.schema";
 import { useBoardAlter, useBoardForm } from "./useBoardHook";
 import { useModal } from "@/context/modalContext";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useToast } from "@/context/toastContext";
 
 export function BoardModalComponent({

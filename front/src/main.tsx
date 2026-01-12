@@ -43,11 +43,11 @@ if (rootElement && !rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <ModalProvider>
-          <ToastProvider>
+        <ToastProvider>
+          <ModalProvider>
             <RouterProvider router={router} />
-          </ToastProvider>
-        </ModalProvider>
+          </ModalProvider>
+        </ToastProvider>
       </QueryClientProvider>
     </StrictMode>
   );

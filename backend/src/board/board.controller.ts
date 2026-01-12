@@ -13,6 +13,7 @@ import { ResponseDto } from 'src/common/common.dto';
 import { BoardDto, CommentDto, UpdateBoardDto } from './board.dto';
 import { Role } from 'src/auth/role.decorator';
 import { Request } from 'express';
+import { GetUser } from 'src/auth/username.decorator';
 
 @Controller('board')
 export class BoardController {
@@ -39,12 +40,9 @@ export class BoardController {
   @Post('create')
   async create(
     @Body() boardData: BoardDto,
-    @Req() req: Request,
+    @GetUser('username') username: string,
   ): Promise<ResponseDto> {
-    const board = await this.boardService.create(
-      boardData,
-      req.headers['authorization'] as string,
-    );
+    const board = await this.boardService.create(boardData, username);
     return board;
   }
 
@@ -52,12 +50,9 @@ export class BoardController {
   @Put('update')
   async update(
     @Body() boardData: UpdateBoardDto,
-    @Req() req: Request,
+    @GetUser('username') username: string,
   ): Promise<ResponseDto> {
-    const board = await this.boardService.update(
-      boardData,
-      req.headers['authorization'] as string,
-    );
+    const board = await this.boardService.update(boardData, username);
     return board;
   }
 
@@ -65,12 +60,9 @@ export class BoardController {
   @Delete('delete')
   async delete(
     @Query('boardId') boardId: string,
-    @Req() req: Request,
+    @GetUser('username') username: string,
   ): Promise<ResponseDto> {
-    const board = await this.boardService.delete(
-      boardId,
-      req.headers['authorization'] as string,
-    );
+    const board = await this.boardService.delete(boardId, username);
     return board;
   }
 

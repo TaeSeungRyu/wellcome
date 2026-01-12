@@ -5,14 +5,12 @@ import { Model } from 'mongoose';
 import { ResponseDto } from 'src/common/common.dto';
 import { BoardDto, CommentDto, UpdateBoardDto } from './board.dto';
 import dayjs from 'dayjs';
-import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class BoardService {
   constructor(
     @InjectModel(Board.name)
     private boardModel: Model<BoardDocument>,
-    private authService: AuthService,
   ) {}
 
   async findAll(page: number = 1, limit: number = 10): Promise<ResponseDto> {
@@ -44,7 +42,7 @@ export class BoardService {
   ): Promise<ResponseDto> {
     try {
       boardData.createDate = dayjs().format('YYYY-MM-DD HH:mm:ss');
-      boardData.username = this.authService.decodeToken(usernameInAuth);
+      boardData.username = usernameInAuth;
       const newBoard = new this.boardModel(boardData);
       const savedBoard = await newBoard.save();
       return new ResponseDto(
@@ -78,15 +76,14 @@ export class BoardService {
     usernameInAuth: string,
   ): Promise<ResponseDto> {
     try {
-      const username = this.authService.decodeToken(usernameInAuth);
-      const isOwner = await this.isYourBoard(updateData._id, username);
+      const isOwner = await this.isYourBoard(updateData._id, usernameInAuth);
       if (!isOwner) {
         throw new Error('게시판 글 수정 권한이 없습니다.');
       }
 
       const { _id } = updateData;
       updateData.updateDate = dayjs().format('YYYY-MM-DD HH:mm:ss');
-      updateData.username = username;
+      updateData.username = usernameInAuth;
       const updatedBoard = await this.boardModel.findByIdAndUpdate(
         _id,
         updateData,
@@ -115,8 +112,7 @@ export class BoardService {
 
   async delete(boardId: string, usernameInAuth: string): Promise<ResponseDto> {
     try {
-      const username = this.authService.decodeToken(usernameInAuth);
-      const isOwner = await this.isYourBoard(boardId, username);
+      const isOwner = await this.isYourBoard(boardId, usernameInAuth);
       if (!isOwner) {
         throw new Error('게시판 글 삭제 권한이 없습니다.');
       }

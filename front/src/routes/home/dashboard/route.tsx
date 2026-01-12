@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import { useBoardForm, useBoardListHook } from "./-/useBoardHook";
 import { PagingComponent } from "@/components/ui/pagingComponent";
 import { useModal } from "@/context/modalContext";
-import InputText from "@/components/form/inputText";
-import { type BoardForm } from "./-/board.schema";
 import { BoardModalComponent } from "./-/board.modal";
 import { FormProvider } from "react-hook-form";
 import { BoardModalComponent222 } from "./-/board.modal2";
@@ -44,7 +42,6 @@ function RouteComponent() {
   const { openModal, closeTopModal } = useModal();
   const methods = useBoardForm();
   const [testShow, setTestShow] = useState(false);
-
   return (
     <div>
       <div>Dashboard Page</div>
