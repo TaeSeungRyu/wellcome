@@ -72,6 +72,7 @@ function RouteComponent() {
             content: (
               <BoardModalComponent
                 closeTopModal={closeTopModal}
+                search={search}
               ></BoardModalComponent>
             ),
           });

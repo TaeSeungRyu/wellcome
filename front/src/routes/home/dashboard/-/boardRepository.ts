@@ -13,4 +13,33 @@ const requestBoardList = async (page: number, limit: number) => {
   return apiClient.request(API.BOARD, params);
 };
 
-export { requestBoardList };
+const requestBoardInsert = async (title: string, contents: string) => {
+  const apiClient = ApiClient.getInstance();
+  const params = {
+    method: "post",
+    body: JSON.stringify({
+      title,
+      contents,
+    }),
+  };
+  return apiClient.request(API.BOARD_CREATE, params);
+};
+
+const requestBoardUpdate = async (
+  _id: string,
+  title: string,
+  contents: string
+) => {
+  const apiClient = ApiClient.getInstance();
+  const params = {
+    method: "put",
+    body: JSON.stringify({
+      _id,
+      title,
+      contents,
+    }),
+  };
+  return apiClient.request(API.BOARD_UPDATE, params);
+};
+
+export { requestBoardList, requestBoardInsert, requestBoardUpdate };

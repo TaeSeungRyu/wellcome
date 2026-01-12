@@ -1,7 +1,7 @@
 import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class BoardDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   username: string;
 

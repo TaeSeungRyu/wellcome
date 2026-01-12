@@ -103,6 +103,13 @@ export class AuthService {
     }
   }
 
+  decodeToken(token: string): string {
+    const payload: Record<string, any> = this.jwtService.decode(
+      token.replace('Bearer ', ''),
+    );
+    return payload['username'] as string;
+  }
+
   async refreshToken(req: Request): Promise<ResponseDto> {
     const key = process.env.JWT_REFRESH_SECRET as string;
     const refreshToken = req.cookies[key] as string;

@@ -37,8 +37,14 @@ export class BoardController {
 
   @Role('admin', 'super', 'manager')
   @Post('create')
-  async create(@Body() boardData: BoardDto): Promise<ResponseDto> {
-    const board = await this.boardService.create(boardData);
+  async create(
+    @Body() boardData: BoardDto,
+    @Req() req: Request,
+  ): Promise<ResponseDto> {
+    const board = await this.boardService.create(
+      boardData,
+      req.headers['authorization'] as string,
+    );
     return board;
   }
 
