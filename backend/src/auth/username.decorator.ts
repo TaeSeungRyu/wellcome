@@ -2,7 +2,7 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
 
-// 1. 유저 정보 인터페이스 정의 (프로젝트 상황에 맞게 수정하세요)
+// 1. 유저 정보 인터페이스
 export interface UserPayload {
   userId: number;
   username: string;

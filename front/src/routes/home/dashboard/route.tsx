@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { useBoardForm, useBoardListHook } from "./-/useBoardHook";
+import { useBoardListHook } from "./-/useBoardHook";
 import { PagingComponent } from "@/components/ui/pagingComponent";
 import { useModal } from "@/context/modalContext";
 import { BoardModalComponent } from "./-/board.modal";
-import { FormProvider } from "react-hook-form";
-import { BoardModalComponent222 } from "./-/board.modal2";
+import { TableComponent } from "@/components/ui/tableComponent";
+import type { Column } from "@/const/type";
+import type { Board } from "./-/board.schema";
 
 export const Route = createFileRoute("/home/dashboard")({
   component: RouteComponent,
@@ -14,6 +15,7 @@ export const Route = createFileRoute("/home/dashboard")({
 function RouteComponent() {
   //const router = useRouter();
 
+  const { openModal, closeTopModal } = useModal();
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [size, setSize] = useState(3);
@@ -22,62 +24,78 @@ function RouteComponent() {
     data: result,
     refetch: search,
   } = useBoardListHook(currentPage, size);
-
   const onPageChange = (page: number) => {
     console.log("Page changed to:", page);
     setCurrentPage(page);
   };
-
   useEffect(() => {
     search();
   }, [currentPage, size]);
+
+  const columns: Column<Board>[] = [
+    {
+      key: "title",
+      header: "제목",
+      render(value, row) {
+        return <strong className="text-red-300">{value}</strong>;
+      },
+    },
+    {
+      key: "contents",
+      header: "내용",
+    },
+    { key: "username", header: "작성자" },
+    {
+      key: "createDate",
+      header: "작성일",
+    },
+  ];
+  const [data, setData] = useState<Board[]>([]);
+  const onRowClick = (row: Board) => {
+    //console.log("Row clicked:", row);
+    runModal(row._id);
+  };
 
   useEffect(() => {
     if (result?.data) {
       setSize(result?.data?.limit);
       setTotalPages(Math.ceil(result?.data?.total / result?.data?.limit));
+      setData(result?.data?.boards || []);
     }
   }, [result?.data]);
 
-  const { openModal, closeTopModal } = useModal();
-  const methods = useBoardForm();
-  const [testShow, setTestShow] = useState(false);
+  const runModal = (_id?: string) => {
+    openModal({
+      options: {
+        afterClose: () => {},
+      },
+      content: (
+        <BoardModalComponent
+          closeTopModal={closeTopModal}
+          search={search}
+          _id={_id}
+        ></BoardModalComponent>
+      ),
+    });
+  };
+
   return (
     <div>
       <div>Dashboard Page</div>
       <button
-        className="px-3 py-1 bg-blue-500 text-white rounded"
-        onClick={() => setTestShow(!testShow)}
-      >
-        {testShow ? "Hide" : "Show"}
-      </button>
-      {testShow && (
-        <div className="m-3">
-          <FormProvider {...methods}>
-            <BoardModalComponent222></BoardModalComponent222>
-          </FormProvider>
-        </div>
-      )}
-
-      <button
         className="px-3 py-1 bg-blue-500 text-white rounded my-3 mx-2"
         onClick={() => {
-          openModal({
-            options: {
-              afterClose: () => {},
-            },
-            content: (
-              <BoardModalComponent
-                closeTopModal={closeTopModal}
-                search={search}
-              ></BoardModalComponent>
-            ),
-          });
+          runModal();
         }}
       >
-        run modal
+        데이터 등록
       </button>
       {isPending && <div>Loading...</div>}
+      <TableComponent
+        columns={columns}
+        data={data}
+        onRowClick={onRowClick}
+      ></TableComponent>
       {result && (
         <div>
           <h2>Board List:</h2>

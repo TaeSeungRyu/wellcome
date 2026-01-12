@@ -16,7 +16,6 @@ export class RoleGuard implements CanActivate {
     );
     const request: Request = context.switchToHttp().getRequest();
     const user = request?.user;
-    console.log('user::::: ', user);
     const savedRole: Array<string> = [];
     if (user?.role && Array.isArray(user.role)) {
       savedRole.push(...(user.role as Array<string>));

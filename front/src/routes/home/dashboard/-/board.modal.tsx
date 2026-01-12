@@ -4,13 +4,16 @@ import { useBoardAlter, useBoardForm } from "./useBoardHook";
 import { useModal } from "@/context/modalContext";
 import { useEffect } from "react";
 import { useToast } from "@/context/toastContext";
+import { requestBoardDetail } from "./boardRepository";
 
 export function BoardModalComponent({
   closeTopModal,
   search,
+  _id,
 }: {
   closeTopModal: () => void;
   search: () => void;
+  _id?: string;
 }) {
   //FORM 영역
   const fields: (keyof BoardForm)[] = ["title", "contents"];
@@ -29,6 +32,7 @@ export function BoardModalComponent({
   const toAlter = async (data: any) => {
     console.log("Form Data Submitted:", data);
     await mutateAsync({
+      _id,
       title: data.title,
       contents: data.contents,
     });
@@ -50,12 +54,22 @@ export function BoardModalComponent({
     }
   }, [error]);
 
+  useEffect(() => {
+    if (_id) {
+      console.log("Loading data for _id:", _id);
+      requestBoardDetail(_id).then(({ result }) => {
+        setValue("title", result.data.title);
+        setValue("contents", result.data.contents);
+      });
+    }
+  }, [_id]);
+
   const onSubmit = (data: any) => {
     openModal({
       content: (
         <div>
           <h2>확인</h2>
-          <p>데이터를 등록하시겠습니까?</p>
+          <p>데이터를 {_id ? "수정" : "등록"}하시겠습니까?</p>
           <button
             className="bg-red-500 text-white px-4 py-2 rounded mr-2"
             onClick={closeConfirmModal}
@@ -66,7 +80,7 @@ export function BoardModalComponent({
             className="bg-blue-500 text-white px-4 py-2 rounded"
             onClick={() => toAlter(data)}
           >
-            등록
+            {_id ? "수정" : "등록"}
           </button>
         </div>
       ),
@@ -76,7 +90,7 @@ export function BoardModalComponent({
   return (
     <div>
       <div>
-        <h2>데이터 등록</h2>
+        <h2>데이터 {_id ? "수정" : "등록"}</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <InputText
             name={fields[0]}
