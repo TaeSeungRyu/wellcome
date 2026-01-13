@@ -52,6 +52,9 @@ export class AuthService {
           {
             accessToken: '',
             refreshToken: '',
+            data: {
+              username,
+            },
             success: false,
           },
           'invalid_credentials',
@@ -80,6 +83,9 @@ export class AuthService {
           {
             accessToken: accessToken,
             refreshToken: refreshToken,
+            data: {
+              username,
+            },
             success: true,
           },
           '',

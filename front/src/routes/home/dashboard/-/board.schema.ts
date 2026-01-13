@@ -14,3 +14,16 @@ export const boardSchema = z.object({
 });
 
 export type BoardForm = z.infer<typeof boardSchema>;
+
+export interface Comment {
+  boardId: string;
+  username: string;
+  comment: string;
+  date?: string;
+}
+
+export const commentSchema = z.object({
+  comment: z.string().min(1, "댓글을 입력하세요"),
+});
+
+export type CommentForm = z.infer<typeof commentSchema>;

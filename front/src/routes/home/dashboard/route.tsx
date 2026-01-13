@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useBoardListHook } from "./-/useBoardHook";
 import { PagingComponent } from "@/components/ui/pagingComponent";
 import { useModal } from "@/context/modalContext";
-import { BoardModalComponent } from "./-/board.modal";
+import { BoardFormComponent } from "./-/board.form";
 import { TableComponent } from "@/components/ui/tableComponent";
 import type { Column } from "@/const/type";
 import type { Board } from "./-/board.schema";
@@ -67,11 +67,11 @@ function RouteComponent() {
         afterClose: () => {},
       },
       content: (
-        <BoardModalComponent
+        <BoardFormComponent
           closeTopModal={closeTopModal}
           search={search}
           _id={_id}
-        ></BoardModalComponent>
+        ></BoardFormComponent>
       ),
     });
   };

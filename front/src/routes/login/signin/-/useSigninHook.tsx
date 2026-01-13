@@ -21,10 +21,9 @@ const useSigninHook = () => {
       password: string;
     }) => requestSignin(username, password),
     onSuccess: (response) => {
-      console.log("Signin Response:", response);
       if (response.result?.success == true) {
-        const { accessToken, refreshToken } = response.result;
-        login(accessToken, refreshToken);
+        const { accessToken, refreshToken, data } = response.result;
+        login(accessToken, refreshToken, data.username);
         setResult("successful");
         setError(null);
         setErrorString;

@@ -4,8 +4,9 @@ import { useBoardAlter, useBoardForm } from "./useBoardHook";
 import { useModal } from "@/context/modalContext";
 import { useEffect } from "react";
 import { useToast } from "@/context/toastContext";
+//import { getUserName } from "@/context/authContext";
 
-export function BoardModalComponent({
+export function BoardFormComponent({
   closeTopModal,
   search,
   _id,
@@ -15,6 +16,9 @@ export function BoardModalComponent({
   _id?: string;
 }) {
   //FORM 영역
+
+  //console.log("providing getUserName() : ", getUserName());
+
   const fields: (keyof BoardForm)[] = ["title", "contents"];
   const {
     register,
@@ -104,7 +108,7 @@ export function BoardModalComponent({
 
   return (
     <div>
-      <div>
+      <div className="p-4 space-y-4 my-2 mx-4 w-96">
         <h2>데이터 {_id ? "수정" : "등록"}</h2>
         {_id && isFetching && <p>Loading...</p>}
         <form onSubmit={handleSubmit(onSubmit)}>

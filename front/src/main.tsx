@@ -7,6 +7,7 @@ import reportWebVitals from "./reportWebVitals.ts";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ModalProvider from "./components/modal/modalProvider.tsx";
 import ToastProvider from "./components/toast/toastProvider.tsx";
+import { AuthProvider } from "./context/authContext.tsx";
 
 const router = createRouter({
   routeTree,
@@ -43,11 +44,13 @@ if (rootElement && !rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <ToastProvider>
-          <ModalProvider>
-            <RouterProvider router={router} />
-          </ModalProvider>
-        </ToastProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <ModalProvider>
+              <RouterProvider router={router} />
+            </ModalProvider>
+          </ToastProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </StrictMode>
   );
