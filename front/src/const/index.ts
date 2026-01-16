@@ -10,4 +10,6 @@ export const API = {
   BOARD_CREATE: `${API_BASE_URL}/board/create`,
   BOARD_UPDATE: `${API_BASE_URL}/board/update`,
   BOARD_DELETE: `${API_BASE_URL}/board/delete`,
+  BOARD_COMMENT_ADD: `${API_BASE_URL}/board/add-comment`,
+  BOARD_COMMENT_DELETE: `${API_BASE_URL}/board/remove-comment`,
 };

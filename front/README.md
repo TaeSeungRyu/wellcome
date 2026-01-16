@@ -8,6 +8,7 @@
 - **TanStack Query**
 - **React hook form**
 - **zod**
+- **zustand**
 - **Vitest / Testing Library**
 
 ---

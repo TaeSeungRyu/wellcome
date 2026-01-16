@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useBoardListHook } from "./-/useBoardHook";
 import { PagingComponent } from "@/components/ui/pagingComponent";
@@ -7,6 +7,7 @@ import { BoardFormComponent } from "./-/board.form";
 import { TableComponent } from "@/components/ui/tableComponent";
 import type { Column } from "@/const/type";
 import type { Board, Comment } from "./-/board.schema";
+import { useBoardState } from "@/state/useBoardState";
 
 export const Route = createFileRoute("/home/dashboard")({
   component: RouteComponent,
@@ -22,6 +23,9 @@ function RouteComponent() {
     data: result,
     refetch: search,
   } = useBoardListHook(currentPage, size);
+
+  const sharedValue = useBoardState((state) => state.sharedValue);
+
   const onPageChange = (page: number) => {
     console.log("Page changed to:", page);
     setCurrentPage(page);
@@ -68,16 +72,23 @@ function RouteComponent() {
         afterClose: () => {},
       },
       content: (
-        <BoardFormComponent
-          closeTopModal={closeTopModal}
-          search={search}
-          _id={_id}
-          comments={comments}
-        ></BoardFormComponent>
+        <>
+          <BoardFormComponent
+            closeTopModal={closeTopModal}
+            search={search}
+            _id={_id}
+            comments={comments}
+          ></BoardFormComponent>
+        </>
       ),
     });
   };
 
+  useEffect(() => {
+    if (sharedValue) {
+      search();
+    }
+  }, [sharedValue]);
   return (
     <div>
       <div>Dashboard Page</div>

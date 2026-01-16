@@ -6,7 +6,6 @@ import {
   Post,
   Put,
   Query,
-  Req,
 } from '@nestjs/common';
 import { BoardService } from './board.service';
 import { ResponseDto } from 'src/common/common.dto';
@@ -78,12 +77,12 @@ export class BoardController {
   async removeComment(
     @Query('boardId') boardId: string,
     @Query('commentId') commentId: string,
-    @Req() req: Request,
+    @GetUser('username') username: string,
   ): Promise<ResponseDto> {
     const board = await this.boardService.removeComment(
       boardId,
       commentId,
-      req.headers['authorization'] as string,
+      username,
     );
     return board;
   }

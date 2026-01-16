@@ -21,6 +21,7 @@ export interface Comment {
   username: string;
   comment: string;
   date?: string;
+  _id?: string;
 }
 
 export const commentSchema = z.object({

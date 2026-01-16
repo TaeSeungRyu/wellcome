@@ -153,6 +153,7 @@ export function BoardFormComponent({
           <CommentFormComponent
             boardId={_id}
             commentList={comments}
+            closeTopModal={closeTopModal}
           ></CommentFormComponent>
         )}
       </div>

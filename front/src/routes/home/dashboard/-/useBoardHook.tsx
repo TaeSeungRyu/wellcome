@@ -1,17 +1,24 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  requestAddComment,
   requestBoardDelete,
   requestBoardDetail,
   requestBoardInsert,
   requestBoardList,
   requestBoardUpdate,
+  requestCommentDelete,
 } from "./boardRepository";
 import { useForm } from "react-hook-form";
 import { boardSchema, commentSchema } from "./board.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 
-const queryKey = ["useBoardListHook", "useBoardAlter", "useBoardForm"];
+const queryKey = [
+  "useBoardListHook",
+  "useBoardAlter",
+  "useBoardForm",
+  "useCommentAlter",
+] as const;
 //BOARD LIST 조회용 HOOK
 export const useBoardListHook = (page: number, limit: number) => {
   return useQuery({
@@ -99,6 +106,35 @@ export const useBoardCommentForm = (_id?: string) => {
       comment: "",
     },
   });
-
   return { ...form };
+};
+
+//BOARD 등록/수정용 HOOK
+export const useCommentAlter = () => {
+  return useMutation({
+    mutationKey: [...queryKey[3]],
+    mutationFn: async ({
+      comment,
+      username,
+      boardId,
+      commentId,
+    }: {
+      comment: string;
+      username: string;
+      boardId: string;
+      commentId?: string;
+    }) => {
+      if (commentId) {
+        return await requestCommentDelete(boardId, commentId, username);
+      } else {
+        return await requestAddComment(boardId, comment, username);
+      }
+    },
+    onSuccess: (response) => {
+      return response.result;
+    },
+    onError: (error: Error) => {
+      throw error;
+    },
+  });
 };

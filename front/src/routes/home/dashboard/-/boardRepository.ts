@@ -64,10 +64,46 @@ const requestBoardDelete = async (_id: string) => {
   return apiClient.request(API.BOARD_DELETE, params);
 };
 
+const requestAddComment = async (
+  boardId: string,
+  comment: string,
+  username: string
+) => {
+  const apiClient = ApiClient.getInstance();
+  const params = {
+    method: "post",
+    body: JSON.stringify({
+      boardId,
+      comment,
+      username,
+    }),
+  };
+  return apiClient.request(API.BOARD_COMMENT_ADD, params);
+};
+
+const requestCommentDelete = async (
+  boardId: string,
+  commentId: string,
+  username: string
+) => {
+  const apiClient = ApiClient.getInstance();
+  const params = {
+    method: "delete",
+    query: {
+      boardId,
+      commentId,
+      username,
+    },
+  };
+  return apiClient.request(API.BOARD_COMMENT_DELETE, params);
+};
+
 export {
   requestBoardList,
   requestBoardInsert,
   requestBoardUpdate,
   requestBoardDetail,
   requestBoardDelete,
+  requestAddComment,
+  requestCommentDelete,
 };
