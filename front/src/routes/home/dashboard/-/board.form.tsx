@@ -1,24 +1,24 @@
 import InputText from "@/components/form/inputText";
-import type { BoardForm } from "./board.schema";
+import type { BoardForm, Comment } from "./board.schema";
 import { useBoardAlter, useBoardForm } from "./useBoardHook";
 import { useModal } from "@/context/modalContext";
 import { useEffect } from "react";
 import { useToast } from "@/context/toastContext";
+import { CommentFormComponent } from "./comment.form";
 //import { getUserName } from "@/context/authContext";
 
 export function BoardFormComponent({
   closeTopModal,
   search,
   _id,
+  comments,
 }: {
   closeTopModal: () => void;
   search: () => void;
   _id?: string;
+  comments?: Comment[];
 }) {
   //FORM 영역
-
-  //console.log("providing getUserName() : ", getUserName());
-
   const fields: (keyof BoardForm)[] = ["title", "contents"];
   const {
     register,
@@ -31,7 +31,7 @@ export function BoardFormComponent({
 
   //MUTATION 영역
   const { openModal, closeTopModal: closeConfirmModal } = useModal();
-  const { mutateAsync, data, error } = useBoardAlter();
+  const { mutateAsync, data: alterResult, error } = useBoardAlter();
   const { showToast } = useToast();
 
   const toAlter = async (data: any) => {
@@ -43,13 +43,15 @@ export function BoardFormComponent({
   };
 
   useEffect(() => {
-    if (data) {
+    if (alterResult) {
       closeConfirmModal();
       closeTopModal();
       search();
-      showToast(data?.message || "완료 하였습니다.", { type: "success" });
+      showToast(alterResult?.message || "완료 하였습니다.", {
+        type: "success",
+      });
     }
-  }, [data]);
+  }, [alterResult]);
 
   useEffect(() => {
     if (error) {
@@ -147,6 +149,12 @@ export function BoardFormComponent({
             </button>
           )}
         </form>
+        {_id && (
+          <CommentFormComponent
+            boardId={_id}
+            commentList={comments}
+          ></CommentFormComponent>
+        )}
       </div>
     </div>
   );

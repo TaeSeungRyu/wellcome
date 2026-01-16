@@ -7,7 +7,7 @@ import {
   requestBoardUpdate,
 } from "./boardRepository";
 import { useForm } from "react-hook-form";
-import { boardSchema } from "./board.schema";
+import { boardSchema, commentSchema } from "./board.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 
@@ -88,4 +88,17 @@ export const useBoardAlter = () => {
       throw error;
     },
   });
+};
+
+//BOARD COMMENT FORM용 HOOK
+export const useBoardCommentForm = (_id?: string) => {
+  const form = useForm({
+    resolver: zodResolver(commentSchema),
+    mode: "all",
+    defaultValues: {
+      comment: "",
+    },
+  });
+
+  return { ...form };
 };

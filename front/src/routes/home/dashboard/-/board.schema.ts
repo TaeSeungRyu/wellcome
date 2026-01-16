@@ -6,6 +6,7 @@ export interface Board {
   contents: string;
   username: string;
   createDate: string;
+  comments?: Comment[];
 }
 
 export const boardSchema = z.object({

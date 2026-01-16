@@ -6,7 +6,7 @@ import { useModal } from "@/context/modalContext";
 import { BoardFormComponent } from "./-/board.form";
 import { TableComponent } from "@/components/ui/tableComponent";
 import type { Column } from "@/const/type";
-import type { Board } from "./-/board.schema";
+import type { Board, Comment } from "./-/board.schema";
 
 export const Route = createFileRoute("/home/dashboard")({
   component: RouteComponent,
@@ -35,7 +35,7 @@ function RouteComponent() {
       key: "title",
       header: "제목",
       render(value) {
-        return <strong className="text-red-300">{value}</strong>;
+        return <strong className="text-red-300">{value as string}</strong>;
       },
     },
     {
@@ -50,7 +50,8 @@ function RouteComponent() {
   ];
   const [data, setData] = useState<Board[]>([]);
   const onRowClick = (row: Board) => {
-    runModal(row._id);
+    console.log(row);
+    runModal(row._id, row.comments);
   };
 
   useEffect(() => {
@@ -61,7 +62,7 @@ function RouteComponent() {
     }
   }, [result?.data]);
 
-  const runModal = (_id?: string) => {
+  const runModal = (_id?: string, comments?: Comment[]) => {
     openModal({
       options: {
         afterClose: () => {},
@@ -71,6 +72,7 @@ function RouteComponent() {
           closeTopModal={closeTopModal}
           search={search}
           _id={_id}
+          comments={comments}
         ></BoardFormComponent>
       ),
     });
@@ -103,7 +105,6 @@ function RouteComponent() {
           </ul>
         </div>
       )}
-
       <PagingComponent
         totalPages={totalPages}
         currentPage={currentPage}
