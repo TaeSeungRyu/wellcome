@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useBoardListHook } from "./-/useBoardHook";
 import { PagingComponent } from "@/components/ui/pagingComponent";

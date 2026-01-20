@@ -7,7 +7,7 @@ import {
   requestBoardList,
   requestBoardUpdate,
   requestCommentDelete,
-} from "./boardRepository";
+} from "./board.repository";
 import { useForm } from "react-hook-form";
 import { boardSchema, commentSchema } from "./board.schema";
 import { zodResolver } from "@hookform/resolvers/zod";

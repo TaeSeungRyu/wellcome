@@ -5,7 +5,6 @@ import { useModal } from "@/context/modalContext";
 import { useEffect } from "react";
 import { useToast } from "@/context/toastContext";
 import { CommentFormComponent } from "./comment.form";
-//import { getUserName } from "@/context/authContext";
 
 export function BoardFormComponent({
   closeTopModal,
