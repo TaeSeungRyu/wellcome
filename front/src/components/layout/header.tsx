@@ -1,4 +1,4 @@
-import { AuthContext } from "@/context/authContext";
+import { AuthContext } from "@/context/auth.context";
 import { useContext, useEffect } from "react";
 
 export default function HeaderComponent() {

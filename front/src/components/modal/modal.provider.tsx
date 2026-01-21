@@ -1,11 +1,11 @@
 // ModalProvider.tsx
 import { useCallback, useState } from "react";
-import Modal from "./modalComponent";
+import Modal from "./modal.component";
 import {
   ModalContext,
   type ModalItem,
   type OpenModalArgs,
-} from "@/context/modalContext";
+} from "@/context/modal.context";
 
 export default function ModalProvider({
   children,

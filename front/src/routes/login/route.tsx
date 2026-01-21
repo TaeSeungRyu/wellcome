@@ -15,7 +15,6 @@ function LoginLayout() {
     <div>
       <div>login head</div>
       <Outlet />
-      <div>login body</div>
     </div>
   );
 }

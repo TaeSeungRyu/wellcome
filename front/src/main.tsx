@@ -5,9 +5,9 @@ import { routeTree } from "./routeTree.gen";
 import "./styles.css";
 import reportWebVitals from "./reportWebVitals.ts";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import ModalProvider from "./components/modal/modalProvider.tsx";
-import ToastProvider from "./components/toast/toastProvider.tsx";
-import { AuthProvider } from "./context/authContext.tsx";
+import ModalProvider from "./components/modal/modal.provider.tsx";
+import ToastProvider from "./components/toast/toast.provider.tsx";
+import { AuthProvider } from "./context/auth.context.tsx";
 
 const router = createRouter({
   routeTree,
@@ -52,7 +52,7 @@ if (rootElement && !rootElement.innerHTML) {
           </ToastProvider>
         </AuthProvider>
       </QueryClientProvider>
-    </StrictMode>
+    </StrictMode>,
   );
 }
 reportWebVitals();

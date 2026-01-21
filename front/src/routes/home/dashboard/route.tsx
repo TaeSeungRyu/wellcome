@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { useBoardListHook } from "./-/useBoardHook";
-import { PagingComponent } from "@/components/ui/pagingComponent";
-import { useModal } from "@/context/modalContext";
+import { useBoardListHook } from "./-/use.board.hook";
+import { PagingComponent } from "@/components/ui/paging.component";
+import { useModal } from "@/context/modal.context";
 import { BoardFormComponent } from "./-/board.form";
-import { TableComponent } from "@/components/ui/tableComponent";
+import { TableComponent } from "@/components/ui/table.component";
 import type { Column } from "@/const/type";
 import type { Board, Comment } from "./-/board.schema";
 import { useBoardState } from "@/state/useBoardState";
@@ -19,15 +19,15 @@ function RouteComponent() {
   const [currentPage, setCurrentPage] = useState(1);
   const [size, setSize] = useState(3);
   const {
-    isPending,
+    isFetching,
     data: result,
     refetch: search,
   } = useBoardListHook(currentPage, size);
 
   const sharedValue = useBoardState((state) => state.sharedValue);
+  const currentPageFromApi = result?.data?.page || 1;
 
   const onPageChange = (page: number) => {
-    console.log("Page changed to:", page);
     setCurrentPage(page);
   };
   useEffect(() => {
@@ -54,7 +54,6 @@ function RouteComponent() {
   ];
   const [data, setData] = useState<Board[]>([]);
   const onRowClick = (row: Board) => {
-    console.log(row);
     runModal(row._id, row.comments);
   };
 
@@ -92,36 +91,42 @@ function RouteComponent() {
   return (
     <div>
       <div>Dashboard Page</div>
-      <button
-        className="px-3 py-1 bg-blue-500 text-white rounded my-3 mx-2"
-        onClick={() => {
-          runModal();
-        }}
-      >
-        데이터 등록
-      </button>
-      {isPending && <div>Loading...</div>}
-      <TableComponent
-        columns={columns}
-        data={data}
-        onRowClick={onRowClick}
-      ></TableComponent>
-      {result && (
-        <div>
-          <h2>Board List:</h2>
-          <ul>
-            {result?.data?.boards?.map((board: any) => (
-              <li key={board._id}>{board.title}</li>
-            ))}
-          </ul>
+      {/* 로딩 오버레이 */}
+      {isFetching && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/60 backdrop-blur-[1px] transition-all">
+          <div className="flex flex-col items-center gap-2">
+            {/* 간단한 스피너 아이콘 (Tailwind) */}
+            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <span className="text-blue-600 font-medium">
+              데이터를 불러오는 중...
+            </span>
+          </div>
         </div>
       )}
-      <PagingComponent
-        totalPages={totalPages}
-        currentPage={currentPage}
-        size={size}
-        onPageChange={onPageChange}
-      ></PagingComponent>
+      <div className="p-3 w-full flex flex-col gap-3 justify-center items-center">
+        <button
+          className="px-3 py-1 bg-blue-500 text-white rounded"
+          onClick={() => {
+            runModal();
+          }}
+        >
+          데이터 등록
+        </button>
+
+        <div className="w-4/6">
+          <TableComponent
+            columns={columns}
+            data={data}
+            onRowClick={onRowClick}
+          ></TableComponent>
+        </div>
+        <PagingComponent
+          totalPages={totalPages}
+          currentPage={currentPageFromApi}
+          size={size}
+          onPageChange={onPageChange}
+        ></PagingComponent>
+      </div>
     </div>
   );
 }

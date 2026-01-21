@@ -1,6 +1,6 @@
 import { useRouter } from "@tanstack/react-router";
 import { useContext, useEffect } from "react";
-import { AuthContext } from "./authContext";
+import { AuthContext } from "./auth.context";
 
 export default function AuthGuard() {
   const auth: any = useContext(AuthContext);

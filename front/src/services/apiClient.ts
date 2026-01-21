@@ -3,12 +3,12 @@ import {
   clearTokens,
   getAccessToken,
   setAccessToken,
-} from "@/context/authContext";
+} from "@/context/auth.context";
 
 const _performFetch = async (
   url: string,
   currentOptions: RequestInit,
-  currentToken: string | null
+  currentToken: string | null,
 ): Promise<any> => {
   const res = await fetch(url, {
     ...currentOptions,
@@ -24,7 +24,7 @@ const _performFetch = async (
       .json()
       .catch(() => ({ message: res.statusText }));
     throw new Error(
-      `HTTP error! status: ${res.status}, message: ${errorBody.message}`
+      `HTTP error! status: ${res.status}, message: ${errorBody.message}`,
     );
   }
   return res.json() as Promise<any>;
@@ -58,7 +58,7 @@ export class ApiClient {
   // HTTP 요청을 수행하는 핵심 메서드
   public async request<T = any>(
     url: string,
-    options: Record<string, any>
+    options: Record<string, any>,
   ): Promise<T> {
     // 요청을 수행하고 401 에러를 처리하는 내부 헬퍼 함수
     try {

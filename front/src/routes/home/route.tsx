@@ -1,8 +1,8 @@
 import HeaderComponent from "@/components/layout/header";
-import { getUserName, useAuth } from "@/context/authContext";
-import AuthGuard from "@/context/authGuard";
+import { getUserName, useAuth } from "@/context/auth.context";
+import AuthGuard from "@/context/auth.guard";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { useSSEHook } from "./-/useSseHook";
+import { useSSEHook } from "./-/use.sse.hook";
 import { useCallback } from "react";
 
 export const Route = createFileRoute("/home")({

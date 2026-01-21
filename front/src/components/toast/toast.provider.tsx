@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import ToastComponent from "./toastComponent";
-import { ToastContext, type ToastItem } from "@/context/toastContext";
+import ToastComponent from "./toast.component";
+import { ToastContext, type ToastItem } from "@/context/toast.context";
 
 export default function ToastProvider({
   children,
@@ -20,7 +20,7 @@ export default function ToastProvider({
       };
       setQueue((prev) => [...prev, toast]);
     },
-    []
+    [],
   );
 
   const removeToast = useCallback((id: string) => {
@@ -29,7 +29,7 @@ export default function ToastProvider({
 
   const updateToast = useCallback((id: string, partial: Partial<ToastItem>) => {
     setQueue((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, ...partial } : t))
+      prev.map((t) => (t.id === id ? { ...t, ...partial } : t)),
     );
   }, []);
 

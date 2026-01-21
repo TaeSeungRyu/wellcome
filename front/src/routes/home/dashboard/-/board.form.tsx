@@ -1,9 +1,9 @@
-import InputText from "@/components/form/inputText";
+import InputText from "@/components/form/input.text";
 import type { BoardForm, Comment } from "./board.schema";
-import { useBoardAlter, useBoardForm } from "./useBoardHook";
-import { useModal } from "@/context/modalContext";
+import { useBoardAlter, useBoardForm } from "./use.board.hook";
+import { useModal } from "@/context/modal.context";
 import { useEffect } from "react";
-import { useToast } from "@/context/toastContext";
+import { useToast } from "@/context/toast.context";
 import { CommentFormComponent } from "./comment.form";
 
 export function BoardFormComponent({

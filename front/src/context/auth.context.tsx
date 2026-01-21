@@ -3,6 +3,10 @@ import { SIGNIN_PATH } from "@/const";
 import { Navigate } from "@tanstack/react-router";
 import { createContext, useContext, useState } from "react";
 
+/*
+ * 지금 구조는 엑세스 토큰을 쿠키에 담는 구조라 엑세스 토큰 관리는 하지 않습니다.
+ * 다만 향후 구조 변경이나 리프레시 토큰 관리를 위해 토큰 관리 코드를 남겨둡니다.
+ */
 // 1. 토큰 관리를 위한 상수 및 헬퍼 함수 (필요에 따라 더 복잡하게 구현 가능)
 export const ACCESS_TOKEN_KEY = "actkn";
 export const REFRESH_TOKEN_KEY = "rftkn"; // 리프레시 토큰도 관리한다고 가정(지금 구조에서는 안씀...)
@@ -44,7 +48,12 @@ export const AuthContext = createContext({
     setRefreshToken(refreshToken);
     setUserName(username);
   },
-  logout: () => {},
+  logout: (noNavigate?: boolean) => {
+    clearTokens();
+    if (!noNavigate) {
+      Navigate({ to: SIGNIN_PATH }); // 권한없으면 로그인페이지로
+    }
+  },
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -52,16 +61,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = (
     accessToken: string,
     refreshToken: string,
-    username: string
+    username: string,
   ) => {
     setToken(accessToken);
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
     setUserName(username);
   };
-  const logout = () => {
-    setToken(null);
-    Navigate({ to: SIGNIN_PATH }); // 권한없으면 로그인페이지로
+  const logout = (noNavigate?: boolean) => {
+    clearTokens();
+    if (!noNavigate) {
+      Navigate({ to: SIGNIN_PATH }); // 권한없으면 로그인페이지로
+    }
   };
   return (
     <AuthContext.Provider value={{ token, login, logout }}>

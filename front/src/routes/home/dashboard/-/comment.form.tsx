@@ -1,11 +1,11 @@
-import InputText from "@/components/form/inputText";
+import InputText from "@/components/form/input.text";
 import type { Comment, CommentForm } from "./board.schema";
-import { useBoardCommentForm, useCommentAlter } from "./useBoardHook";
-import { getUserName, useAuth } from "@/context/authContext";
+import { useBoardCommentForm, useCommentAlter } from "./use.board.hook";
+import { getUserName } from "@/context/auth.context";
 import { useEffect } from "react";
-import { useToast } from "@/context/toastContext";
+import { useToast } from "@/context/toast.context";
 import { useBoardState } from "@/state/useBoardState";
-import { useModal } from "@/context/modalContext";
+import { useModal } from "@/context/modal.context";
 
 export function CommentFormComponent({
   boardId,

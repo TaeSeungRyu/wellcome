@@ -1,6 +1,6 @@
 // ToastContainer.tsx
 import { useEffect } from "react";
-import { useToast, type ToastItem } from "../../context/toastContext";
+import { useToast, type ToastItem } from "../../context/toast.context";
 
 const ANIMATION_DURATION = 200;
 
