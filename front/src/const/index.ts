@@ -1,3 +1,5 @@
+import type { FileRouteTypes } from "@/routeTree.gen";
+
 export const API_BASE_URL = "/api";
 export const SIGNIN_PATH = "/login";
 
@@ -13,3 +15,22 @@ export const API = {
   BOARD_COMMENT_ADD: `${API_BASE_URL}/board/add-comment`,
   BOARD_COMMENT_DELETE: `${API_BASE_URL}/board/remove-comment`,
 };
+
+export interface MenuItem {
+  label: string;
+  key: string;
+  link?: FileRouteTypes["to"];
+}
+
+export const MENU_ITEMS: MenuItem[] = [
+  {
+    label: "Manage Board",
+    key: "manage-board",
+    link: "/home/dashboard",
+  },
+  {
+    label: "Manage User",
+    key: "manage-user",
+    link: "/home/user",
+  },
+];
