@@ -1,15 +1,16 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useUserListHook } from "./-/use.user.hook";
 import { TableComponent } from "@/components/ui/table.component";
 import { PagingComponent } from "@/components/ui/paging.component";
 import type { Column } from "@/const/type";
 
-export const Route = createFileRoute("/home/user")({
+export const Route = createFileRoute("/home/user/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const router = useRouter();
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [size, setSize] = useState(3);
@@ -60,6 +61,13 @@ function RouteComponent() {
     }
   }, [result?.data]);
 
+  const moveWritePage = () => {
+    console.log(121212);
+    router.navigate({
+      to: "/home/user/write",
+    });
+  };
+
   return (
     <div className="p-8 bg-slate-50 ">
       {/* 헤더 섹션 */}
@@ -74,7 +82,7 @@ function RouteComponent() {
             </p>
           </div>
           <div className="flex gap-2">
-            <button className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-200 transition-all active:scale-95">
+            <button className="tailwind-blue-button" onClick={moveWritePage}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"

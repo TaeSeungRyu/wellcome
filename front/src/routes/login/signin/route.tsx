@@ -9,6 +9,7 @@ import InputPassword from "@/components/form/input.password";
 import { useToast } from "@/context/toast.context";
 import { signinSchema } from "./-/signin.schema";
 import { useAuth } from "@/context/auth.context";
+import { LoadingComponent } from "@/components/ui/loading.component";
 
 export const Route = createFileRoute("/login/signin")({
   component: RouteComponent,
@@ -31,7 +32,7 @@ function RouteComponent() {
     defaultValues: {},
   });
 
-  const [option, _] = useState<InputOption>({
+  const [option, setOption] = useState<InputOption>({
     style: {},
     offRightIcon: false,
     disabled: false,
@@ -47,14 +48,15 @@ function RouteComponent() {
         type: "error",
       });
     } else if (signinResult) {
-      showToast("로그인에 성공하였습니다.\n2초뒤 이동합니다.", {
+      showToast("로그인에 성공하였습니다.\n1초뒤 이동합니다.", {
         type: "success",
       });
+      setOption((prev) => ({ ...prev, disabled: true }));
       setTimeout(() => {
         router.navigate({
           to: "/home/dashboard",
         });
-      }, 2000);
+      }, 1000);
     }
   }, [signinResult, error]);
 
@@ -83,25 +85,16 @@ function RouteComponent() {
           errors={errors}
         />
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed disabled:shadow-none disabled:active:scale-100"
           type="submit"
+          disabled={option.disabled}
         >
           로그인
         </button>
       </form>
       <div className="my-2"></div>
       {/* 로딩 오버레이 */}
-      {isPending && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/60 backdrop-blur-[1px] transition-all">
-          <div className="flex flex-col items-center gap-2">
-            {/* 간단한 스피너 아이콘 (Tailwind) */}
-            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-blue-600 font-medium">
-              데이터를 불러오는 중...
-            </span>
-          </div>
-        </div>
-      )}{" "}
+      {isPending && <LoadingComponent></LoadingComponent>}
     </div>
   );
 }

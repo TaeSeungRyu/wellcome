@@ -47,11 +47,13 @@ export default function InputText({
       <div className="relative group">
         <input
           {...register(name)}
+          name={name}
           value={innerValue}
           placeholder={placeholder}
           onChange={handleChange}
           inputMode="numeric"
           disabled={option?.disabled}
+          autoComplete="off"
           type="text"
           className={`
             w-full px-4 py-3 bg-white border rounded-xl text-sm transition-all duration-200 outline-none

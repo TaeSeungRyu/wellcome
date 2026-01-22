@@ -8,6 +8,7 @@ import { TableComponent } from "@/components/ui/table.component";
 import type { Column } from "@/const/type";
 import type { Board, Comment } from "./-/board.schema";
 import { useBoardState } from "@/state/useBoardState";
+import { LoadingComponent } from "@/components/ui/loading.component";
 
 export const Route = createFileRoute("/home/dashboard")({
   component: RouteComponent,
@@ -17,7 +18,7 @@ function RouteComponent() {
   const { openModal, closeTopModal } = useModal();
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [size, setSize] = useState(3);
+  const [size, setSize] = useState(5);
   const {
     isFetching,
     data: result,
@@ -93,16 +94,13 @@ function RouteComponent() {
       {/* 상단 헤더 영역 */}
       <div className="max-w-6xl mx-auto mb-6 flex justify-between items-end">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Dashboard</h1>
+          <h1 className="text-2xl font-bold text-slate-800">게시글 관리</h1>
           <p className="text-sm text-slate-500 mt-1">
             게시글을 관리하고 실시간 현황을 확인하세요.
           </p>
         </div>
 
-        <button
-          className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-200 transition-all active:scale-95"
-          onClick={() => runModal()}
-        >
+        <button className="tailwind-blue-button" onClick={() => runModal()}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
@@ -121,16 +119,7 @@ function RouteComponent() {
 
       <div className="max-w-6xl mx-auto relative">
         {/* 로딩 오버레이: 더 부드러운 블러 효과 */}
-        {isFetching && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center bg-slate-50/40 backdrop-blur-sm rounded-2xl transition-all">
-            <div className="flex flex-col items-center gap-3 p-6 bg-white shadow-xl rounded-2xl border border-slate-100">
-              <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-slate-600 font-medium">
-                데이터를 동기화 중입니다...
-              </span>
-            </div>
-          </div>
-        )}
+        {isFetching && <LoadingComponent></LoadingComponent>}
 
         {/* 테이블 컨테이너: 카드 스타일 */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -138,7 +127,7 @@ function RouteComponent() {
             <h3 className="text-sm font-semibold text-slate-700">
               게시글 목록{" "}
               <span className="ml-2 text-blue-500 font-normal">
-                {result?.data?.total || 0}명
+                {result?.data?.total || 0}건
               </span>
             </h3>
           </div>

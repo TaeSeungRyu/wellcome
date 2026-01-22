@@ -14,8 +14,9 @@ import { Route as HomeRouteRouteImport } from './routes/home/route'
 import { Route as RouteRouteImport } from './routes/route'
 import { Route as LoginSignupRouteRouteImport } from './routes/login/signup/route'
 import { Route as LoginSigninRouteRouteImport } from './routes/login/signin/route'
-import { Route as HomeUserRouteRouteImport } from './routes/home/user/route'
 import { Route as HomeDashboardRouteRouteImport } from './routes/home/dashboard/route'
+import { Route as HomeUserIndexRouteImport } from './routes/home/user/index'
+import { Route as HomeUserWriteRouteImport } from './routes/home/user/write'
 
 const LoginRouteRoute = LoginRouteRouteImport.update({
   id: '/login',
@@ -42,14 +43,19 @@ const LoginSigninRouteRoute = LoginSigninRouteRouteImport.update({
   path: '/signin',
   getParentRoute: () => LoginRouteRoute,
 } as any)
-const HomeUserRouteRoute = HomeUserRouteRouteImport.update({
-  id: '/user',
-  path: '/user',
-  getParentRoute: () => HomeRouteRoute,
-} as any)
 const HomeDashboardRouteRoute = HomeDashboardRouteRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => HomeRouteRoute,
+} as any)
+const HomeUserIndexRoute = HomeUserIndexRouteImport.update({
+  id: '/user/',
+  path: '/user/',
+  getParentRoute: () => HomeRouteRoute,
+} as any)
+const HomeUserWriteRoute = HomeUserWriteRouteImport.update({
+  id: '/user/write',
+  path: '/user/write',
   getParentRoute: () => HomeRouteRoute,
 } as any)
 
@@ -57,17 +63,19 @@ export interface FileRoutesByFullPath {
   '/home': typeof HomeRouteRouteWithChildren
   '/login': typeof LoginRouteRouteWithChildren
   '/home/dashboard': typeof HomeDashboardRouteRoute
-  '/home/user': typeof HomeUserRouteRoute
   '/login/signin': typeof LoginSigninRouteRoute
   '/login/signup': typeof LoginSignupRouteRoute
+  '/home/user/write': typeof HomeUserWriteRoute
+  '/home/user': typeof HomeUserIndexRoute
 }
 export interface FileRoutesByTo {
   '/home': typeof HomeRouteRouteWithChildren
   '/login': typeof LoginRouteRouteWithChildren
   '/home/dashboard': typeof HomeDashboardRouteRoute
-  '/home/user': typeof HomeUserRouteRoute
   '/login/signin': typeof LoginSigninRouteRoute
   '/login/signup': typeof LoginSignupRouteRoute
+  '/home/user/write': typeof HomeUserWriteRoute
+  '/home/user': typeof HomeUserIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -75,9 +83,10 @@ export interface FileRoutesById {
   '/home': typeof HomeRouteRouteWithChildren
   '/login': typeof LoginRouteRouteWithChildren
   '/home/dashboard': typeof HomeDashboardRouteRoute
-  '/home/user': typeof HomeUserRouteRoute
   '/login/signin': typeof LoginSigninRouteRoute
   '/login/signup': typeof LoginSignupRouteRoute
+  '/home/user/write': typeof HomeUserWriteRoute
+  '/home/user/': typeof HomeUserIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -85,26 +94,29 @@ export interface FileRouteTypes {
     | '/home'
     | '/login'
     | '/home/dashboard'
-    | '/home/user'
     | '/login/signin'
     | '/login/signup'
+    | '/home/user/write'
+    | '/home/user'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/home'
     | '/login'
     | '/home/dashboard'
-    | '/home/user'
     | '/login/signin'
     | '/login/signup'
+    | '/home/user/write'
+    | '/home/user'
   id:
     | '__root__'
     | '/'
     | '/home'
     | '/login'
     | '/home/dashboard'
-    | '/home/user'
     | '/login/signin'
     | '/login/signup'
+    | '/home/user/write'
+    | '/home/user/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -150,13 +162,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginSigninRouteRouteImport
       parentRoute: typeof LoginRouteRoute
     }
-    '/home/user': {
-      id: '/home/user'
-      path: '/user'
-      fullPath: '/home/user'
-      preLoaderRoute: typeof HomeUserRouteRouteImport
-      parentRoute: typeof HomeRouteRoute
-    }
     '/home/dashboard': {
       id: '/home/dashboard'
       path: '/dashboard'
@@ -164,17 +169,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeDashboardRouteRouteImport
       parentRoute: typeof HomeRouteRoute
     }
+    '/home/user/': {
+      id: '/home/user/'
+      path: '/user'
+      fullPath: '/home/user'
+      preLoaderRoute: typeof HomeUserIndexRouteImport
+      parentRoute: typeof HomeRouteRoute
+    }
+    '/home/user/write': {
+      id: '/home/user/write'
+      path: '/user/write'
+      fullPath: '/home/user/write'
+      preLoaderRoute: typeof HomeUserWriteRouteImport
+      parentRoute: typeof HomeRouteRoute
+    }
   }
 }
 
 interface HomeRouteRouteChildren {
   HomeDashboardRouteRoute: typeof HomeDashboardRouteRoute
-  HomeUserRouteRoute: typeof HomeUserRouteRoute
+  HomeUserWriteRoute: typeof HomeUserWriteRoute
+  HomeUserIndexRoute: typeof HomeUserIndexRoute
 }
 
 const HomeRouteRouteChildren: HomeRouteRouteChildren = {
   HomeDashboardRouteRoute: HomeDashboardRouteRoute,
-  HomeUserRouteRoute: HomeUserRouteRoute,
+  HomeUserWriteRoute: HomeUserWriteRoute,
+  HomeUserIndexRoute: HomeUserIndexRoute,
 }
 
 const HomeRouteRouteWithChildren = HomeRouteRoute._addFileChildren(

@@ -1,10 +1,12 @@
 import { MENU_ITEMS } from "@/const";
-import { getUserName } from "@/context/auth.context";
+import { getUserName, useAuth } from "@/context/auth.context";
 import { useLocation, useRouter } from "@tanstack/react-router";
 import { useIsFetching } from "@tanstack/react-query";
 import { LoadingIndicator } from "./loading.indicator";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 export default function HeaderComponent() {
+  const { logout } = useAuth();
   const isFetching = useIsFetching();
   const router = useRouter();
   const pathInfo = useLocation();
@@ -15,6 +17,18 @@ export default function HeaderComponent() {
       router.navigate({ to: link });
     }
   };
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  // 스타일 클래스 추상화
+  const menuTriggerClass =
+    "h-10 w-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-bold hover:bg-slate-200 transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-blue-500";
+  const dropdownContentClass =
+    "min-w-[160px] bg-white rounded-xl shadow-lg border border-slate-200 p-1.5 z-[100] animate-in fade-in slide-in-from-top-2";
+  const dropdownItemClass =
+    "flex items-center px-3 py-2 text-sm text-slate-700 rounded-lg cursor-pointer outline-none hover:bg-slate-50 focus:bg-slate-50 transition-colors";
 
   return (
     <div className="w-full bg-white border-b border-slate-200">
@@ -66,19 +80,42 @@ export default function HeaderComponent() {
           </nav>
 
           {/* 4. 우측 영역: 사용자 정보 및 프로필 */}
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex flex-col items-end mr-2">
-              <span className="text-xs text-slate-400 font-medium">
-                Administrator
-              </span>
-              <span className="text-sm font-semibold text-slate-700">
-                {username || "Guest"}
-              </span>
-            </div>
-            <div className="h-10 w-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-bold hover:bg-slate-200 transition-colors cursor-pointer">
-              {username?.charAt(0).toUpperCase() || "U"}
-            </div>
-          </div>
+          {/* Radix Dropdown 적용 */}
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger asChild>
+              <button className={menuTriggerClass}>
+                {username?.charAt(0).toUpperCase() || "U"}
+              </button>
+            </DropdownMenu.Trigger>
+
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content
+                className={dropdownContentClass}
+                sideOffset={8}
+                align="end"
+              >
+                <DropdownMenu.Label className="px-3 py-2 text-xs font-semibold text-slate-400">
+                  계정 관리
+                </DropdownMenu.Label>
+
+                <DropdownMenu.Item
+                  className={dropdownItemClass}
+                  onClick={() => {}}
+                >
+                  <span className="mr-2">👤</span> 내 프로필
+                </DropdownMenu.Item>
+
+                <DropdownMenu.Separator className="h-px bg-slate-100 my-1" />
+
+                <DropdownMenu.Item
+                  className={`${dropdownItemClass} text-red-600 hover:bg-red-50 focus:bg-red-50`}
+                  onClick={handleLogout}
+                >
+                  <span className="mr-2">🚪</span> 로그아웃
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>
         </div>
       </div>
     </div>

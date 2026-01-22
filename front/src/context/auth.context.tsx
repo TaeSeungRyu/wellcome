@@ -1,6 +1,5 @@
 // src/context/AuthContext.tsx
 import { SIGNIN_PATH } from "@/const";
-import { Navigate } from "@tanstack/react-router";
 import { createContext, useContext, useState } from "react";
 
 /*
@@ -51,7 +50,7 @@ export const AuthContext = createContext({
   logout: (noNavigate?: boolean) => {
     clearTokens();
     if (!noNavigate) {
-      Navigate({ to: SIGNIN_PATH }); // 권한없으면 로그인페이지로
+      location.href = SIGNIN_PATH; // 권한없으면 로그인페이지로
     }
   },
 });
@@ -71,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = (noNavigate?: boolean) => {
     clearTokens();
     if (!noNavigate) {
-      Navigate({ to: SIGNIN_PATH }); // 권한없으면 로그인페이지로
+      location.href = SIGNIN_PATH;
     }
   };
   return (

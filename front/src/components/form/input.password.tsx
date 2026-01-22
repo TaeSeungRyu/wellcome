@@ -48,6 +48,7 @@ export default function InputPassword({
       <div className="relative group">
         <input
           {...register(name)}
+          name={name}
           value={innerValue}
           placeholder={placeholder}
           onChange={handleChange}

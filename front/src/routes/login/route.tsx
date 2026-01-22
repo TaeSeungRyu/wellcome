@@ -1,10 +1,26 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { SIGNIN_PATH } from "@/const";
+import {
+  createFileRoute,
+  Outlet,
+  useLocation,
+  useNavigate,
+} from "@tanstack/react-router";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/login")({
   component: LoginLayout,
 });
 
 function LoginLayout() {
+  const pathInfo = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (pathInfo.pathname === "/login") {
+      navigate({ to: SIGNIN_PATH, replace: true });
+    }
+  }, [pathInfo.pathname, navigate]);
+
   return (
     // 전체 화면 배경: 회색 톤과 Flexbox 중앙 정렬
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
@@ -16,7 +32,6 @@ function LoginLayout() {
           </h1>
           <p className="mt-2 text-sm text-slate-600">계정에 로그인하세요</p>
         </div>
-
         {/* 실제 로그인 폼 컨텐츠 (Outlet) */}
         <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
           <Outlet />

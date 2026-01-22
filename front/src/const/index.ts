@@ -1,7 +1,7 @@
 import type { FileRouteTypes } from "@/routeTree.gen";
 
 export const API_BASE_URL = "/api";
-export const SIGNIN_PATH = "/login";
+export const SIGNIN_PATH = "/login/signin";
 
 export const API = {
   LOGIN: `${API_BASE_URL}/auth/login`,
@@ -25,12 +25,12 @@ export interface MenuItem {
 
 export const MENU_ITEMS: MenuItem[] = [
   {
-    label: "Manage Board",
+    label: "게시글 관리",
     key: "manage-board",
     link: "/home/dashboard",
   },
   {
-    label: "Manage User",
+    label: "사용자 관리",
     key: "manage-user",
     link: "/home/user",
   },
