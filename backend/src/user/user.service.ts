@@ -65,9 +65,9 @@ export class UserService {
       // 3. 응답 데이터 구성 (현재 페이지, 전체 페이지 등 추가 정보 제공)
       const paginationData = {
         users,
-        totalCount: total,
-        currentPage: page,
-        totalPages: Math.ceil(total / limit),
+        total,
+        page,
+        limit,
       };
 
       return new ResponseDto(

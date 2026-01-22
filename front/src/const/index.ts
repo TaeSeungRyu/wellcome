@@ -14,6 +14,7 @@ export const API = {
   BOARD_DELETE: `${API_BASE_URL}/board/delete`,
   BOARD_COMMENT_ADD: `${API_BASE_URL}/board/add-comment`,
   BOARD_COMMENT_DELETE: `${API_BASE_URL}/board/remove-comment`,
+  USER: `${API_BASE_URL}/user/list`,
 };
 
 export interface MenuItem {

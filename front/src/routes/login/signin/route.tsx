@@ -67,8 +67,8 @@ function RouteComponent() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <InputText
           name="myText"
-          label="my text 입력 테스트"
-          placeholder="비밀번호를 입력하세요"
+          label="아이디"
+          placeholder="아이디를 입력하세요"
           register={register}
           setValue={setValue}
           errors={errors}
@@ -76,7 +76,7 @@ function RouteComponent() {
         />
         <InputPassword
           name="myPassword"
-          label="my password 입력 테스트"
+          label="비밀번호"
           placeholder="비밀번호를 입력하세요"
           register={register}
           setValue={setValue}
