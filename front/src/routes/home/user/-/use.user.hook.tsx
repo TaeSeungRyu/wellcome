@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { requestUserList } from "./user.repository";
+import { requestUserAuthList, requestUserList } from "./user.repository";
 import { useForm } from "react-hook-form";
 import { userSchema } from "./user.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,6 +19,19 @@ export const useUserListHook = (page: number, limit: number) => {
       return data?.result ?? null;
     },
     placeholderData: (prev) => prev,
+  });
+};
+
+export const useUserAuthListHook = () => {
+  return useQuery({
+    queryKey: ["requestUserAuthList"],
+    gcTime: Infinity,
+    staleTime: Infinity,
+    enabled: true,
+    queryFn: async () => {
+      const { result } = await requestUserAuthList();
+      return result ?? null;
+    },
   });
 };
 

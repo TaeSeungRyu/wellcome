@@ -13,4 +13,12 @@ const requestUserList = async (page: number, limit: number) => {
   return apiClient.request(API.USER, params);
 };
 
-export { requestUserList };
+const requestUserAuthList = async () => {
+  const apiClient = ApiClient.getInstance();
+  const params = {
+    method: "get",
+  };
+  return apiClient.request(API.AUTH_LIST, params);
+};
+
+export { requestUserList, requestUserAuthList };

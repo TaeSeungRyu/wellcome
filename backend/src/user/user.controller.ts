@@ -54,21 +54,31 @@ export class UserController {
     return users;
   }
 
+  @Role('super')
   @Post('create')
   async create(@Body() userData: UserDto): Promise<ResponseDto> {
     const user = await this.userService.createUser(userData);
     return user;
   }
 
+  @Role('super')
   @Put('update')
   async update(@Body() updateData: UserDto): Promise<ResponseDto> {
     const user = await this.userService.updateUser(updateData);
     return user;
   }
 
+  @Role('super')
   @Delete('delete')
   async delete(@Body('username') username: string): Promise<ResponseDto> {
     const user = await this.userService.deleteUser(username);
     return user;
+  }
+
+  @Role('super', 'admin')
+  @Get('auth-list')
+  async authList(): Promise<ResponseDto> {
+    const roles = await this.userService.getAuthList();
+    return roles;
   }
 }

@@ -221,4 +221,28 @@ export class UserService {
       );
     }
   }
+
+  async getAuthList(): Promise<ResponseDto> {
+    try {
+      // 1. 사용자 권한 목록 조회 (중복 제거)
+      const roles = await this.userModel.distinct('role').exec();
+
+      // 2. 응답 반환
+      return new ResponseDto(
+        { success: true, data: roles },
+        '',
+        '사용자 권한 목록을 성공적으로 조회했습니다.',
+        200,
+      );
+    } catch (error) {
+      if (error instanceof BadRequestException) throw error;
+      throw new BadRequestException(
+        new ResponseDto(
+          { success: false },
+          'fetch_error',
+          '사용자 권한 목록 조회 중 오류가 발생했습니다.',
+        ),
+      );
+    }
+  }
 }

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useUserForm } from "./-/use.user.hook";
+import { useUserAuthListHook, useUserForm } from "./-/use.user.hook";
 import InputText from "@/components/form/input.text";
 import type { UserForm } from "./-/user.schema";
 import InputCheckbox from "@/components/form/input.check";
@@ -10,6 +10,8 @@ export const Route = createFileRoute("/home/user/write")({
 });
 
 function RouteComponent() {
+  const { data: authList } = useUserAuthListHook();
+
   const {
     register,
     handleSubmit,
@@ -37,6 +39,7 @@ function RouteComponent() {
       { value: "user", label: "사용자", selected: false },
       { value: "guest", label: "게스트", selected: false },
     ]);
+    console.log("authList:", authList);
   }, [setValue]);
 
   return (
