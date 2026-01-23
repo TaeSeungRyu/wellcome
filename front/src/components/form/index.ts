@@ -15,6 +15,7 @@ export interface InputOption {
   disabled?: boolean;
   offRightIcon?: boolean;
   offErrorMessage?: boolean;
+  direction?: "row" | "column";
 }
 
 export interface InputFieldProps {

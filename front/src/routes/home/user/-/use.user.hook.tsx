@@ -1,5 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { requestUserList } from "./user.repository";
+import { useForm } from "react-hook-form";
+import { userSchema } from "./user.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const queryKey = ["requestUserList"] as const;
 //LIST 조회용 HOOK
@@ -17,4 +20,21 @@ export const useUserListHook = (page: number, limit: number) => {
     },
     placeholderData: (prev) => prev,
   });
+};
+
+export const useUserForm = (_id?: string) => {
+  const form = useForm({
+    resolver: zodResolver(userSchema),
+    mode: "all",
+    defaultValues: {
+      username: "",
+      password: "",
+      name: "",
+      accessDate: "",
+      role: [],
+      email: "",
+      phone: "",
+    },
+  });
+  return { ...form };
 };
