@@ -9,6 +9,8 @@ export default function InputCommaNumber({
   setValue,
   errors,
   option,
+  minLength,
+  maxLength,
 }: InputFieldProps) {
   const [innerValue, setInnerValue] = useState("");
 
@@ -19,6 +21,7 @@ export default function InputCommaNumber({
       setValue(name, raw);
     }
     register(name).onChange(e);
+    option?.onChange?.(e);
   };
 
   const removeValue = () => {
@@ -45,6 +48,8 @@ export default function InputCommaNumber({
         placeholder={placeholder}
         onChange={handleChange}
         inputMode="numeric"
+        minLength={minLength}
+        maxLength={maxLength}
         className={"w-full outline-none " + (option?.className ?? "")}
         style={{ ...option?.style }}
         disabled={option?.disabled}

@@ -9,6 +9,8 @@ export default function InputText({
   setValue,
   errors,
   option,
+  maxLength,
+  minLength,
 }: InputFieldProps) {
   const [innerValue, setInnerValue] = useState("");
   const hasError = !!errors?.[name];
@@ -22,6 +24,7 @@ export default function InputText({
       setValue(name, raw);
     }
     register(name).onChange(e);
+    option?.onChange?.(e);
   };
 
   const removeValue = () => {
@@ -55,6 +58,8 @@ export default function InputText({
           disabled={option?.disabled}
           autoComplete="off"
           type="text"
+          maxLength={maxLength}
+          minLength={minLength}
           className={`
             w-full px-4 py-3 bg-white border rounded-xl text-sm transition-all duration-200 outline-none
             placeholder:text-slate-400

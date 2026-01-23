@@ -33,6 +33,7 @@ export default function InputSelect({
     }
     setOpen(false);
     register(name).onChange(e);
+    option?.onChange?.(e);
   };
 
   return (

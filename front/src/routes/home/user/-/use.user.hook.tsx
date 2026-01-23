@@ -32,6 +32,16 @@ export const useUserAuthListHook = () => {
       const { result } = await requestUserAuthList();
       return result ?? null;
     },
+    placeholderData: (prev) => prev,
+    select(data) {
+      return (
+        data?.data?.map((key: string) => ({
+          value: key,
+          label: key,
+          selected: false,
+        })) ?? []
+      );
+    },
   });
 };
 

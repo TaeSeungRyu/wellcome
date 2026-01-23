@@ -9,6 +9,8 @@ export default function InputPassword({
   setValue,
   errors,
   option,
+  minLength,
+  maxLength,
 }: InputFieldProps) {
   const [innerValue, setInnerValue] = useState("");
   const [inputType, setInputType] = useState<"password" | "text">("password");
@@ -19,6 +21,7 @@ export default function InputPassword({
     setInnerValue(raw);
     if (setValue) setValue(name, raw);
     register(name).onChange(e);
+    option?.onChange?.(e);
   };
 
   const removeValue = () => {
@@ -54,6 +57,8 @@ export default function InputPassword({
           onChange={handleChange}
           disabled={option?.disabled}
           type={inputType}
+          minLength={minLength}
+          maxLength={maxLength}
           autoComplete="current-password"
           className={`
             w-full px-4 py-3 bg-white border rounded-xl text-sm transition-all duration-200 outline-none

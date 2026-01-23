@@ -4,6 +4,8 @@ import InputText from "@/components/form/input.text";
 import type { UserForm } from "./-/user.schema";
 import InputCheckbox from "@/components/form/input.check";
 import { useEffect } from "react";
+import InputPassword from "@/components/form/input.password";
+import { formatPhoneNumber } from "@/services/util";
 
 export const Route = createFileRoute("/home/user/write")({
   component: RouteComponent,
@@ -33,14 +35,15 @@ function RouteComponent() {
     console.log("Form Data:", data);
   };
 
+  const phoneValueHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setTimeout(() => setValue("phone", formatted), 1); //BAD 코드..
+  };
+
   useEffect(() => {
-    setValue("role", [
-      { value: "admin", label: "관리자", selected: false },
-      { value: "user", label: "사용자", selected: false },
-      { value: "guest", label: "게스트", selected: false },
-    ]);
+    setValue("role", authList);
     console.log("authList:", authList);
-  }, [setValue]);
+  }, [authList, setValue]);
 
   return (
     <div className="py-8">
@@ -57,7 +60,7 @@ function RouteComponent() {
           setValue={setValue}
           errors={errors}
         />
-        <InputText
+        <InputPassword
           name={fields[1]}
           label="비밀번호"
           placeholder="비밀번호를 입력하세요"
@@ -88,6 +91,10 @@ function RouteComponent() {
           register={register}
           setValue={setValue}
           errors={errors}
+          maxLength={13}
+          option={{
+            onChange: (e) => phoneValueHandler(e),
+          }}
         />
         <InputCheckbox
           name={fields[5]}

@@ -21,6 +21,7 @@ export default function InputRadio({
       setValue(name, updated, { shouldValidate: true });
     }
     register(name).onChange(e);
+    option?.onChange?.(e);
   };
 
   return (

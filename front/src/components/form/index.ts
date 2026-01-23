@@ -16,6 +16,7 @@ export interface InputOption {
   offRightIcon?: boolean;
   offErrorMessage?: boolean;
   direction?: "row" | "column";
+  onChange?: (e: React.ChangeEvent<any>) => void;
 }
 
 export interface InputFieldProps {
@@ -27,4 +28,6 @@ export interface InputFieldProps {
   errors?: FieldErrors<any>;
   watch?: UseFormWatch<any>;
   option?: InputOption;
+  minLength?: number;
+  maxLength?: number;
 }

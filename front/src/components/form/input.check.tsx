@@ -21,14 +21,14 @@ export default function InputCheckbox({
 
     // setValue를 통해 RHF 상태 업데이트
     setValue(name, updated, { shouldValidate: true });
-
+    option?.onChange?.(e);
     // 만약 register의 onChange 트리거가 꼭 필요하다면 수동 호출 가능하지만,
     // 통상 setValue만으로 충분합니다.
   };
 
   // 공통 스타일 추출
   const wrapperClass = `relative w-full mb-4 rounded border-gray-300 ${option?.wrapperClassName ?? ""}`;
-  const labelClass = `block text-sm font-medium mb-3 text-gray-700 ${option?.labelClassName ?? ""}`;
+  const labelClass = `block text-sm font-bold mb-3 text-gray-700 ${option?.labelClassName ?? ""}`;
   const direction =
     option?.direction === "row" ? "flex-row flex-wrap" : "flex-col";
   return (
