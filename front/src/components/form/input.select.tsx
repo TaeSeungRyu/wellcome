@@ -32,8 +32,11 @@ export default function InputSelect({
       setValue(name, updated, { shouldValidate: true });
     }
     setOpen(false);
-    register(name).onChange(e);
-    option?.onChange?.(e);
+    register(name)
+      .onChange(e)
+      .then(() => {
+        option?.onChange?.(e);
+      });
   };
 
   return (

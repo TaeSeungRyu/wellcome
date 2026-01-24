@@ -26,7 +26,11 @@ export default function InputToggle({
       };
       setValue(name, updated, { shouldValidate: true });
     }
-    register(name).onChange(e as any);
+    register(name)
+      .onChange(e)
+      .then(() => {
+        option?.onChange?.(e);
+      });
   };
 
   return (

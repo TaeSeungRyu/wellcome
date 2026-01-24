@@ -37,7 +37,8 @@ function RouteComponent() {
 
   const phoneValueHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhoneNumber(e.target.value);
-    setTimeout(() => setValue("phone", formatted), 1); //BAD 코드..
+    //setTimeout(() => setValue("phone", formatted), 1); //BAD 코드..
+    setValue("phone", formatted);
   };
 
   useEffect(() => {

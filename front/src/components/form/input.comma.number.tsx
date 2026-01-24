@@ -31,8 +31,11 @@ export default function InputCommaNumber({
       const numberValue = raw.replace(/[^\d]/g, "");
       setValue(name, numberValue === "" ? "" : Number(numberValue));
     }
-    register(name).onChange(e);
-    option?.onChange?.(e);
+    register(name)
+      .onChange(e)
+      .then(() => {
+        option?.onChange?.(e);
+      });
   };
 
   const removeValue = () => {

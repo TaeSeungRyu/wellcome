@@ -20,8 +20,11 @@ export default function InputRadio({
       }));
       setValue(name, updated, { shouldValidate: true });
     }
-    register(name).onChange(e);
-    option?.onChange?.(e);
+    register(name)
+      .onChange(e)
+      .then(() => {
+        option?.onChange?.(e);
+      });
   };
 
   return (

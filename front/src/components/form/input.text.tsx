@@ -23,8 +23,11 @@ export default function InputText({
     if (setValue) {
       setValue(name, raw);
     }
-    register(name).onChange(e);
-    option?.onChange?.(e);
+    register(name)
+      .onChange(e)
+      .then(() => {
+        option?.onChange?.(e);
+      });
   };
 
   const removeValue = () => {
