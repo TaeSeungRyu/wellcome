@@ -92,6 +92,25 @@ export class UserService {
     }
   }
 
+  async checkExistUser(username: string): Promise<ResponseDto> {
+    const user = await this.userModel.findOne({ username }).exec();
+    if (user) {
+      return new ResponseDto(
+        { success: true, data: { exists: true } },
+        '',
+        '사용자가 존재합니다.',
+        200,
+      );
+    } else {
+      return new ResponseDto(
+        { success: true, data: { exists: false } },
+        '',
+        '사용자가 존재하지 않습니다.',
+        200,
+      );
+    }
+  }
+
   async createUser(userData: UserDto): Promise<ResponseDto> {
     try {
       // 1. 중복 체크

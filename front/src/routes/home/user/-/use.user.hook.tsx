@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   requestUserAuthList,
+  requestUserCheckExist,
   requestUserCreate,
   requestUserList,
 } from "./user.repository";
@@ -66,6 +67,22 @@ export const useUserForm = (_id?: string) => {
   return { ...form };
 };
 
+export const useCheckExistUser = (username: string) => {
+  return useQuery({
+    queryKey: ["requestUserCheckExist", username],
+    queryFn: async () => {
+      return await requestUserCheckExist(username);
+    },
+    enabled: false,
+    gcTime: 1000 * 1,
+    staleTime: 1000 * 1,
+    select(data) {
+      return data?.result ?? null;
+    },
+    placeholderData: (prev) => prev,
+  });
+};
+
 //BOARD 등록/수정용 HOOK
 export const useUserAlter = () => {
   return useMutation({
@@ -84,24 +101,34 @@ export const useUserAlter = () => {
       password: string;
       name: string;
       role: string[];
-      email: string;
-      phone: string;
+      email?: string;
+      phone?: string;
       _id?: string;
       isDelete?: boolean;
     }) => {
+      const param = {
+        username,
+        password,
+        name,
+        role,
+        email: email,
+        phone: phone,
+      };
+      param.role = role
+        .filter((role: any) => {
+          return role.selected;
+        })
+        .map((role: any) => {
+          return role.value;
+        });
       if (isDelete && _id) {
         //  return await requestUserDelete(_id);
       } else if (_id) {
         // return await requestUserUpdate(_id, username, password, name, role, email, phone);
       } else {
-        return await requestUserCreate({
-          username,
-          password,
-          name,
-          role,
-          email,
-          phone,
-        });
+        if (param.phone === "") delete param.phone;
+        if (param.email === "") delete param.email;
+        return await requestUserCreate(param);
       }
     },
     onSuccess: (response) => {

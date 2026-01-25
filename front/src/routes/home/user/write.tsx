@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
+  useCheckExistUser,
   useUserAlter,
   useUserAuthListHook,
   useUserForm,
@@ -12,6 +13,7 @@ import InputPassword from "@/components/form/input.password";
 import { formatPhoneNumber } from "@/services/util";
 import { useModal } from "@/context/modal.context";
 import { useToast } from "@/context/toast.context";
+import { set } from "zod";
 
 export const Route = createFileRoute("/home/user/write")({
   component: RouteComponent,
@@ -20,18 +22,23 @@ export const Route = createFileRoute("/home/user/write")({
 function RouteComponent() {
   const { openModal, closeTopModal: closeConfirmModal } = useModal();
   const { data: authList } = useUserAuthListHook();
-  const { mutateAsync: toAlter, data: alterData, error } = useUserAlter();
-  const { showToast } = useToast();
-
   const {
     register,
     handleSubmit,
     setValue,
     watch,
     formState: { errors },
+    setError,
+    clearErrors,
     // isFetching,
     // isError,
   } = useUserForm();
+
+  const { mutateAsync: toAlter, data: alterData, error } = useUserAlter();
+  const { data: checkExistUserData, refetch: refetchCheckExistUser } =
+    useCheckExistUser(watch("username"));
+  const { showToast } = useToast();
+
   const fields: (keyof UserForm)[] = [
     "username",
     "password",
@@ -41,23 +48,6 @@ function RouteComponent() {
     "role",
   ];
   const onSubmit = (data: any) => {
-    //TODO ;;; 리펙토링 필요, 컴포넌트 말고 훅에서 처리 필요
-    const param = {
-      ...data,
-    };
-    param.role = data.role
-      .filter((role: any) => {
-        return role.selected;
-      })
-      .map((role: any) => {
-        return role.value;
-      });
-    if (param.phone === "") {
-      delete param.phone;
-    }
-    if (param.email === "") {
-      delete param.email;
-    }
     openModal({
       content: (
         <div>
@@ -71,7 +61,7 @@ function RouteComponent() {
           </button>
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded"
-            onClick={() => toAlter(param)}
+            onClick={() => toAlter(data)}
           >
             등록
           </button>
@@ -108,6 +98,23 @@ function RouteComponent() {
     }
   }, [error]);
 
+  const askCheckUserExist = () => {
+    if (!watch("username")) {
+      showToast("아이디를 입력하세요.", { type: "error" });
+      return;
+    }
+    refetchCheckExistUser().then(() => {
+      console.log(checkExistUserData);
+      if (checkExistUserData?.data?.exists) {
+        showToast("이미 존재하는 아이디입니다.", { type: "error" });
+        setError("username", { message: "이미 존재하는 아이디입니다." });
+      } else {
+        showToast("사용 가능한 아이디입니다.", { type: "success" });
+        clearErrors("username");
+      }
+    });
+  };
+
   return (
     <div className="py-8">
       <form
@@ -123,6 +130,13 @@ function RouteComponent() {
           setValue={setValue}
           errors={errors}
         />
+        <button
+          className="tailwind-blue-button"
+          type="button"
+          onClick={askCheckUserExist}
+        >
+          중복 확인
+        </button>
         <InputPassword
           name={fields[1]}
           label="비밀번호"

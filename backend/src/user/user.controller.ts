@@ -61,6 +61,15 @@ export class UserController {
     return user;
   }
 
+  @Role('super', 'admin')
+  @Get('check-exist')
+  async checkExistUser(
+    @Query('username') username: string,
+  ): Promise<ResponseDto> {
+    const user = await this.userService.checkExistUser(username);
+    return user;
+  }
+
   @Role('super')
   @Put('update')
   async update(@Body() updateData: UserDto): Promise<ResponseDto> {
