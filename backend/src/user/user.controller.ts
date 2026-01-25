@@ -54,7 +54,7 @@ export class UserController {
     return users;
   }
 
-  @Role('super')
+  @Role('super', 'admin')
   @Post('create')
   async create(@Body() userData: UserDto): Promise<ResponseDto> {
     const user = await this.userService.createUser(userData);

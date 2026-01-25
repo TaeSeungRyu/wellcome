@@ -24,7 +24,10 @@ export const userSchema = z.object({
         selected: z.boolean(),
       }),
     )
-    .optional(),
+    .min(1, "권한을 선택하세요")
+    .refine((roles) => roles.some((role) => role.selected), {
+      message: "권한을 하나 이상 선택하세요",
+    }),
   email: z.string().optional(),
   phone: z.string().optional(),
 });

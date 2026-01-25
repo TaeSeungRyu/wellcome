@@ -1,18 +1,27 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useUserAuthListHook, useUserForm } from "./-/use.user.hook";
+import {
+  useUserAlter,
+  useUserAuthListHook,
+  useUserForm,
+} from "./-/use.user.hook";
 import InputText from "@/components/form/input.text";
 import type { UserForm } from "./-/user.schema";
 import InputCheckbox from "@/components/form/input.check";
 import { useEffect } from "react";
 import InputPassword from "@/components/form/input.password";
 import { formatPhoneNumber } from "@/services/util";
+import { useModal } from "@/context/modal.context";
+import { useToast } from "@/context/toast.context";
 
 export const Route = createFileRoute("/home/user/write")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const { openModal, closeTopModal: closeConfirmModal } = useModal();
   const { data: authList } = useUserAuthListHook();
+  const { mutateAsync: toAlter, data: alterData, error } = useUserAlter();
+  const { showToast } = useToast();
 
   const {
     register,
@@ -32,19 +41,72 @@ function RouteComponent() {
     "role",
   ];
   const onSubmit = (data: any) => {
-    console.log("Form Data:", data);
+    //TODO ;;; 리펙토링 필요, 컴포넌트 말고 훅에서 처리 필요
+    const param = {
+      ...data,
+    };
+    param.role = data.role
+      .filter((role: any) => {
+        return role.selected;
+      })
+      .map((role: any) => {
+        return role.value;
+      });
+    if (param.phone === "") {
+      delete param.phone;
+    }
+    if (param.email === "") {
+      delete param.email;
+    }
+    openModal({
+      content: (
+        <div>
+          <h2>확인</h2>
+          <p>사용자를 등록 하시겠습니까?</p>
+          <button
+            className="bg-red-500 text-white px-4 py-2 rounded mr-2"
+            onClick={closeConfirmModal}
+          >
+            취소
+          </button>
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+            onClick={() => toAlter(param)}
+          >
+            등록
+          </button>
+        </div>
+      ),
+    });
   };
 
   const phoneValueHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhoneNumber(e.target.value);
-    //setTimeout(() => setValue("phone", formatted), 1); //BAD 코드..
     setValue("phone", formatted);
   };
 
   useEffect(() => {
     setValue("role", authList);
-    console.log("authList:", authList);
   }, [authList, setValue]);
+
+  useEffect(() => {
+    if (alterData) {
+      closeConfirmModal();
+      showToast(alterData?.message || "완료 하였습니다.", {
+        type: "success",
+      });
+    }
+  }, [alterData]);
+
+  useEffect(() => {
+    if (error) {
+      showToast(error?.message || "에러 발생", {
+        type: "error",
+        duration: 1000,
+      });
+      console.error("Error during mutation:", error);
+    }
+  }, [error]);
 
   return (
     <div className="py-8">

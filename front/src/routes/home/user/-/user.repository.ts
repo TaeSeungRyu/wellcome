@@ -21,4 +21,13 @@ const requestUserAuthList = async () => {
   return apiClient.request(API.AUTH_LIST, params);
 };
 
-export { requestUserList, requestUserAuthList };
+const requestUserCreate = async (data: any) => {
+  const apiClient = ApiClient.getInstance();
+  const params = {
+    method: "post",
+    body: JSON.stringify(data),
+  };
+  return apiClient.request(API.USER_CREATE, params);
+};
+
+export { requestUserList, requestUserAuthList, requestUserCreate };

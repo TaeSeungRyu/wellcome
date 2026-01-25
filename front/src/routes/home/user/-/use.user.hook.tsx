@@ -1,10 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import { requestUserAuthList, requestUserList } from "./user.repository";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  requestUserAuthList,
+  requestUserCreate,
+  requestUserList,
+} from "./user.repository";
 import { useForm } from "react-hook-form";
 import { userSchema } from "./user.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-const queryKey = ["requestUserList"] as const;
+const queryKey = ["requestUserList", "requestUserAlter"] as const;
 //LIST 조회용 HOOK
 export const useUserListHook = (page: number, limit: number) => {
   return useQuery({
@@ -60,4 +64,51 @@ export const useUserForm = (_id?: string) => {
     },
   });
   return { ...form };
+};
+
+//BOARD 등록/수정용 HOOK
+export const useUserAlter = () => {
+  return useMutation({
+    mutationKey: [...queryKey[1]],
+    mutationFn: async ({
+      username,
+      password,
+      name,
+      role,
+      email,
+      phone,
+      _id,
+      isDelete,
+    }: {
+      username: string;
+      password: string;
+      name: string;
+      role: string[];
+      email: string;
+      phone: string;
+      _id?: string;
+      isDelete?: boolean;
+    }) => {
+      if (isDelete && _id) {
+        //  return await requestUserDelete(_id);
+      } else if (_id) {
+        // return await requestUserUpdate(_id, username, password, name, role, email, phone);
+      } else {
+        return await requestUserCreate({
+          username,
+          password,
+          name,
+          role,
+          email,
+          phone,
+        });
+      }
+    },
+    onSuccess: (response) => {
+      return response.result;
+    },
+    onError: (error: Error) => {
+      throw error;
+    },
+  });
 };
