@@ -8,12 +8,11 @@ import {
 import InputText from "@/components/form/input.text";
 import type { UserForm } from "./-/user.schema";
 import InputCheckbox from "@/components/form/input.check";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import InputPassword from "@/components/form/input.password";
 import { formatPhoneNumber } from "@/services/util";
 import { useModal } from "@/context/modal.context";
 import { useToast } from "@/context/toast.context";
-import { set } from "zod";
 
 export const Route = createFileRoute("/home/user/write")({
   component: RouteComponent,
@@ -30,9 +29,9 @@ function RouteComponent() {
     formState: { errors },
     setError,
     clearErrors,
-    // isFetching,
-    // isError,
   } = useUserForm();
+
+  const [isCheckingExistence, setIsCheckingExistence] = useState(false);
 
   const { mutateAsync: toAlter, data: alterData, error } = useUserAlter();
   const { data: checkExistUserData, refetch: refetchCheckExistUser } =
@@ -103,17 +102,27 @@ function RouteComponent() {
       showToast("아이디를 입력하세요.", { type: "error" });
       return;
     }
-    refetchCheckExistUser().then(() => {
-      console.log(checkExistUserData);
-      if (checkExistUserData?.data?.exists) {
-        showToast("이미 존재하는 아이디입니다.", { type: "error" });
-        setError("username", { message: "이미 존재하는 아이디입니다." });
-      } else {
-        showToast("사용 가능한 아이디입니다.", { type: "success" });
-        clearErrors("username");
-      }
-    });
+    refetchCheckExistUser();
   };
+
+  useEffect(() => {
+    if (!checkExistUserData?.data) return;
+    if (checkExistUserData.data.exists) {
+      showToast("이미 존재하는 아이디입니다.", { type: "error" });
+      setError("username", { message: "이미 존재하는 아이디입니다." });
+      setIsCheckingExistence(false);
+    } else {
+      showToast("사용 가능한 아이디입니다.", { type: "success" });
+      clearErrors("username");
+      setIsCheckingExistence(true);
+    }
+  }, [checkExistUserData]);
+
+  const username = watch("username");
+
+  useEffect(() => {
+    setIsCheckingExistence(false);
+  }, [username]);
 
   return (
     <div className="py-8">
@@ -182,7 +191,11 @@ function RouteComponent() {
           errors={errors}
           option={{ direction: "row" }}
         ></InputCheckbox>
-        <button className="tailwind-blue-button" type="submit">
+        <button
+          className="tailwind-blue-button"
+          type="submit"
+          disabled={!isCheckingExistence}
+        >
           등록
         </button>
       </form>

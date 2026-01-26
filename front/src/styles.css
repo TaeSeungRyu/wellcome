@@ -6,6 +6,16 @@
 
 @layer components {
   .tailwind-blue-button {
-    @apply flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-200 transition-all active:scale-95;
+    @apply flex items-center gap-2 px-5 py-2.5
+      bg-blue-600 hover:bg-blue-700
+      text-white text-sm font-semibold
+      rounded-xl shadow-md shadow-blue-200
+      transition-all active:scale-95
+
+      disabled:bg-blue-400
+      disabled:cursor-not-allowed
+      disabled:opacity-60
+      disabled:shadow-none
+      disabled:active:scale-100;
   }
 }
