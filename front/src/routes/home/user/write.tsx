@@ -32,12 +32,10 @@ function RouteComponent() {
   } = useUserForm();
 
   const [isCheckingExistence, setIsCheckingExistence] = useState(false);
-
-  const { mutateAsync: toAlter, data: alterData, error } = useUserAlter();
+  const { mutateAsync: toAlter, data: alterData } = useUserAlter();
   const { data: checkExistUserData, refetch: refetchCheckExistUser } =
     useCheckExistUser(watch("username"));
   const { showToast } = useToast();
-
   const fields: (keyof UserForm)[] = [
     "username",
     "password",
@@ -86,16 +84,6 @@ function RouteComponent() {
       });
     }
   }, [alterData]);
-
-  useEffect(() => {
-    if (error) {
-      showToast(error?.message || "에러 발생", {
-        type: "error",
-        duration: 1000,
-      });
-      console.error("Error during mutation:", error);
-    }
-  }, [error]);
 
   const askCheckUserExist = () => {
     if (!watch("username")) {

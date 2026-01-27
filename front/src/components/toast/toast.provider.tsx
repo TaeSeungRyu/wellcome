@@ -1,6 +1,10 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ToastComponent from "./toast.component";
-import { ToastContext, type ToastItem } from "@/context/toast.context";
+import {
+  setGlobalToast,
+  ToastContext,
+  type ToastItem,
+} from "@/context/toast.context";
 
 export default function ToastProvider({
   children,
@@ -31,6 +35,10 @@ export default function ToastProvider({
     setQueue((prev) =>
       prev.map((t) => (t.id === id ? { ...t, ...partial } : t)),
     );
+  }, []);
+
+  useEffect(() => {
+    setGlobalToast(showToast);
   }, []);
 
   return (

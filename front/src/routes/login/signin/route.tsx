@@ -18,7 +18,7 @@ export const Route = createFileRoute("/login/signin")({
 function RouteComponent() {
   const { logout } = useAuth();
   const { showToast } = useToast();
-  const { isPending, error, mutateAsync, data: signinResult } = useSigninHook();
+  const { isPending, mutateAsync, data: signinResult } = useSigninHook();
   const router = useRouter();
   const {
     register,
@@ -43,11 +43,7 @@ function RouteComponent() {
     await mutateAsync({ username, password });
   };
   useEffect(() => {
-    if (error) {
-      showToast(error?.message || "데이터를 확인하여 주세요.", {
-        type: "error",
-      });
-    } else if (signinResult) {
+    if (signinResult) {
       showToast("로그인에 성공하였습니다.\n1초뒤 이동합니다.", {
         type: "success",
       });
@@ -58,7 +54,7 @@ function RouteComponent() {
         });
       }, 1000);
     }
-  }, [signinResult, error]);
+  }, [signinResult]);
 
   useEffect(() => {
     logout(true);

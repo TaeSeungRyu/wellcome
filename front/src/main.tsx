@@ -4,10 +4,16 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import "./styles.css";
 import reportWebVitals from "./reportWebVitals.ts";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  MutationCache,
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import ModalProvider from "./components/modal/modal.provider.tsx";
 import ToastProvider from "./components/toast/toast.provider.tsx";
 import { AuthProvider } from "./context/auth.context.tsx";
+import { globalToast } from "./context/toast.context.tsx";
 
 const router = createRouter({
   routeTree,
@@ -24,6 +30,28 @@ declare module "@tanstack/react-router" {
   }
 }
 const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: (error, query) => {
+      // background fetch 에러는 제외하고 싶을 때 조건문 추가 가능
+      if (query.state.data !== undefined) return;
+
+      const message =
+        error instanceof Error
+          ? error.message
+          : "데이터 로드 중 에러가 발생했습니다.";
+      globalToast.error(message);
+    },
+  }),
+  mutationCache: new MutationCache({
+    onError: (error) => {
+      // 뮤테이션(등록, 수정, 삭제)은 대부분 즉각적인 피드백이 필요함
+      const message =
+        error instanceof Error
+          ? error.message
+          : "요청 처리 중 에러가 발생했습니다.";
+      globalToast.error(message);
+    },
+  }),
   defaultOptions: {
     queries: {
       retry: 1, // 재시도 횟수 (기본: 3)

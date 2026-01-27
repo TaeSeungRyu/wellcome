@@ -30,7 +30,7 @@ export function BoardFormComponent({
 
   //MUTATION 영역
   const { openModal, closeTopModal: closeConfirmModal } = useModal();
-  const { mutateAsync, data: alterResult, error } = useBoardAlter();
+  const { mutateAsync, data: alterResult } = useBoardAlter();
   const { showToast } = useToast();
 
   const toAlter = async (data: any) => {
@@ -51,13 +51,6 @@ export function BoardFormComponent({
       });
     }
   }, [alterResult]);
-
-  useEffect(() => {
-    if (error) {
-      showToast("에러 발생", { type: "error", duration: 1000 });
-      console.error("Error during mutation:", error);
-    }
-  }, [error]);
 
   const onSubmit = (data: any) => {
     openModal({

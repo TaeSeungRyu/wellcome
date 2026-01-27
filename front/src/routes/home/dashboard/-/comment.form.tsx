@@ -22,7 +22,7 @@ export function CommentFormComponent({
   const username = getUserName() as string;
   const fields: (keyof CommentForm)[] = ["comment"];
   const { showToast } = useToast();
-  const { mutateAsync, data: alterResult, error } = useCommentAlter();
+  const { mutateAsync, data: alterResult } = useCommentAlter();
   const {
     register,
     handleSubmit,
@@ -97,13 +97,6 @@ export function CommentFormComponent({
       }
     }
   }, [alterResult]);
-
-  useEffect(() => {
-    if (error) {
-      showToast("에러 발생", { type: "error", duration: 1000 });
-      console.error("Error during mutation:", error);
-    }
-  }, [error]);
 
   return (
     <div>
