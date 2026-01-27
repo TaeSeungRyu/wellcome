@@ -20,7 +20,6 @@ function HomeLayout() {
   const handleError = useCallback((error: any) => {
     console.error("SSE Error 발생:", error);
   }, []);
-
   useSSEHook(username, token, handleMessage, handleError);
 
   return (

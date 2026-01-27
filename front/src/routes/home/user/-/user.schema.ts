@@ -9,6 +9,8 @@ export interface User {
   role?: string[];
   email?: string;
   phone?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export const userSchema = z.object({

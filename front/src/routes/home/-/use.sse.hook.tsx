@@ -1,46 +1,38 @@
 import { useEffect, useRef } from "react";
 import { EventSourcePolyfill } from "event-source-polyfill";
-
 export const useSSEHook = (
   id: string | null,
-  jwtToken: string | null,
+  token: string | null,
   onMessage: (data: any) => void,
   onError?: (error: any) => void,
 ) => {
-  // eventSource 인스턴스를 유지하기 위한 ref
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
 
   useEffect(() => {
-    // ID나 토큰이 없으면 연결하지 않음
-    if (!id || !jwtToken) return;
+    if (!id || !token) return;
 
-    console.log("SSE 연결 시도:", id);
-
-    eventSourceRef.current = new EventSourcePolyfill(`/api/events/sse/${id}`, {
+    const es = new EventSourcePolyfill(`/api/events/sse/${id}`, {
       headers: {
-        Authorization: `Bearer ${jwtToken}`,
+        Authorization: `Bearer ${token}`,
       },
-      heartbeatTimeout: 60 * 1000,
+      heartbeatTimeout: 60_000,
     });
 
-    eventSourceRef.current.onmessage = (event) => {
+    eventSourceRef.current = es;
+
+    es.onmessage = (event) => {
       onMessage(event.data);
     };
 
-    eventSourceRef.current.onerror = (error) => {
+    es.onerror = (error) => {
       console.error("SSE Error:", error);
-      if (onError) onError(error);
+      onError?.(error);
+      // ❌ 여기서 토큰 건드리지 않음
     };
 
-    //Cleanup
     return () => {
-      if (eventSourceRef.current) {
-        console.log("SSE 연결 해제");
-        eventSourceRef.current.close();
-        eventSourceRef.current = null;
-      }
+      es.close();
+      eventSourceRef.current = null;
     };
-  }, [id, jwtToken]); // 의존성 배열 관리
-
-  return eventSourceRef.current;
+  }, [id, token]); // 🔥 token 바뀌면 자동 재연결
 };

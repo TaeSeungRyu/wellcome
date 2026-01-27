@@ -7,7 +7,7 @@ import {
   requestUserList,
 } from "./user.repository";
 import { useForm } from "react-hook-form";
-import { userSchema } from "./user.schema";
+import { userSchema, type User } from "./user.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const queryKey = ["requestUserList", "requestUserAlter"] as const;
@@ -151,5 +151,8 @@ export const useUserDetail = (username: string) => {
     gcTime: 0,
     staleTime: 0,
     placeholderData: (prev) => prev,
+    select(data) {
+      return (data?.result?.data as User) ?? null;
+    },
   });
 };
