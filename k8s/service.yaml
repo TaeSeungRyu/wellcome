@@ -1,0 +1,15 @@
+# service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-svc # Service 이름
+spec:
+  type: ClusterIP # 기본값, 클러스터 내부 전용
+
+  # 이 selector로 Pod를 찾음
+  selector:
+    app: hello
+
+  ports:
+    - port: 80 # Service가 노출하는 포트
+      targetPort: 80 # Pod(컨테이너)의 포트

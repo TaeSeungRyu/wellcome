@@ -1,0 +1,7 @@
+apiVersion: v1 # 쿠버네티스 API 버전
+kind: ConfigMap # 설정 데이터를 담는 리소스
+metadata:
+  name: hello-config # Deployment에서 참조할 이름
+data:
+  # 컨테이너에 환경변수로 주입됨
+  APP_NAME: hello-k8s
