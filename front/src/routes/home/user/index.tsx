@@ -36,17 +36,39 @@ function RouteComponent() {
     {
       key: "email",
       header: "이메일",
+      render(value, row) {
+        if (!value) return "-";
+        return value;
+      },
     },
-    { key: "phone", header: "전화번호" },
+    {
+      key: "phone",
+      header: "전화번호",
+      render(value, row) {
+        if (!value) return "-";
+        return value;
+      },
+    },
     {
       key: "createdAt",
       header: "작성일",
+      render(value) {
+        const date = new Date(value as string);
+        return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+      },
     },
   ];
 
+  //상세는 search로 세부 수정은 path로 예정!
   const [data, setData] = useState<any[]>([]);
   const onRowClick = (row: any) => {
     console.log(row);
+    router.navigate({
+      to: "/home/user/info",
+      search: {
+        username: row.username,
+      },
+    });
   };
 
   useEffect(() => {

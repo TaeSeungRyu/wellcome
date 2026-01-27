@@ -39,9 +39,19 @@ const requestUserCheckExist = async (username: string) => {
   return apiClient.request(API.USER_CHECK_EXIST, params);
 };
 
+const requestUserDetail = async (username: string) => {
+  const apiClient = ApiClient.getInstance();
+  const params = {
+    method: "get",
+    query: { username },
+  };
+  return apiClient.request(`${API.USER_DETAIL}`, params);
+};
+
 export {
   requestUserList,
   requestUserAuthList,
   requestUserCreate,
   requestUserCheckExist,
+  requestUserDetail,
 };

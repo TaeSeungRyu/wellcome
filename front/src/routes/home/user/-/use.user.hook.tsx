@@ -3,6 +3,7 @@ import {
   requestUserAuthList,
   requestUserCheckExist,
   requestUserCreate,
+  requestUserDetail,
   requestUserList,
 } from "./user.repository";
 import { useForm } from "react-hook-form";
@@ -137,5 +138,18 @@ export const useUserAlter = () => {
     onError: (error: Error) => {
       throw error;
     },
+  });
+};
+
+export const useUserDetail = (username: string) => {
+  return useQuery({
+    queryKey: ["requestUserDetail", username],
+    queryFn: async () => {
+      return await requestUserDetail(username);
+    },
+    enabled: true,
+    gcTime: 0,
+    staleTime: 0,
+    placeholderData: (prev) => prev,
   });
 };

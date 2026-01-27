@@ -18,6 +18,7 @@ export const API = {
   AUTH_LIST: `${API_BASE_URL}/user/auth-list`,
   USER_CREATE: `${API_BASE_URL}/user/create`,
   USER_CHECK_EXIST: `${API_BASE_URL}/user/check-exist`,
+  USER_DETAIL: `${API_BASE_URL}/user/find`,
 };
 
 export interface MenuItem {
