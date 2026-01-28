@@ -48,10 +48,20 @@ const requestUserDetail = async (username: string) => {
   return apiClient.request(`${API.USER_DETAIL}`, params);
 };
 
+const requestUserDelete = async (username: string) => {
+  const apiClient = ApiClient.getInstance();
+  const params = {
+    method: "delete",
+    body: JSON.stringify({ username }),
+  };
+  return apiClient.request(`${API.USER_DELETE}`, params);
+};
+
 export {
   requestUserList,
   requestUserAuthList,
   requestUserCreate,
   requestUserCheckExist,
   requestUserDetail,
+  requestUserDelete,
 };

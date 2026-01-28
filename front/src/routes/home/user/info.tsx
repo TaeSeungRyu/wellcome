@@ -1,6 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useUserDetail } from "./-/use.user.hook";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { useUserAlter, useUserDetail } from "./-/use.user.hook";
 import { useEffect } from "react";
+import { useModal } from "@/context/modal.context";
+import { useToast } from "@/context/toast.context";
 
 export const Route = createFileRoute("/home/user/info")({
   component: RouteComponent,
@@ -16,12 +18,54 @@ export const Route = createFileRoute("/home/user/info")({
 });
 
 function RouteComponent() {
+  const router = useRouter();
+  const { openModal, closeTopModal: closeConfirmModal } = useModal();
+  const { showToast } = useToast();
+
+  const { mutateAsync, data: deleteResult } = useUserAlter();
   const { username } = Route.useSearch();
   const { data: info } = useUserDetail(username);
 
   useEffect(() => {
     console.log("User Info:", info);
   }, [info]);
+
+  useEffect(() => {
+    if (deleteResult) {
+      closeConfirmModal();
+      showToast(deleteResult?.message || "삭제 하였습니다.", {
+        type: "success",
+      });
+      setTimeout(() => {
+        router.navigate({
+          to: "/home/user",
+        });
+      }, 100);
+    }
+  }, [deleteResult]);
+
+  const runConfirmModal = () => {
+    openModal({
+      content: (
+        <div>
+          <h2>확인</h2>
+          <p>사용자를 삭제 하시겠습니까?</p>
+          <button
+            className="bg-red-500 text-white px-4 py-2 rounded mr-2"
+            onClick={closeConfirmModal}
+          >
+            취소
+          </button>
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+            onClick={() => mutateAsync({ username, isDelete: true })}
+          >
+            삭제
+          </button>
+        </div>
+      ),
+    });
+  };
 
   return (
     <div className="max-w-3xl mx-auto p-6">
@@ -51,7 +95,9 @@ function RouteComponent() {
 
         <div className="px-6 flex gap-2 justify-end py-4 border-t border-gray-200">
           <button className="tailwind-blue-button">정보 수정</button>
-          <button className="tailwind-red-button">사용자 삭제</button>
+          <button className="tailwind-red-button" onClick={runConfirmModal}>
+            사용자 삭제
+          </button>
         </div>
       </div>
     </div>

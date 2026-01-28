@@ -70,14 +70,14 @@ export class UserController {
     return user;
   }
 
-  @Role('super')
+  @Role('super', 'admin')
   @Put('update')
   async update(@Body() updateData: UserDto): Promise<ResponseDto> {
     const user = await this.userService.updateUser(updateData);
     return user;
   }
 
-  @Role('super')
+  @Role('super', 'admin')
   @Delete('delete')
   async delete(@Body('username') username: string): Promise<ResponseDto> {
     const user = await this.userService.deleteUser(username);

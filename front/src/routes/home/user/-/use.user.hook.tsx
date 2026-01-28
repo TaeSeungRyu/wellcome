@@ -3,6 +3,7 @@ import {
   requestUserAuthList,
   requestUserCheckExist,
   requestUserCreate,
+  requestUserDelete,
   requestUserDetail,
   requestUserList,
 } from "./user.repository";
@@ -98,10 +99,10 @@ export const useUserAlter = () => {
       _id,
       isDelete,
     }: {
-      username: string;
-      password: string;
-      name: string;
-      role: string[];
+      username?: string;
+      password?: string;
+      name?: string;
+      role?: string[];
       email?: string;
       phone?: string;
       _id?: string;
@@ -116,14 +117,14 @@ export const useUserAlter = () => {
         phone: phone,
       };
       param.role = role
-        .filter((role: any) => {
+        ?.filter((role: any) => {
           return role.selected;
         })
         .map((role: any) => {
           return role.value;
         });
-      if (isDelete && _id) {
-        //  return await requestUserDelete(_id);
+      if (isDelete && username) {
+        return await requestUserDelete(username);
       } else if (_id) {
         // return await requestUserUpdate(_id, username, password, name, role, email, phone);
       } else {

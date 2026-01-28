@@ -33,8 +33,9 @@ function RouteComponent() {
 
   const [isCheckingExistence, setIsCheckingExistence] = useState(false);
   const { mutateAsync: toAlter, data: alterData } = useUserAlter();
-  const { data: checkExistUserData, refetch: refetchCheckExistUser } =
-    useCheckExistUser(watch("username"));
+  const { refetch: refetchCheckExistUser } = useCheckExistUser(
+    watch("username"),
+  );
   const { showToast } = useToast();
   const fields: (keyof UserForm)[] = [
     "username",
@@ -85,17 +86,18 @@ function RouteComponent() {
     }
   }, [alterData]);
 
-  const askCheckUserExist = () => {
-    if (!watch("username")) {
+  const askCheckUserExist = async () => {
+    if (!username) {
       showToast("아이디를 입력하세요.", { type: "error" });
       return;
     }
-    refetchCheckExistUser();
-  };
 
-  useEffect(() => {
-    if (!checkExistUserData?.data) return;
-    if (checkExistUserData.data.exists) {
+    // refetch의 결과를 직접 받아서 처리
+    const { data: latestData } = await refetchCheckExistUser();
+
+    if (!latestData?.data) return;
+
+    if (latestData.data.exists) {
       showToast("이미 존재하는 아이디입니다.", { type: "error" });
       setError("username", { message: "이미 존재하는 아이디입니다." });
       setIsCheckingExistence(false);
@@ -104,7 +106,7 @@ function RouteComponent() {
       clearErrors("username");
       setIsCheckingExistence(true);
     }
-  }, [checkExistUserData]);
+  };
 
   const username = watch("username");
 
