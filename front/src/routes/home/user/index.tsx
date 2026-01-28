@@ -36,7 +36,7 @@ function RouteComponent() {
     {
       key: "email",
       header: "이메일",
-      render(value, row) {
+      render(value) {
         if (!value) return "-";
         return value;
       },
@@ -44,7 +44,7 @@ function RouteComponent() {
     {
       key: "phone",
       header: "전화번호",
-      render(value, row) {
+      render(value) {
         if (!value) return "-";
         return value;
       },

@@ -21,14 +21,9 @@ function RouteComponent() {
   const router = useRouter();
   const { openModal, closeTopModal: closeConfirmModal } = useModal();
   const { showToast } = useToast();
-
   const { mutateAsync, data: deleteResult } = useUserAlter();
   const { username } = Route.useSearch();
   const { data: info } = useUserDetail(username);
-
-  useEffect(() => {
-    console.log("User Info:", info);
-  }, [info]);
 
   useEffect(() => {
     if (deleteResult) {

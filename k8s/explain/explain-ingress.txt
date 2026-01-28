@@ -1,0 +1,37 @@
+* Ingress의 책임
+ - 외부 HTTP 라우팅
+ - 도메인 / 경로 기반 분기
+ - TLS 종료
+
+Ingress: 📮 “이 주소(서비스 이름)로 배달”
+Service: 🏢 “이 조건(라벨)에 맞는 직원들에게 분배”
+Pod: 👩‍💻 실제 일하는 사람
+
+* 클러스터 이슈어
+- 어떤 CA를 쓸지 (Let’s Encrypt)
+- 어떤 서버를 쓸지 (staging / prod)
+- 도메인 소유권을 어떻게 증명할지 (http-01 / dns-01)
+- ACME 계정 키는 어디에 저장할지
+
+# 지금 구성된 인그레스, 클러스터 이슈어에 대한 요약 설명 
+"이 도메인(hello.example.com)에 대해
+my-letsencrypt-prod 방식으로
+인증서를 하나 만들어서
+hello-tls-cert 라는 Secret에 저장해 줘"
+
+
+1. Ingress 생성
+2. cert-manager가 Ingress annotation 감지
+3. ClusterIssuer 설정 로드
+4. Let’s Encrypt에 인증서 요청
+5. HTTP-01 챌린지 수행 (Ingress Controller 사용)
+6. 인증서 발급 성공
+7. tls Secret 생성 (hello-tls-cert)
+8. nginx ingress가 그 Secret을 사용해 HTTPS 시작
+
+
+회사 건물 전체 = Kubernetes Cluster
+ ├─ 관리실 (Control Plane)
+ ├─ 사무실들 (Worker Nodes)
+ │    └─ 책상 (Pods)
+ │         └─ 직원 (Containers)

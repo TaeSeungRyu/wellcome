@@ -1,0 +1,8 @@
+# spec 에서 알려주는 정보
+#Pod 몇 개: replicas
+#어떤 이미지? image
+#어떤 포트? ports
+#누구를 연결할지? selector
+#어떻게 배포? strategy
+#어디서 접근(외부, 내부)? type 
+#spec은 ‘원하는 상태’를 선언하는 곳이다

@@ -91,12 +91,8 @@ function RouteComponent() {
       showToast("아이디를 입력하세요.", { type: "error" });
       return;
     }
-
-    // refetch의 결과를 직접 받아서 처리
     const { data: latestData } = await refetchCheckExistUser();
-
     if (!latestData?.data) return;
-
     if (latestData.data.exists) {
       showToast("이미 존재하는 아이디입니다.", { type: "error" });
       setError("username", { message: "이미 존재하는 아이디입니다." });

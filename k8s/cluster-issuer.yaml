@@ -1,0 +1,22 @@
+# 90일마다 자동 갱신
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: my-letsencrypt-prod
+spec:
+  acme: # Let’s Encrypt가 사용하는 표준 인증서 발급 프로토콜
+    email: you@example.com # 이메일 주소(갱신 알림용)
+    server: https://acme-v02.api.letsencrypt.org/directory # Let's Encrypt 프로덕션 서버
+    privateKeySecretRef:
+      name: letsencrypt-prod-key # 비밀 키를 저장할 시크릿 이름
+    solvers: #도메인 소유권 확인 방법
+      - http01: # HTTP-01 챌린지 사용해서 도메인 소유권 확인
+          ingress: # Ingress 만들 때 nginx Ingress Controller가 처리하게 해라
+            class: nginx
+      - dns01: # DNS-01 챌린지 사용해서 도메인 소유권 확인
+          # 자격 증명이 필요한 DNS 제공자 사용 시
+          cloudflare: # Cloudflare DNS를 사용해서 도메인 소유권 확인
+            email: you@example.com # Cloudflare 계정 이메일
+            apiTokenSecretRef:
+              name: cloudflare-api-token-secret # Cloudflare API 토큰이 저장된 시크릿 이름
+              key: api-token # 시크릿에서 API 토큰이 저장된 키 이름

@@ -1,0 +1,14 @@
+* Service가 Deployment를 직접 보면 안 되는 이유
+ - Service의 역할은 “Pod 네트워크 추상화”이지 “Deployment 관리”가 아님
+
+* 실제 계층
+Deployment
+   ↓ (생성/유지)
+ Pod (label: app=hello)
+   ↑ (selector)
+Service
+
+
+
+Deployment는 “Pod를 관리”하고 Service는 “Pod를 노출”한다
+둘의 공통 언어가 “label” 이다

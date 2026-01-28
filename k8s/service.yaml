@@ -6,7 +6,7 @@ metadata:
   labels: # 메타데이터 라벨
     app: service-hello # 라벨 키-값 쌍
 spec:
-  type: ClusterIP # 기본값, 클러스터 내부 전용
+  type: ClusterIP # 기본값, 클러스터 내부 전용(외부 노출 비 허용)
 
   # 이 selector로 Pod를 찾음
   selector:
@@ -15,3 +15,4 @@ spec:
   ports:
     - port: 80 # Service가 노출하는 포트
       targetPort: 80 # Pod(컨테이너)의 포트
+

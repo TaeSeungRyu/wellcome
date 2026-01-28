@@ -1,0 +1,39 @@
+# kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
+# kubectl get pods -n cert-manager
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hello-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: "my-letsencrypt-prod" # ClusterIssuer 이름
+    nginx.ingress.kubernetes.io/ssl-redirect: "true" # HTTP -> HTTPS 리다이렉트
+    nginx.ingress.kubernetes.io/proxy-body-size: "8m" # 업로드 파일 크기 제한
+spec:
+  ingressClassName: nginx # nginx Ingress Controller 사용
+  tls:
+    - hosts:
+        - hello.local
+        - api.hello.local
+      secretName: hello-tls-cert # 발급된 인증서가 저장될 시크릿 이름
+  rules:
+    - host: hello.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hello-svc # Service 이름(인그레스는 서비스의 이름을 알아야 함)
+                port:
+                  number: 80 # Service 포트 번호
+    - host: api.hello.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hello-svc
+                port:
+                  number: 80

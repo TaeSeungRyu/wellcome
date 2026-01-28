@@ -1,0 +1,36 @@
+회사 건물 전체 = Kubernetes Cluster
+ ├─ 관리실 (Control Plane)
+ │    ├─ 인사팀 (Scheduler)
+ │    ├─ 시설팀 (Controller Manager)
+ │    ├─ 안내 데스크 (API Server)
+ │    └─ 문서 보관실 (etcd)
+ │
+ ├─ 사무실들 (Worker Nodes)
+ │    ├─ 사무실 A (Node 1)
+ │    │    ├─ 책상 묶음 (Pods)
+ │    │    │    └─ 직원들 (Containers)
+ │    │    │         └─ 실제 프로그램 (App, Nginx, API 등)
+ │    │    │
+ │    │    └─ 부서장 (kubelet)
+ │    │
+ │    ├─ 사무실 B (Node 2)
+ │    │    └─ 책상 / 직원 구조 동일
+ │    │
+ │    └─ 공용 안내 시스템 (Service)
+ │
+ └─ 건물 안내도 & 출입 규칙 (Ingress)
+
+
+# [OS]
+#   ↓
+# [Kubernetes Cluster]
+#   ↓
+# [Ingress Controller 설치]  ← 제일 먼저
+#   ↓
+# [cert-manager 설치]
+#   ↓
+# [ClusterIssuer 생성]
+#   ↓
+# [Deployment / Service]
+#   ↓
+# [Ingress]
