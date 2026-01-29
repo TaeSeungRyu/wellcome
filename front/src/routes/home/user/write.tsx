@@ -13,6 +13,7 @@ import InputPassword from "@/components/form/input.password";
 import { formatPhoneNumber } from "@/services/util";
 import { useModal } from "@/context/modal.context";
 import { useToast } from "@/context/toast.context";
+import { UserFormView } from "./-/form.view";
 
 export const Route = createFileRoute("/home/user/write")({
   component: RouteComponent,
@@ -21,16 +22,8 @@ export const Route = createFileRoute("/home/user/write")({
 function RouteComponent() {
   const { openModal, closeTopModal: closeConfirmModal } = useModal();
   const { data: authList } = useUserAuthListHook();
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-    setError,
-    clearErrors,
-  } = useUserForm();
-
+  const form = useUserForm();
+  const { watch, setError, clearErrors, setValue } = form;
   const [isCheckingExistence, setIsCheckingExistence] = useState(false);
   const { mutateAsync: toAlter, data: alterData } = useUserAlter();
   const { refetch: refetchCheckExistUser } = useCheckExistUser(
@@ -66,11 +59,6 @@ function RouteComponent() {
         </div>
       ),
     });
-  };
-
-  const phoneValueHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatPhoneNumber(e.target.value);
-    setValue("phone", formatted);
   };
 
   useEffect(() => {
@@ -111,80 +99,22 @@ function RouteComponent() {
   }, [username]);
 
   return (
-    <div className="py-8">
-      <form
-        className="p-4 max-w-2xl mx-auto bg-white shadow-md rounded-xl"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <div className="mb-4 text-lg font-semibold">사용자 등록</div>
-        <InputText
-          name={fields[0]}
-          label="아이디"
-          placeholder="아이디를 입력하세요"
-          register={register}
-          setValue={setValue}
-          errors={errors}
-        />
-        <button
-          className="tailwind-blue-button"
-          type="button"
-          onClick={askCheckUserExist}
-        >
-          중복 확인
-        </button>
-        <InputPassword
-          name={fields[1]}
-          label="비밀번호"
-          placeholder="비밀번호를 입력하세요"
-          register={register}
-          setValue={setValue}
-          errors={errors}
-        />
-        <InputText
-          name={fields[2]}
-          label="이름"
-          placeholder="이름을 입력하세요"
-          register={register}
-          setValue={setValue}
-          errors={errors}
-        />
-        <InputText
-          name={fields[3]}
-          label="이메일"
-          placeholder="이메일을 입력하세요"
-          register={register}
-          setValue={setValue}
-          errors={errors}
-        />
-        <InputText
-          name={fields[4]}
-          label="전화번호"
-          placeholder="전화번호를 입력하세요"
-          register={register}
-          setValue={setValue}
-          errors={errors}
-          maxLength={13}
-          option={{
-            onChange: (e) => phoneValueHandler(e),
-          }}
-        />
-        <InputCheckbox
-          name={fields[5]}
-          label="역할 선택"
-          register={register}
-          setValue={setValue}
-          watch={watch}
-          errors={errors}
-          option={{ direction: "row" }}
-        ></InputCheckbox>
-        <button
-          className="tailwind-blue-button"
-          type="submit"
-          disabled={!isCheckingExistence}
-        >
-          등록
-        </button>
-      </form>
+    <div className="py-2">
+      <UserFormView
+        form={form}
+        onSubmit={onSubmit}
+        submitLabel="등록"
+        isCheckingExistence={isCheckingExistence}
+        extraButtons={
+          <button
+            type="button"
+            onClick={askCheckUserExist}
+            className="tailwind-blue-button mt-2"
+          >
+            중복 확인
+          </button>
+        }
+      />
     </div>
   );
 }
