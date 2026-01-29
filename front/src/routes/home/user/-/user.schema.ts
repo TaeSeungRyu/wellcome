@@ -34,4 +34,8 @@ export const userSchema = z.object({
   phone: z.string().optional(),
 });
 
+export const updatedUserSchema = userSchema.extend({
+  password: z.string().optional(),
+});
+
 export type UserForm = z.infer<typeof userSchema>;

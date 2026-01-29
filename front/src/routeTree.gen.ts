@@ -18,6 +18,7 @@ import { Route as HomeDashboardRouteRouteImport } from './routes/home/dashboard/
 import { Route as HomeUserIndexRouteImport } from './routes/home/user/index'
 import { Route as HomeUserWriteRouteImport } from './routes/home/user/write'
 import { Route as HomeUserInfoRouteImport } from './routes/home/user/info'
+import { Route as HomeUserAlterUsernameRouteImport } from './routes/home/user/alter.$username'
 
 const LoginRouteRoute = LoginRouteRouteImport.update({
   id: '/login',
@@ -64,6 +65,11 @@ const HomeUserInfoRoute = HomeUserInfoRouteImport.update({
   path: '/user/info',
   getParentRoute: () => HomeRouteRoute,
 } as any)
+const HomeUserAlterUsernameRoute = HomeUserAlterUsernameRouteImport.update({
+  id: '/user/alter/$username',
+  path: '/user/alter/$username',
+  getParentRoute: () => HomeRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/home': typeof HomeRouteRouteWithChildren
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/home/user/info': typeof HomeUserInfoRoute
   '/home/user/write': typeof HomeUserWriteRoute
   '/home/user': typeof HomeUserIndexRoute
+  '/home/user/alter/$username': typeof HomeUserAlterUsernameRoute
 }
 export interface FileRoutesByTo {
   '/home': typeof HomeRouteRouteWithChildren
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/home/user/info': typeof HomeUserInfoRoute
   '/home/user/write': typeof HomeUserWriteRoute
   '/home/user': typeof HomeUserIndexRoute
+  '/home/user/alter/$username': typeof HomeUserAlterUsernameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/home/user/info': typeof HomeUserInfoRoute
   '/home/user/write': typeof HomeUserWriteRoute
   '/home/user/': typeof HomeUserIndexRoute
+  '/home/user/alter/$username': typeof HomeUserAlterUsernameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -108,6 +117,7 @@ export interface FileRouteTypes {
     | '/home/user/info'
     | '/home/user/write'
     | '/home/user'
+    | '/home/user/alter/$username'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/home'
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/home/user/info'
     | '/home/user/write'
     | '/home/user'
+    | '/home/user/alter/$username'
   id:
     | '__root__'
     | '/'
@@ -129,6 +140,7 @@ export interface FileRouteTypes {
     | '/home/user/info'
     | '/home/user/write'
     | '/home/user/'
+    | '/home/user/alter/$username'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -202,6 +214,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeUserInfoRouteImport
       parentRoute: typeof HomeRouteRoute
     }
+    '/home/user/alter/$username': {
+      id: '/home/user/alter/$username'
+      path: '/user/alter/$username'
+      fullPath: '/home/user/alter/$username'
+      preLoaderRoute: typeof HomeUserAlterUsernameRouteImport
+      parentRoute: typeof HomeRouteRoute
+    }
   }
 }
 
@@ -210,6 +229,7 @@ interface HomeRouteRouteChildren {
   HomeUserInfoRoute: typeof HomeUserInfoRoute
   HomeUserWriteRoute: typeof HomeUserWriteRoute
   HomeUserIndexRoute: typeof HomeUserIndexRoute
+  HomeUserAlterUsernameRoute: typeof HomeUserAlterUsernameRoute
 }
 
 const HomeRouteRouteChildren: HomeRouteRouteChildren = {
@@ -217,6 +237,7 @@ const HomeRouteRouteChildren: HomeRouteRouteChildren = {
   HomeUserInfoRoute: HomeUserInfoRoute,
   HomeUserWriteRoute: HomeUserWriteRoute,
   HomeUserIndexRoute: HomeUserIndexRoute,
+  HomeUserAlterUsernameRoute: HomeUserAlterUsernameRoute,
 }
 
 const HomeRouteRouteWithChildren = HomeRouteRoute._addFileChildren(

@@ -8,8 +8,9 @@ import {
   requestUserList,
 } from "./user.repository";
 import { useForm } from "react-hook-form";
-import { userSchema, type User } from "./user.schema";
+import { updatedUserSchema, userSchema, type User } from "./user.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 
 const queryKey = ["requestUserList", "requestUserAlter"] as const;
 //LIST 조회용 HOOK
@@ -51,22 +52,45 @@ export const useUserAuthListHook = () => {
     },
   });
 };
+export const useUserForm = (username?: string) => {
+  const { data: info } = useUserDetail(username || "");
 
-export const useUserForm = (_id?: string) => {
+  // 1. 상황에 맞는 스키마 선택
+  const currentSchema = username ? updatedUserSchema : userSchema;
+  // 2. useForm은 항상 최상위에서 한 번만 호출
   const form = useForm({
-    resolver: zodResolver(userSchema),
+    // 여기서 Zod 스키마로부터 추론된 타입을 명시
+    resolver: zodResolver(currentSchema),
     mode: "all",
     defaultValues: {
       username: "",
       password: "",
       name: "",
-      accessDate: "",
       role: [],
       email: "",
       phone: "",
     },
   });
-  return { ...form };
+  const { reset } = form;
+  // 3. 데이터 로드 시 초기화 로직
+  useEffect(() => {
+    if (username && info) {
+      reset({
+        username: info.username,
+        password: "", // 수정 시 비밀번호는 비워두는 경우가 많음
+        name: info.name,
+        role:
+          info.role?.map((r) => ({
+            value: r,
+            label: r,
+            selected: true,
+          })) || [],
+        email: info.email || "",
+        phone: info.phone || "",
+      });
+    }
+  }, [info, reset, username]);
+  return form;
 };
 
 export const useCheckExistUser = (username: string) => {

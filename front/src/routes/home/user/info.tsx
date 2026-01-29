@@ -62,6 +62,15 @@ function RouteComponent() {
     });
   };
 
+  const moveAlterPage = () => {
+    router.navigate({
+      to: "/home/user/alter/$username",
+      params: {
+        username,
+      },
+    });
+  };
+
   return (
     <div className="max-w-3xl mx-auto p-6">
       <div className="bg-white rounded-2xl shadow-md border border-gray-200">
@@ -89,7 +98,9 @@ function RouteComponent() {
         </div>
 
         <div className="px-6 flex gap-2 justify-end py-4 border-t border-gray-200">
-          <button className="tailwind-blue-button">정보 수정</button>
+          <button className="tailwind-blue-button" onClick={moveAlterPage}>
+            정보 수정
+          </button>
           <button className="tailwind-red-button" onClick={runConfirmModal}>
             사용자 삭제
           </button>
