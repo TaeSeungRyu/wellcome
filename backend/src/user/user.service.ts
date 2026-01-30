@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './user.schema';
 import { ResponseDto } from 'src/common/common.dto';
-import { UserDto } from './user.dto';
+import { UpdateUserDto, UserDto } from './user.dto';
 import { hashPassword } from 'src/common/util';
 
 @Injectable()
@@ -157,7 +157,7 @@ export class UserService {
     }
   }
 
-  async updateUser(updateData: UserDto): Promise<ResponseDto> {
+  async updateUser(updateData: UpdateUserDto): Promise<ResponseDto> {
     try {
       const { username, password } = updateData;
 

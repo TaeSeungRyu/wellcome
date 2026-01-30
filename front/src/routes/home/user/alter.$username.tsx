@@ -1,13 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useUserAuthListHook, useUserForm } from "./-/use.user.hook";
-import InputCheckbox from "@/components/form/input.check";
-import InputText from "@/components/form/input.text";
-import InputPassword from "@/components/form/input.password";
+import {
+  useUserAlter,
+  useUserAuthListHook,
+  useUserForm,
+} from "./-/use.user.hook";
+
 import { useToast } from "@/context/toast.context";
 import type { UserForm } from "./-/user.schema";
-import { formatPhoneNumber } from "@/services/util";
 import { UserFormView } from "./-/form.view";
-import { useEffect, useMemo } from "react";
+import { useEffect, type BaseSyntheticEvent } from "react";
+import { useModal } from "@/context/modal.context";
 
 export const Route = createFileRoute("/home/user/alter/$username")({
   component: RouteComponent,
@@ -15,10 +17,11 @@ export const Route = createFileRoute("/home/user/alter/$username")({
 
 function RouteComponent() {
   const username = Route.useParams().username;
-  const form = useUserForm(username);
-  const { data: authList } = useUserAuthListHook();
+  const { form, refetch } = useUserForm(username);
+  const { openModal, closeTopModal: closeConfirmModal } = useModal();
 
-  const { setValue, getValues } = form;
+  const { data: authList } = useUserAuthListHook();
+  const { mutate: userAlterMutate, data: alterData } = useUserAlter();
 
   const { showToast } = useToast();
   const fields: (keyof UserForm)[] = [
@@ -30,20 +33,43 @@ function RouteComponent() {
     "role",
   ];
 
-  useEffect(() => {
-    const currentRoles = getValues("role"); // 현재 폼의 role 값
-    // 권한 목록과 유저의 권한 정보가 모두 존재할 때만 실행
-    if (authList?.length > 0 && currentRoles?.length > 0) {
-      const combinedRoles = authList.map((auth: any) => ({
-        ...auth,
-        selected: currentRoles.some((r: any) => r.value === auth.value),
-      }));
-      // 주의: 단순 비교를 통해 값이 같으면 업데이트하지 않음 (무한루프 방지)
-      setValue("role", combinedRoles);
-    }
-  }, [authList, setValue]); // authList가 오면 딱 한 번 세팅
+  const onSubmit = (
+    data: any,
+    e: BaseSyntheticEvent<object, any, any> | undefined,
+  ) => {
+    data.isUpdate = true;
+    e?.preventDefault();
+    e?.stopPropagation();
+    // openModal({
+    //   content: (
+    //     <div>
+    //       <h2>확인</h2>
+    //       <p>사용자를 수정 하시겠습니까?</p>
+    //       <button
+    //         className="bg-red-500 text-white px-4 py-2 rounded mr-2"
+    //         onClick={closeConfirmModal}
+    //       >
+    //         취소
+    //       </button>
+    //       <button
+    //         className="bg-blue-500 text-white px-4 py-2 rounded"
+    //         onClick={() => userAlterMutate(data)}
+    //       >
+    //         수정
+    //       </button>
+    //     </div>
+    //   ),
+    // });
+  };
 
-  const onSubmit = (data: any) => {};
+  useEffect(() => {
+    if (alterData?.result?.success) {
+      showToast(alterData?.message || "완료 하였습니다.", {
+        type: "success",
+      });
+      closeConfirmModal();
+    }
+  }, [alterData, showToast, closeConfirmModal]);
 
   return (
     <div className="py-2">

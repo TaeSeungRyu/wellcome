@@ -2,15 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   useCheckExistUser,
   useUserAlter,
-  useUserAuthListHook,
   useUserForm,
 } from "./-/use.user.hook";
-import InputText from "@/components/form/input.text";
-import type { UserForm } from "./-/user.schema";
-import InputCheckbox from "@/components/form/input.check";
 import { useEffect, useState } from "react";
-import InputPassword from "@/components/form/input.password";
-import { formatPhoneNumber } from "@/services/util";
 import { useModal } from "@/context/modal.context";
 import { useToast } from "@/context/toast.context";
 import { UserFormView } from "./-/form.view";
@@ -21,23 +15,15 @@ export const Route = createFileRoute("/home/user/write")({
 
 function RouteComponent() {
   const { openModal, closeTopModal: closeConfirmModal } = useModal();
-  const { data: authList } = useUserAuthListHook();
-  const form = useUserForm();
-  const { watch, setError, clearErrors, setValue } = form;
+  const { form } = useUserForm();
+  const { watch, setError, clearErrors } = form;
   const [isCheckingExistence, setIsCheckingExistence] = useState(false);
   const { mutateAsync: toAlter, data: alterData } = useUserAlter();
   const { refetch: refetchCheckExistUser } = useCheckExistUser(
     watch("username"),
   );
   const { showToast } = useToast();
-  const fields: (keyof UserForm)[] = [
-    "username",
-    "password",
-    "name",
-    "email",
-    "phone",
-    "role",
-  ];
+
   const onSubmit = (data: any) => {
     openModal({
       content: (
@@ -60,11 +46,6 @@ function RouteComponent() {
       ),
     });
   };
-
-  useEffect(() => {
-    setValue("role", authList);
-  }, [authList, setValue]);
-
   useEffect(() => {
     if (alterData) {
       closeConfirmModal();
@@ -75,6 +56,7 @@ function RouteComponent() {
   }, [alterData]);
 
   const askCheckUserExist = async () => {
+    console.log("check user exist called");
     if (!username) {
       showToast("아이디를 입력하세요.", { type: "error" });
       return;
@@ -108,7 +90,7 @@ function RouteComponent() {
         extraButtons={
           <button
             type="button"
-            onClick={askCheckUserExist}
+            onClick={() => askCheckUserExist()}
             className="tailwind-blue-button mt-2"
           >
             중복 확인

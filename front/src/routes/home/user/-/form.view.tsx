@@ -6,10 +6,14 @@ import InputCheckbox from "@/components/form/input.check";
 import { formatPhoneNumber } from "@/services/util";
 import type { UserForm } from "./user.schema";
 import type { UseFormReturn } from "react-hook-form";
+import type { BaseSyntheticEvent } from "react";
 
 interface UserFormViewProps {
   form: UseFormReturn<UserForm | any>; // 타입이 섞여있다면 any 혹은 공통 타입 사용
-  onSubmit: (data: any) => void;
+  onSubmit: (
+    data: any,
+    e: BaseSyntheticEvent<object, any, any> | undefined,
+  ) => void;
   submitLabel: string;
   isEdit?: boolean;
   extraButtons?: React.ReactNode; // 중복 확인 버튼 등을 위한 자리
@@ -47,7 +51,7 @@ export const UserFormView = ({
   return (
     <form
       className="p-4 max-w-2xl mx-auto bg-white shadow-md rounded-xl"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit((data, e) => onSubmit(data, e))}
     >
       <div className="mb-2 text-lg font-semibold">
         사용자 {isEdit ? "수정" : "등록"}

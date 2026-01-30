@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ResponseDto } from 'src/common/common.dto';
 import { UserService } from './user.service';
-import { UserDto } from './user.dto';
+import { UpdateUserDto, UserDto } from './user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Role } from 'src/auth/role.decorator';
 
@@ -72,7 +72,7 @@ export class UserController {
 
   @Role('super', 'admin')
   @Put('update')
-  async update(@Body() updateData: UserDto): Promise<ResponseDto> {
+  async update(@Body() updateData: UpdateUserDto): Promise<ResponseDto> {
     const user = await this.userService.updateUser(updateData);
     return user;
   }

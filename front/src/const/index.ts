@@ -20,6 +20,7 @@ export const API = {
   USER_CHECK_EXIST: `${API_BASE_URL}/user/check-exist`,
   USER_DETAIL: `${API_BASE_URL}/user/find`,
   USER_DELETE: `${API_BASE_URL}/user/delete`,
+  USER_UPDATE: `${API_BASE_URL}/user/update`,
 };
 
 export interface MenuItem {

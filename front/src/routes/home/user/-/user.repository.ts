@@ -57,6 +57,14 @@ const requestUserDelete = async (username: string) => {
   return apiClient.request(`${API.USER_DELETE}`, params);
 };
 
+const requestUserUpdate = async (data: any) => {
+  const apiClient = ApiClient.getInstance();
+  const params = {
+    method: "put",
+    body: JSON.stringify(data),
+  };
+  return apiClient.request(API.USER_UPDATE, params);
+};
 export {
   requestUserList,
   requestUserAuthList,
@@ -64,4 +72,5 @@ export {
   requestUserCheckExist,
   requestUserDetail,
   requestUserDelete,
+  requestUserUpdate,
 };

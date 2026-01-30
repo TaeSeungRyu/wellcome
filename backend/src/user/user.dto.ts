@@ -1,3 +1,4 @@
+import { PartialType } from '@nestjs/swagger';
 import {
   IsString,
   IsEmail,
@@ -34,4 +35,10 @@ export class UserDto {
   @IsOptional()
   @IsString()
   phone?: string;
+}
+
+export class UpdateUserDto extends PartialType(UserDto) {
+  @IsOptional()
+  @IsString()
+  password?: string;
 }
