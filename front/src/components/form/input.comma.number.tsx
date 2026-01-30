@@ -11,8 +11,9 @@ export default function InputCommaNumber({
   option,
   minLength,
   maxLength,
+  watch,
 }: InputFieldProps) {
-  const [innerValue, setInnerValue] = useState("");
+  const value = watch?.(name) || "";
 
   // 콤마 추가 함수
   const formatNumber = (value: string) => {
@@ -24,12 +25,10 @@ export default function InputCommaNumber({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
     // 화면에 보여줄 값 (콤마 추가)
-    const formatted = formatNumber(raw);
-    setInnerValue(formatted);
+    const formatted = formatNumber(raw.replace(/[^\d]/g, ""));
     // RHF 의 실제 값 → 콤마 제거한 숫자
     if (setValue) {
-      const numberValue = raw.replace(/[^\d]/g, "");
-      setValue(name, numberValue === "" ? "" : Number(numberValue));
+      setValue(name, formatted);
     }
     register(name)
       .onChange(e)
@@ -39,7 +38,6 @@ export default function InputCommaNumber({
   };
 
   const removeValue = () => {
-    setInnerValue("");
     if (setValue) setValue(name, "");
   };
 
@@ -58,7 +56,7 @@ export default function InputCommaNumber({
       )}
       <input
         {...register(name)}
-        value={innerValue}
+        value={value}
         placeholder={placeholder}
         onChange={handleChange}
         inputMode="numeric"
@@ -69,7 +67,7 @@ export default function InputCommaNumber({
         disabled={option?.disabled}
       />
       {/* 전체 삭제 버튼 */}
-      {setValue && innerValue && innerValue !== "" && !option?.offRightIcon && (
+      {setValue && value && value !== "" && !option?.offRightIcon && (
         <button
           type="button"
           onClick={removeValue}

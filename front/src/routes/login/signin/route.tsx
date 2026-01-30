@@ -26,6 +26,7 @@ function RouteComponent() {
     setValue,
     getValues,
     handleSubmit,
+    watch,
   } = useForm({
     resolver: zodResolver(signinSchema),
     mode: "all",
@@ -71,6 +72,7 @@ function RouteComponent() {
           setValue={setValue}
           errors={errors}
           option={option}
+          watch={watch}
         />
         <InputPassword
           name="myPassword"
@@ -79,6 +81,7 @@ function RouteComponent() {
           register={register}
           setValue={setValue}
           errors={errors}
+          watch={watch}
         />
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed disabled:shadow-none disabled:active:scale-100"

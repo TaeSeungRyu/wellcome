@@ -40,26 +40,26 @@ function RouteComponent() {
     data.isUpdate = true;
     e?.preventDefault();
     e?.stopPropagation();
-    // openModal({
-    //   content: (
-    //     <div>
-    //       <h2>확인</h2>
-    //       <p>사용자를 수정 하시겠습니까?</p>
-    //       <button
-    //         className="bg-red-500 text-white px-4 py-2 rounded mr-2"
-    //         onClick={closeConfirmModal}
-    //       >
-    //         취소
-    //       </button>
-    //       <button
-    //         className="bg-blue-500 text-white px-4 py-2 rounded"
-    //         onClick={() => userAlterMutate(data)}
-    //       >
-    //         수정
-    //       </button>
-    //     </div>
-    //   ),
-    // });
+    openModal({
+      content: (
+        <div>
+          <h2>확인</h2>
+          <p>사용자를 수정 하시겠습니까?</p>
+          <button
+            className="bg-red-500 text-white px-4 py-2 rounded mr-2"
+            onClick={closeConfirmModal}
+          >
+            취소
+          </button>
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+            onClick={() => userAlterMutate(data)}
+          >
+            수정
+          </button>
+        </div>
+      ),
+    });
   };
 
   useEffect(() => {

@@ -26,6 +26,7 @@ export function BoardFormComponent({
     formState: { errors },
     isFetching,
     isError,
+    watch,
   } = useBoardForm(_id);
 
   //MUTATION 영역
@@ -113,6 +114,7 @@ export function BoardFormComponent({
             register={register}
             setValue={setValue}
             errors={errors}
+            watch={watch}
           />
           <InputText
             name={fields[1]}
@@ -121,6 +123,7 @@ export function BoardFormComponent({
             register={register}
             setValue={setValue}
             errors={errors}
+            watch={watch}
           />
           {isError && <p className="text-red-500">데이터 로드 중 에러 발생</p>}
           {!isError && (

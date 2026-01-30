@@ -11,12 +11,12 @@ export default function InputCommaNumber({
   option,
   minLength,
   maxLength,
+  watch,
 }: InputFieldProps) {
-  const [innerValue, setInnerValue] = useState("");
+  const value = watch?.(name) || "";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    setInnerValue(raw);
     if (setValue) {
       setValue(name, raw);
     }
@@ -28,7 +28,6 @@ export default function InputCommaNumber({
   };
 
   const removeValue = () => {
-    setInnerValue("");
     if (setValue) setValue(name, "");
   };
 
@@ -47,7 +46,7 @@ export default function InputCommaNumber({
       )}
       <input
         {...register(name)}
-        value={innerValue}
+        value={value}
         placeholder={placeholder}
         onChange={handleChange}
         inputMode="numeric"
@@ -58,7 +57,7 @@ export default function InputCommaNumber({
         disabled={option?.disabled}
       />
       {/* 전체 삭제 버튼 */}
-      {setValue && innerValue && innerValue !== "" && !option?.offRightIcon && (
+      {setValue && value && value !== "" && !option?.offRightIcon && (
         <button
           type="button"
           onClick={removeValue}

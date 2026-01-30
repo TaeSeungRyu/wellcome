@@ -11,13 +11,13 @@ export default function InputText({
   option,
   maxLength,
   minLength,
+  watch,
 }: InputFieldProps) {
-  const [innerValue, setInnerValue] = useState("");
+  const value = watch?.(name) || "";
   const hasError = !!errors?.[name];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    setInnerValue(raw);
 
     // RHF 연동
     if (setValue) {
@@ -31,7 +31,6 @@ export default function InputText({
   };
 
   const removeValue = () => {
-    setInnerValue("");
     if (setValue) setValue(name, "");
   };
 
@@ -54,7 +53,7 @@ export default function InputText({
         <input
           {...register(name)}
           name={name}
-          value={innerValue}
+          value={value}
           placeholder={placeholder}
           onChange={handleChange}
           inputMode="numeric"
@@ -78,7 +77,7 @@ export default function InputText({
         />
 
         {/* 삭제 버튼: 디자인 및 인터랙션 개선 */}
-        {setValue && innerValue && !option?.offRightIcon && (
+        {setValue && value && !option?.offRightIcon && (
           <button
             type="button"
             onClick={removeValue}

@@ -28,6 +28,7 @@ export function CommentFormComponent({
     handleSubmit,
     setValue,
     formState: { errors },
+    watch,
   } = useBoardCommentForm(boardId);
 
   const toAlter = async (data: CommentForm) => {
@@ -108,6 +109,7 @@ export function CommentFormComponent({
           register={register}
           setValue={setValue}
           errors={errors}
+          watch={watch}
         />
         <button
           type="submit"

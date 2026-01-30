@@ -11,14 +11,14 @@ export default function InputPassword({
   option,
   minLength,
   maxLength,
+  watch,
 }: InputFieldProps) {
-  const [innerValue, setInnerValue] = useState("");
+  const value = watch?.(name) || "";
   const [inputType, setInputType] = useState<"password" | "text">("password");
   const hasError = !!errors?.[name];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    setInnerValue(raw);
     if (setValue) setValue(name, raw);
     register(name)
       .onChange(e)
@@ -28,7 +28,6 @@ export default function InputPassword({
   };
 
   const removeValue = () => {
-    setInnerValue("");
     if (setValue) setValue(name, "");
   };
 
@@ -55,7 +54,7 @@ export default function InputPassword({
         <input
           {...register(name)}
           name={name}
-          value={innerValue}
+          value={value}
           placeholder={placeholder}
           onChange={handleChange}
           disabled={option?.disabled}
@@ -80,7 +79,7 @@ export default function InputPassword({
         {/* 우측 버튼 그룹 (삭제 + 토글) */}
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1">
           {/* 전체 삭제 버튼 */}
-          {setValue && innerValue && !option?.offRightIcon && (
+          {setValue && value && !option?.offRightIcon && (
             <button
               type="button"
               onClick={removeValue}

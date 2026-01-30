@@ -66,6 +66,7 @@ export const UserFormView = ({
             setValue={setValue}
             errors={errors}
             option={{ disabled: isEdit }}
+            watch={watch}
           />
           {extraButtons}
         </div>
@@ -76,6 +77,7 @@ export const UserFormView = ({
           register={register}
           setValue={setValue}
           errors={errors}
+          watch={watch}
         />
         <InputText
           name={fields[2]}
@@ -83,6 +85,7 @@ export const UserFormView = ({
           register={register}
           setValue={setValue}
           errors={errors}
+          watch={watch}
         />
         <InputText
           name={fields[3]}
@@ -90,6 +93,7 @@ export const UserFormView = ({
           register={register}
           setValue={setValue}
           errors={errors}
+          watch={watch}
         />
 
         <InputText
@@ -100,6 +104,7 @@ export const UserFormView = ({
           errors={errors}
           maxLength={13}
           option={{ onChange: phoneValueHandler }}
+          watch={watch}
         />
 
         <InputCheckbox
