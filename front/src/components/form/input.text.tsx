@@ -1,4 +1,3 @@
-import { useState } from "react";
 import type { InputFieldProps } from ".";
 
 export default function InputText({

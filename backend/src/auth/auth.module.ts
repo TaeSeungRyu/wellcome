@@ -8,6 +8,8 @@ import { LoginSchema, LoginUser } from 'src/login/login.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from 'src/redis/redis.module';
+import { Auth, AuthSchema } from './auth.schema';
+import { AuthController } from './auth.controller';
 
 @Module({
   imports: [
@@ -23,11 +25,15 @@ import { RedisModule } from 'src/redis/redis.module';
         },
       }),
     }),
-    MongooseModule.forFeature([{ name: LoginUser.name, schema: LoginSchema }]),
+    MongooseModule.forFeature([
+      { name: LoginUser.name, schema: LoginSchema },
+      { name: Auth.name, schema: AuthSchema },
+    ]),
     RedisModule,
   ],
   providers: [JwtStrategy, AuthService],
   exports: [JwtModule, AuthService],
+  controllers: [AuthController],
 })
 export class AuthModule {
   constructor() {

@@ -13,6 +13,7 @@ import { Model } from 'mongoose';
 import { comparePassword } from 'src/common/util';
 import Redis from 'ioredis';
 import { LoginDto } from 'src/login/login.dto';
+import { Auth, AuthDocument } from './auth.schema';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +22,9 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectModel(LoginUser.name)
     private loginModel: Model<LoginDocument>,
+
+    @InjectModel(Auth.name)
+    private authModel: Model<AuthDocument>,
   ) {}
 
   async findByUsername(
@@ -152,5 +156,29 @@ export class AuthService {
         ),
       );
     });
+  }
+
+  async findAuthAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<ResponseDto> {
+    const skip = (page - 1) * limit;
+    const auths = await this.authModel.find().skip(skip).limit(limit).exec();
+    const total = await this.authModel.countDocuments().exec();
+    const paginationData = {
+      auths,
+      total,
+      page,
+      limit,
+    };
+    return new ResponseDto(
+      {
+        success: true,
+        data: paginationData,
+      },
+      '',
+      '성공적으로 조회했습니다.',
+      200,
+    );
   }
 }

@@ -1,12 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  useUserAlter,
-  useUserAuthListHook,
-  useUserForm,
-} from "./-/use.user.hook";
+import { useUserAlter, useUserForm } from "./-/use.user.hook";
 
 import { useToast } from "@/context/toast.context";
-import type { UserForm } from "./-/user.schema";
 import { UserFormView } from "./-/form.view";
 import { useEffect, type BaseSyntheticEvent } from "react";
 import { useModal } from "@/context/modal.context";
@@ -17,27 +12,15 @@ export const Route = createFileRoute("/home/user/alter/$username")({
 
 function RouteComponent() {
   const username = Route.useParams().username;
-  const { form, refetch } = useUserForm(username);
+  const { form } = useUserForm(username);
   const { openModal, closeTopModal: closeConfirmModal } = useModal();
-
-  const { data: authList } = useUserAuthListHook();
   const { mutate: userAlterMutate, data: alterData } = useUserAlter();
-
   const { showToast } = useToast();
-  const fields: (keyof UserForm)[] = [
-    "username",
-    "password",
-    "name",
-    "email",
-    "phone",
-    "role",
-  ];
 
   const onSubmit = (
     data: any,
     e: BaseSyntheticEvent<object, any, any> | undefined,
   ) => {
-    data.isUpdate = true;
     e?.preventDefault();
     e?.stopPropagation();
     openModal({
@@ -53,7 +36,7 @@ function RouteComponent() {
           </button>
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded"
-            onClick={() => userAlterMutate(data)}
+            onClick={() => userAlterMutate({ ...data, isUpdate: true })}
           >
             수정
           </button>
