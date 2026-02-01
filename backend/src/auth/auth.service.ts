@@ -14,6 +14,7 @@ import { comparePassword } from 'src/common/util';
 import Redis from 'ioredis';
 import { LoginDto } from 'src/login/login.dto';
 import { Auth, AuthDocument } from './auth.schema';
+import { AuthDto } from './auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -180,5 +181,52 @@ export class AuthService {
       '성공적으로 조회했습니다.',
       200,
     );
+  }
+  async findById(id: string): Promise<ResponseDto> {
+    const info = await this.authModel.findById(id).exec();
+    if (!info) {
+      throw new Error('해당 권한 코드를 찾을 수 없습니다.');
+    }
+    return new ResponseDto(
+      {
+        success: true,
+        data: info,
+      },
+      '',
+      '성공적으로 조회했습니다.',
+      200,
+    );
+  }
+
+  async isExistCode(code: string): Promise<boolean> {
+    const existingCode = await this.authModel.findOne({ code }).exec();
+    return existingCode ? true : false;
+  }
+
+  async createCode(authData: AuthDto): Promise<ResponseDto> {
+    const checkCode = await this.isExistCode(authData.code);
+    if (checkCode) {
+      throw new Error('이미 존재하는 권한 코드입니다.');
+    }
+    try {
+      authData.createDate = new Date().toISOString();
+      const newAuth = new this.authModel(authData);
+      const savedAuth = await newAuth.save();
+      return new ResponseDto(
+        {
+          success: true,
+          data: savedAuth,
+        },
+        '',
+        '권한 코드가 성공적으로 생성되었습니다.',
+        201,
+      );
+    } catch (error) {
+      throw new Error(
+        error instanceof Error
+          ? error.message
+          : '권한 코드 생성 중 오류가 발생했습니다.',
+      );
+    }
   }
 }
