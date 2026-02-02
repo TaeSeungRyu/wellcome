@@ -14,7 +14,8 @@ import { comparePassword } from 'src/common/util';
 import Redis from 'ioredis';
 import { LoginDto } from 'src/login/login.dto';
 import { Auth, AuthDocument } from './auth.schema';
-import { AuthDto } from './auth.dto';
+import { AuthDto, UpdateAuthDto } from './auth.dto';
+import { SseService } from 'src/sse/sse.service';
 
 @Injectable()
 export class AuthService {
@@ -26,6 +27,8 @@ export class AuthService {
 
     @InjectModel(Auth.name)
     private authModel: Model<AuthDocument>,
+
+    private service: SseService,
   ) {}
 
   async findByUsername(
@@ -184,6 +187,7 @@ export class AuthService {
   }
   async findById(id: string): Promise<ResponseDto> {
     const info = await this.authModel.findById(id).exec();
+
     if (!info) {
       throw new Error('해당 권한 코드를 찾을 수 없습니다.');
     }
@@ -226,6 +230,73 @@ export class AuthService {
         error instanceof Error
           ? error.message
           : '권한 코드 생성 중 오류가 발생했습니다.',
+      );
+    }
+  }
+
+  async updateCode(authData: UpdateAuthDto): Promise<ResponseDto> {
+    const existingCode = await this.authModel.findById(authData._id).exec();
+    if (!existingCode) {
+      throw new Error('해당 권한 코드를 찾을 수 없습니다.');
+    }
+    try {
+      existingCode.code = authData.code;
+      existingCode.name = authData.name;
+      existingCode.desc = authData.desc;
+      const updatedAuth = await existingCode.save();
+
+      this.service.publishEvent({
+        event: 'auth_update',
+        data: { _id: updatedAuth._id, code: updatedAuth.code },
+        id: '',
+      });
+
+      return new ResponseDto(
+        {
+          success: true,
+          data: updatedAuth,
+        },
+        '',
+        '권한 코드가 성공적으로 업데이트되었습니다.',
+        200,
+      );
+    } catch (error) {
+      throw new Error(
+        error instanceof Error
+          ? error.message
+          : '권한 코드 업데이트 중 오류가 발생했습니다.',
+      );
+    }
+  }
+
+  async deleteCode(id: string): Promise<ResponseDto> {
+    const existingCode = await this.authModel.findById(id).exec();
+    if (!existingCode) {
+      throw new Error('해당 권한 코드를 찾을 수 없습니다.');
+    }
+    try {
+      await this.authModel.findByIdAndDelete(id).exec();
+
+      this.service.publishEvent({
+        event: 'auth_delete',
+        data: { _id: existingCode._id, code: existingCode.code },
+        id: '',
+      });
+
+      return new ResponseDto(
+        {
+          success: true,
+          data: null,
+        },
+        '',
+        '권한 코드가 성공적으로 삭제되었습니다.',
+        200,
+      );
+    } catch (error) {
+      throw new Error(
+        error instanceof Error
+          ? error.message
+          : '권한 코드 삭제 중 오류가 발생했습니다.',
       );
     }
   }
