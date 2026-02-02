@@ -16,6 +16,7 @@ import { LoginDto } from 'src/login/login.dto';
 import { Auth, AuthDocument } from './auth.schema';
 import { AuthDto, UpdateAuthDto } from './auth.dto';
 import { SseService } from 'src/sse/sse.service';
+import { ConstService } from 'src/const/const.service';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +29,9 @@ export class AuthService {
     @InjectModel(Auth.name)
     private authModel: Model<AuthDocument>,
 
-    private service: SseService,
+    private sseService: SseService,
+
+    private constService: ConstService,
   ) {}
 
   async findByUsername(
@@ -244,9 +247,8 @@ export class AuthService {
       existingCode.name = authData.name;
       existingCode.desc = authData.desc;
       const updatedAuth = await existingCode.save();
-
-      this.service.publishEvent({
-        event: 'auth_update',
+      this.sseService.publishEvent({
+        event: this.constService.getConstList().SSE_AUTH_CODE_UPDATE,
         data: { _id: updatedAuth._id, code: updatedAuth.code },
         id: '',
       });
@@ -277,8 +279,8 @@ export class AuthService {
     try {
       await this.authModel.findByIdAndDelete(id).exec();
 
-      this.service.publishEvent({
-        event: 'auth_delete',
+      this.sseService.publishEvent({
+        event: this.constService.getConstList().SSE_AUTH_CODE_DELETE,
         data: { _id: existingCode._id, code: existingCode.code },
         id: '',
       });

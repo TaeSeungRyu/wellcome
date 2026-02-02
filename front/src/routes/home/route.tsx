@@ -3,8 +3,9 @@ import { getUserName, useAuth } from "@/context/auth.context";
 import AuthGuard from "@/context/auth.guard";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { useSSEHook } from "./-/use.sse.hook";
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useToast } from "@/context/toast.context";
+import { useConstState } from "@/state/useConstState";
 
 export const Route = createFileRoute("/home")({
   component: HomeLayout,
@@ -13,18 +14,32 @@ export const Route = createFileRoute("/home")({
 function HomeLayout() {
   const { token } = useAuth();
   const username = getUserName();
+  const constObject = useConstState((s) => s.sharedValue);
+  const constRef = useRef(constObject);
+
+  useEffect(() => {
+    constRef.current = constObject;
+  }, [constObject]);
+
   const { showToast } = useToast();
 
-  const handleMessage = useCallback((arg: string) => {
-    if (arg) {
-      const { data, event } = JSON.parse(arg);
-      console.log(data, event);
-
-      // showToast(event, {
-      //   type: "success",
-      // });
-    }
-  }, []);
+  const handleMessage = useCallback(
+    (arg: string) => {
+      if (arg) {
+        const { data, event } = JSON.parse(arg);
+        console.log(constRef.current, event, constRef.current[event]);
+        if (constRef.current[event]) {
+          console.log(data, event, constRef.current);
+        } else {
+          console.log("just ping...");
+        }
+        // showToast(event, {
+        //   type: "success",
+        // });
+      }
+    },
+    [constObject],
+  );
 
   const handleError = useCallback((error: any) => {
     console.error("SSE Error 발생:", error);

@@ -10,7 +10,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from 'src/redis/redis.module';
 import { Auth, AuthSchema } from './auth.schema';
 import { AuthController } from './auth.controller';
-import { SseService } from 'src/sse/sse.service';
+import { ConstService } from 'src/const/const.service';
+import { SseModule } from 'src/sse/sse.module';
 
 @Module({
   imports: [
@@ -31,8 +32,9 @@ import { SseService } from 'src/sse/sse.service';
       { name: Auth.name, schema: AuthSchema },
     ]),
     RedisModule,
+    SseModule,
   ],
-  providers: [JwtStrategy, AuthService, SseService],
+  providers: [JwtStrategy, AuthService, ConstService],
   exports: [JwtModule, AuthService],
   controllers: [AuthController],
 })

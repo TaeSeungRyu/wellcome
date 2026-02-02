@@ -16,7 +16,7 @@ import { AuthDto, UpdateAuthDto } from './auth.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Role('admin', 'super')
+  //@Role('admin', 'super')
   @Get('list')
   async list(
     @Query('page') page: number,
@@ -33,7 +33,7 @@ export class AuthController {
     return newAuthCode;
   }
 
-  @Role('admin', 'super')
+  //@Role('admin', 'super')
   @Put('update')
   async updateAuthCode(@Body() authData: UpdateAuthDto): Promise<ResponseDto> {
     const updatedAuthCode = await this.authService.updateCode(authData);
