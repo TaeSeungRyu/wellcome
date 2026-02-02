@@ -4,6 +4,7 @@ import AuthGuard from "@/context/auth.guard";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { useSSEHook } from "./-/use.sse.hook";
 import { useCallback } from "react";
+import { useToast } from "@/context/toast.context";
 
 export const Route = createFileRoute("/home")({
   component: HomeLayout,
@@ -12,9 +13,17 @@ export const Route = createFileRoute("/home")({
 function HomeLayout() {
   const { token } = useAuth();
   const username = getUserName();
+  const { showToast } = useToast();
 
-  const handleMessage = useCallback((data: any) => {
-    console.log("SSE Message 수신:", data);
+  const handleMessage = useCallback((arg: string) => {
+    if (arg) {
+      const { data, event } = JSON.parse(arg);
+      console.log(data, event);
+
+      // showToast(event, {
+      //   type: "success",
+      // });
+    }
   }, []);
 
   const handleError = useCallback((error: any) => {

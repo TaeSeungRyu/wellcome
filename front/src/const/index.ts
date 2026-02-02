@@ -4,6 +4,7 @@ export const API_BASE_URL = "/api";
 export const SIGNIN_PATH = "/login/signin";
 
 export const API = {
+  CONST_LIST: `${API_BASE_URL}/const/list`,
   LOGIN: `${API_BASE_URL}/auth/login`,
   LOGIN_REFRESH: `${API_BASE_URL}/auth/refresh`,
   TEST_URL: `${API_BASE_URL}/category`, //테스트용 URL

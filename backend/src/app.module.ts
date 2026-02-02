@@ -14,6 +14,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TasksModule } from './schedule/tasks.module';
 import { SseModule } from './sse/sse.module';
 import { BoardModule } from './board/board.modue';
+import { ConstModule } from './const/const.modue';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { BoardModule } from './board/board.modue';
     TasksModule,
     SseModule,
     BoardModule,
+    ConstModule,
   ],
   controllers: [AppController],
   providers: [
