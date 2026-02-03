@@ -24,15 +24,20 @@ function HomeLayout() {
   const { showToast } = useToast();
 
   const handleMessage = useCallback(
-    (arg: string) => {
-      if (arg) {
-        const { data, event } = JSON.parse(arg);
-        console.log(constRef.current, event, constRef.current[event]);
-        if (constRef.current[event]) {
-          console.log(data, event, constRef.current);
-        } else {
-          console.log("just ping...");
-        }
+    (arg: Record<string, any>) => {
+      if (arg && arg.data) {
+        console.log("SSE Message received:", arg.data);
+        const sseData = JSON.parse(arg.data);
+        console.log(sseData);
+        // if (constRef.current[event]) {
+        //   if (event.includes("UPDATE")) {
+        //     //업데이트
+        //   } else {
+        //   } //삭제
+        //   console.log(data);
+        // } else {
+        //   console.log("just ping...");
+        // }
         // showToast(event, {
         //   type: "success",
         // });

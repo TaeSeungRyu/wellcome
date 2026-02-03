@@ -248,8 +248,13 @@ export class AuthService {
       existingCode.desc = authData.desc;
       const updatedAuth = await existingCode.save();
       this.sseService.publishEvent({
-        event: this.constService.getConstList().SSE_AUTH_CODE_UPDATE,
-        data: { _id: updatedAuth._id, code: updatedAuth.code },
+        event: 'event',
+        data: {
+          _id: updatedAuth._id,
+          newCode: updatedAuth.code,
+          beforeCode: existingCode.code,
+          event: this.constService.getConstList().SSE_AUTH_CODE_UPDATE,
+        },
         id: '',
       });
 
@@ -280,8 +285,12 @@ export class AuthService {
       await this.authModel.findByIdAndDelete(id).exec();
 
       this.sseService.publishEvent({
-        event: this.constService.getConstList().SSE_AUTH_CODE_DELETE,
-        data: { _id: existingCode._id, code: existingCode.code },
+        event: 'event',
+        data: {
+          _id: existingCode._id,
+          code: existingCode.code,
+          event: this.constService.getConstList().SSE_AUTH_CODE_DELETE,
+        },
         id: '',
       });
 

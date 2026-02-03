@@ -1,94 +1,54 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { Response } from 'express';
-import { BehaviorSubject, map, Observable, ReplaySubject } from 'rxjs';
-import { SseMessageEvent, SseClient, SseEvent } from './sse.dto';
+import { MessageEvent } from '@nestjs/common'; // NestJS에서 제공하는 SSE 이벤트 타입
+import { Subject, map, Observable, interval, merge } from 'rxjs';
+import { SseEvent } from './sse.dto';
 
-//TODO : 이벤트를 주고받기 위한 타입이 정의되어 있지 않습니다.
 @Injectable()
 export class SseService implements OnModuleDestroy, OnModuleInit {
-  private clients: SseClient[] = [];
-  private intervalId: NodeJS.Timeout | null = null;
-  //다른 도메인에서 발생한 이벤트를 전달하기 위한 객체
-  private eventBus: BehaviorSubject<SseEvent>;
-  constructor() {
-    this.eventBus = new BehaviorSubject({
-      event: '',
-      data: {},
-      id: '',
-    });
-  }
+  // 1. 전역 이벤트 버스 (BehaviorSubject 대신 Subject 사용)
+  // SseEvent 타입으로 이벤트를 받습니다.
+  private eventBus$ = new Subject<SseEvent>();
+
+  // 2. 10초 주기의 Ping 스트림
+  // MessageEvent 형식을 반환하도록 타입을 명시합니다.
+  private pingStream$: Observable<MessageEvent> = interval(10000).pipe(
+    map(() => ({
+      type: 'ping',
+      data: { timestamp: new Date().toISOString() },
+    })),
+  );
 
   onModuleInit() {
-    this.pintRunner();
+    // 별도의 pintRunner 실행 없이 merge에서 처리됩니다.
   }
 
   onModuleDestroy() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-    }
-  }
-
-  pintRunner() {
-    this.intervalId = setInterval(() => {
-      this.publishEvent({
-        event: 'ping',
-        data: {},
-        id: '',
-      });
-    }, 1000 * 10); // 1분마다 ping 이벤트 발행
+    this.eventBus$.complete();
   }
 
   /**
-   * @param data 이벤트 전달용 데이터 입니다.
+   * 다른 서비스에서 이벤트를 발행할 때 사용
    */
-  publishEvent(data: SseEvent) {
-    this.eventBus.next(data);
+  publishEvent(data: SseEvent): void {
+    this.eventBus$.next(data);
   }
 
   /**
-   * 이벤트 구독을 실행 합니다.
+   * Controller에서 호출하여 SSE 연결을 형성
    */
-  runSubscribe() {
-    this.eventBus.subscribe((data) => {
-      this.clients.forEach((stream) => {
-        stream.subject.next({
-          event: data.event,
-          data: data || {},
-        });
-      });
-    });
-  }
+  addClient(id: string): Observable<MessageEvent> {
+    // 3. 이벤트 버스를 MessageEvent 형식으로 변환
+    const eventStream$: Observable<MessageEvent> = this.eventBus$
+      .asObservable()
+      .pipe(
+        map((event) => ({
+          id: id,
+          type: 'event', // 클라이언트가 수신할 이벤트명 (addEventListener('이벤트명'))
+          data: event.data || {},
+        })),
+      );
 
-  /**
-   * 이벤트 구독을 종료 합니다.
-   */
-  stopSubscribe() {
-    if (this.eventBus) {
-      this.eventBus.unsubscribe();
-    }
-  }
-
-  /**
-   *
-   * @param response 브라우저의 응답 객체 입니다.
-   * @returns 브라우저에 전송할 데이터 입니다.
-   * @description 접속한 브라우저의 커넥션을 담고 있는 객체를 생성합니다.
-   */
-  addClient(id: string, response: Response): Observable<SseMessageEvent> {
-    //ID를 가지고 로그인 했는지 조사하는 기능이 필요 합니다.
-    const subject = new ReplaySubject<SseClient>();
-    const observer = subject.asObservable();
-    this.clients.push({ id, subject, observer, response });
-
-    return observer.pipe(
-      map((data) => {
-        //브라우저에 전송할 데이터
-        const result: SseMessageEvent = {
-          id,
-          data: data || {},
-        };
-        return result;
-      }),
-    );
+    // 4. 핑과 이벤트를 합침 (두 스트림 모두 MessageEvent 타입이므로 오류 발생 안 함)
+    return merge(this.pingStream$, eventStream$);
   }
 }

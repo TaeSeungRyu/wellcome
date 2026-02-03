@@ -20,9 +20,12 @@ export const useSSEHook = (
 
     eventSourceRef.current = es;
 
-    es.onmessage = (event) => {
-      onMessage(event.data);
+    const handleMessage = (event: any) => {
+      onMessage(event); // 이제 여기서 콘솔이 찍힐 겁니다!
     };
+
+    es.addEventListener("ping", handleMessage);
+    es.addEventListener("event", handleMessage); // type이 없는 경우
 
     es.onerror = (error) => {
       console.error("SSE Error:", error);
