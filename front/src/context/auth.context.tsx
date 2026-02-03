@@ -10,6 +10,7 @@ import { createContext, useContext, useState } from "react";
 export const ACCESS_TOKEN_KEY = "actkn";
 export const REFRESH_TOKEN_KEY = "rftkn"; // 리프레시 토큰도 관리한다고 가정(지금 구조에서는 안씀...)
 export const USER_NAME_KEY = "username";
+export const ROLE = "role";
 
 // 로컬 스토리지에 액세스 토큰 저장
 export const setAccessToken = (token: string) => {
@@ -34,18 +35,32 @@ export const getUserName = (): string | null => {
   return localStorage.getItem(USER_NAME_KEY);
 };
 
+export const setRole = (role: string) => {
+  localStorage.setItem(ROLE, role);
+};
+
+export const getRole = (): string | null => {
+  return localStorage.getItem(ROLE);
+};
+
 // 토큰들을 제거하고 로그아웃 처리
 export const clearTokens = () => {
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
+  localStorage.removeItem(ROLE);
 };
-
 export const AuthContext = createContext({
   token: null as string | null,
-  login: (accessToken: string, refreshToken: string, username: string) => {
+  login: (
+    accessToken: string,
+    refreshToken: string,
+    username: string,
+    role: string,
+  ) => {
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
     setUserName(username);
+    setRole(role);
   },
   logout: (noNavigate?: boolean) => {
     clearTokens();
@@ -61,11 +76,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     accessToken: string,
     refreshToken: string,
     username: string,
+    role: string,
   ) => {
     setToken(accessToken);
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
     setUserName(username);
+    setRole(role);
   };
   const logout = (noNavigate?: boolean) => {
     clearTokens();

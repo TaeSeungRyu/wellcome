@@ -1,6 +1,7 @@
 import { useAuth } from "@/context/auth.context";
 import { requestSignin } from "./signin.repository";
 import { useMutation } from "@tanstack/react-query";
+import { jwtDecode } from "jwt-decode";
 
 /**
  *  로그인용 훅 함수
@@ -19,7 +20,8 @@ const useSigninHook = () => {
     onSuccess: (response) => {
       if (response.result?.success == true) {
         const { accessToken, refreshToken, data } = response.result;
-        login(accessToken, refreshToken, data.username);
+        const decoded: Record<string, any> = jwtDecode(accessToken);
+        login(accessToken, refreshToken, data.username, decoded.role);
       }
     },
   });

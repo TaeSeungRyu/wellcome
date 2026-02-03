@@ -26,9 +26,16 @@ function HomeLayout() {
   const handleMessage = useCallback(
     (arg: Record<string, any>) => {
       if (arg && arg.data) {
-        console.log("SSE Message received:", arg.data);
         const sseData = JSON.parse(arg.data);
-        console.log(sseData);
+        console.log("SSE Message received:", sseData);
+        if (sseData.event) {
+          if (sseData.event.includes("UPDATE")) {
+            //업데이트
+            console.log("upd", sseData);
+          } else {
+            console.log("rm", sseData);
+          } //삭제
+        }
         // if (constRef.current[event]) {
         //   if (event.includes("UPDATE")) {
         //     //업데이트
