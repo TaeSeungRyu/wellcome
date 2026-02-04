@@ -4,7 +4,6 @@ import AuthGuard from "@/context/auth.guard";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { useSSEHook } from "./-/use.sse.hook";
 import { useCallback, useEffect, useRef } from "react";
-import { useToast } from "@/context/toast.context";
 import { useConstState } from "@/state/useConstState";
 
 export const Route = createFileRoute("/home")({
@@ -21,8 +20,6 @@ function HomeLayout() {
   useEffect(() => {
     constRef.current = constObject;
   }, [constObject]);
-
-  const { showToast } = useToast();
 
   const handleMessage = useCallback(
     (arg: Record<string, any>) => {

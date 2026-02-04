@@ -44,9 +44,9 @@ export const useUserAuthListHook = () => {
     placeholderData: (prev) => prev,
     select(data) {
       return (
-        data?.data?.map((key: string) => ({
-          value: key,
-          label: key,
+        data?.data?.auths.map((key: Record<string, any>) => ({
+          value: key.code,
+          label: key.name,
           selected: false,
         })) ?? []
       );

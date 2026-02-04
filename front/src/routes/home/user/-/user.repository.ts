@@ -17,6 +17,10 @@ const requestUserAuthList = async () => {
   const apiClient = ApiClient.getInstance();
   const params = {
     method: "get",
+    query: {
+      page: 1,
+      limit: 10000,
+    },
   };
   return apiClient.request(API.AUTH_LIST, params);
 };

@@ -26,7 +26,7 @@ export class AuthController {
     return codeList;
   }
 
-  @Role('admin', 'super')
+  //@Role('admin', 'super')
   @Post('create')
   async createAuthCode(@Body() authData: AuthDto): Promise<ResponseDto> {
     const newAuthCode = await this.authService.createCode(authData);

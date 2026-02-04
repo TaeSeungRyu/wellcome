@@ -243,10 +243,12 @@ export class AuthService {
       throw new Error('해당 권한 코드를 찾을 수 없습니다.');
     }
     try {
+      const copyExistingCode = existingCode.code;
       existingCode.code = authData.code;
       existingCode.name = authData.name;
       existingCode.desc = authData.desc;
       const updatedAuth = await existingCode.save();
+      await this.updateUserRoles(copyExistingCode, authData.code);
       this.sseService.publishEvent({
         event: 'event',
         data: {
@@ -257,7 +259,6 @@ export class AuthService {
         },
         id: '',
       });
-
       return new ResponseDto(
         {
           success: true,
@@ -284,6 +285,8 @@ export class AuthService {
     try {
       await this.authModel.findByIdAndDelete(id).exec();
 
+      await this.updateUserRoles(existingCode.code);
+
       this.sseService.publishEvent({
         event: 'event',
         data: {
@@ -308,6 +311,31 @@ export class AuthService {
         error instanceof Error
           ? error.message
           : '권한 코드 삭제 중 오류가 발생했습니다.',
+      );
+    }
+  }
+
+  /**
+   * 사용자 컬렉션의 role 배열을 업데이트하거나 삭제하는 공통 메서드
+   * @param targetCode 변경/삭제될 대상 권한 코드
+   * @param newCode 새 권한 코드 (삭제 시에는 전달하지 않음)
+   */
+  private async updateUserRoles(
+    targetCode: string,
+    newCode?: string,
+  ): Promise<void> {
+    if (newCode) {
+      // 1. 업데이트 로직: positional operator ($)를 사용하여 배열 내 일치하는 요소만 변경
+      // 사용자의 roles 배열에 targetCode가 있는 경우에만 실행
+      await this.loginModel.updateMany(
+        { role: targetCode },
+        { $set: { 'role.$': newCode } }, // 배열 내의 targetCode를 newCode로 변경
+      );
+    } else {
+      // 2. 삭제 로직: $pull을 사용하여 배열에서 해당 코드를 제거
+      await this.loginModel.updateMany(
+        { role: targetCode },
+        { $pull: { role: targetCode } },
       );
     }
   }

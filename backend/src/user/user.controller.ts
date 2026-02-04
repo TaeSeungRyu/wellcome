@@ -83,11 +83,4 @@ export class UserController {
     const user = await this.userService.deleteUser(username);
     return user;
   }
-
-  @Role('super', 'admin')
-  @Get('auth-list')
-  async authList(): Promise<ResponseDto> {
-    const roles = await this.userService.getAuthList();
-    return roles;
-  }
 }
