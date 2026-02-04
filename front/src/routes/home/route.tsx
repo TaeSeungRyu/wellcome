@@ -1,5 +1,5 @@
 import HeaderComponent from "@/components/layout/header";
-import { getUserName, useAuth } from "@/context/auth.context";
+import { getRole, getUserName, useAuth } from "@/context/auth.context";
 import AuthGuard from "@/context/auth.guard";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { useSSEHook } from "./-/use.sse.hook";
@@ -12,8 +12,9 @@ export const Route = createFileRoute("/home")({
 });
 
 function HomeLayout() {
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
   const username = getUserName();
+  const roles = getRole();
   const constObject = useConstState((s) => s.sharedValue);
   const constRef = useRef(constObject);
 
@@ -27,27 +28,16 @@ function HomeLayout() {
     (arg: Record<string, any>) => {
       if (arg && arg.data) {
         const sseData = JSON.parse(arg.data);
-        console.log("SSE Message received:", sseData);
+        console.log("roles:", roles);
         if (sseData.event) {
-          if (sseData.event.includes("UPDATE")) {
-            //업데이트
-            console.log("upd", sseData);
-          } else {
-            console.log("rm", sseData);
+          if (sseData.event.includes("DELETE")) {
+            const { code } = sseData;
+            if (roles?.includes(code)) {
+              alert("현재 접속 중인 계정의 권한이 삭제되어 로그아웃됩니다.");
+              logout();
+            }
           } //삭제
         }
-        // if (constRef.current[event]) {
-        //   if (event.includes("UPDATE")) {
-        //     //업데이트
-        //   } else {
-        //   } //삭제
-        //   console.log(data);
-        // } else {
-        //   console.log("just ping...");
-        // }
-        // showToast(event, {
-        //   type: "success",
-        // });
       }
     },
     [constObject],

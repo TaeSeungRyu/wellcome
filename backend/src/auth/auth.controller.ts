@@ -40,7 +40,7 @@ export class AuthController {
     return updatedAuthCode;
   }
 
-  @Role('admin', 'super')
+  //@Role('admin', 'super')
   @Delete('delete')
   async deleteAuthCode(@Query('_id') id: string): Promise<ResponseDto> {
     const deletedAuthCode = await this.authService.deleteCode(id);
