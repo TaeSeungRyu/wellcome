@@ -1,5 +1,6 @@
 import { API } from "@/const";
 import { ApiClient } from "@/services/apiClient";
+import { ApiMultipartClient } from "@/services/apiClientMultipart";
 
 const requestUserList = async (page: number, limit: number) => {
   const apiClient = ApiClient.getInstance();
@@ -32,6 +33,11 @@ const requestUserCreate = async (data: any) => {
     body: JSON.stringify(data),
   };
   return apiClient.request(API.USER_CREATE, params);
+};
+
+const requestUserCreateWithFile = async (data: any, file?: File) => {
+  const apiClient = ApiMultipartClient.getInstance();
+  return apiClient.postMultipart(API.USER_CREATE, data, file);
 };
 
 const requestUserCheckExist = async (username: string) => {

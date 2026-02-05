@@ -8,12 +8,15 @@ import {
   Get,
   Query,
   UseGuards,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ResponseDto } from 'src/common/common.dto';
 import { UserService } from './user.service';
 import { UpdateUserDto, UserDto } from './user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Role } from 'src/auth/role.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
 export class UserController {
@@ -58,6 +61,18 @@ export class UserController {
   @Post('create')
   async create(@Body() userData: UserDto): Promise<ResponseDto> {
     const user = await this.userService.createUser(userData);
+    return user;
+  }
+
+  //테스트 컨트롤러, 테스트 완료 후 create 로 통합 예정
+  @Role('super', 'admin')
+  @Post('create-with-file')
+  @UseInterceptors(FileInterceptor('file')) // 'file'은 클라이언트가 보내는 field name
+  async createWithFile(
+    @Body() userData: UserDto,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<ResponseDto> {
+    const user = await this.userService.createUserWithFile(userData, file);
     return user;
   }
 

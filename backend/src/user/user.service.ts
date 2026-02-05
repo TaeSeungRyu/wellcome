@@ -157,6 +157,59 @@ export class UserService {
     }
   }
 
+  async createUserWithFile(
+    userData: UserDto,
+    file?: Express.Multer.File,
+  ): Promise<ResponseDto> {
+    try {
+      // 1. 중복 체크 (기존 코드와 동일)
+      const check = await this.findByUsername(userData.username).catch(
+        () => null,
+      );
+      if (check?.result?.success) {
+        throw new BadRequestException(/* ...기존 에러 객체... */);
+      }
+
+      // 2. 비밀번호 해싱
+      userData.password = await hashPassword(userData.password);
+
+      // 3. 파일 처리 로직 (파일이 존재할 경우)
+      let profileImageUrl = '/uploads';
+      if (file) {
+        // file 객체를 'any'로 보지 않도록 보장
+        const filename = file.filename;
+        profileImageUrl = `/uploads/${filename}`;
+      }
+      // 4. 모델 생성 시 파일 경로 포함
+      const newUser = new this.userModel({
+        ...userData,
+        profileImage: profileImageUrl, // DB 스키마에 이 필드가 있어야 합니다.
+      });
+
+      const result = await newUser.save();
+
+      if (result) {
+        return new ResponseDto(
+          { success: true, data: result },
+          '',
+          '사용자 생성에 성공했습니다.',
+          200,
+        );
+      }
+      throw new Error('Save failed');
+    } catch (error) {
+      throw new BadRequestException(
+        new ResponseDto(
+          { success: false },
+          'save_error',
+          error instanceof Error
+            ? error.message
+            : '사용자 생성 중 오류가 발생했습니다.',
+        ),
+      );
+    }
+  }
+
   async updateUser(updateData: UpdateUserDto): Promise<ResponseDto> {
     try {
       const { username, password } = updateData;
