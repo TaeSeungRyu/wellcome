@@ -126,16 +126,23 @@ export class ApiMultipartClient {
   ): Promise<T> {
     const formData = new FormData();
 
-    // 데이터 추가
     Object.keys(data).forEach((key) => {
-      if (data[key] !== undefined && data[key] !== null) {
-        formData.append(key, data[key]);
+      const value = data[key];
+      if (value !== undefined && value !== null) {
+        if (Array.isArray(value)) {
+          // 배열인 경우 (예: role) 같은 키로 여러 번 append 하거나 처리
+          value.forEach((v) => formData.append(key, v));
+        } else if (typeof value === "object" && !(value instanceof File)) {
+          // 객체인 경우 문자열화 (필요 시)
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, value);
+        }
       }
     });
 
-    // 파일 추가
     if (file) {
-      formData.append("file", file); // NestJS @UploadedFile('file')와 매칭
+      formData.append("file", file);
     }
 
     return this.request<T>(url, {

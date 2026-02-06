@@ -37,7 +37,7 @@ const requestUserCreate = async (data: any) => {
 
 const requestUserCreateWithFile = async (data: any, file?: File) => {
   const apiClient = ApiMultipartClient.getInstance();
-  return apiClient.postMultipart(API.USER_CREATE, data, file);
+  return apiClient.postMultipart(API.USER_CREATE_FILE, data, file);
 };
 
 const requestUserCheckExist = async (username: string) => {
@@ -83,4 +83,5 @@ export {
   requestUserDetail,
   requestUserDelete,
   requestUserUpdate,
+  requestUserCreateWithFile,
 };

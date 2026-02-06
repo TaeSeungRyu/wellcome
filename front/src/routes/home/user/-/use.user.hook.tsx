@@ -3,6 +3,7 @@ import {
   requestUserAuthList,
   requestUserCheckExist,
   requestUserCreate,
+  requestUserCreateWithFile,
   requestUserDelete,
   requestUserDetail,
   requestUserList,
@@ -140,6 +141,7 @@ export const useUserAlter = () => {
       phone,
       isDelete,
       isUpdate,
+      file,
     }: {
       username?: string;
       password?: string;
@@ -149,6 +151,7 @@ export const useUserAlter = () => {
       phone?: string;
       isDelete?: boolean;
       isUpdate?: boolean;
+      file?: any;
     }) => {
       const param = {
         username,
@@ -175,7 +178,7 @@ export const useUserAlter = () => {
       } else {
         if (param.phone === "") delete param.phone;
         if (param.email === "") delete param.email;
-        return await requestUserCreate(param);
+        return await requestUserCreateWithFile(param, file[0]);
       }
     },
     onSuccess: (response) => {

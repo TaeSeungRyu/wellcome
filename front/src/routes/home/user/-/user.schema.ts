@@ -11,6 +11,7 @@ export interface User {
   phone?: string;
   createdAt?: string;
   updatedAt?: string;
+  file?: any;
 }
 
 export const userSchema = z.object({
@@ -32,6 +33,7 @@ export const userSchema = z.object({
     }),
   email: z.string().optional(),
   phone: z.string().optional(),
+  file: z.any().optional(),
 });
 
 export const updatedUserSchema = userSchema.extend({

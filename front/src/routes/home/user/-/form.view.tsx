@@ -116,6 +116,7 @@ export const UserFormView = ({
           errors={errors}
           option={{ direction: "row" }}
         />
+        <input type="file" {...register("file")} />
 
         <button
           className="tailwind-blue-button"
