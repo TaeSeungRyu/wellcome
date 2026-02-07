@@ -23,6 +23,7 @@ export const API = {
   USER_DELETE: `${API_BASE_URL}/user/delete`,
   USER_UPDATE: `${API_BASE_URL}/user/update`,
   USER_CREATE_FILE: `${API_BASE_URL}/user/create-with-file`,
+  USER_UPDATE_FILE: `${API_BASE_URL}/user/update-with-file`,
 };
 
 export interface MenuItem {

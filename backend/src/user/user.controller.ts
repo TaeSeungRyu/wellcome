@@ -93,6 +93,17 @@ export class UserController {
   }
 
   @Role('super', 'admin')
+  @Put('update-with-file')
+  @UseInterceptors(FileInterceptor('file')) // 'file'은 클라이언트가 보내는 field name
+  async updateWithFile(
+    @Body() updateData: UpdateUserDto,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<ResponseDto> {
+    const user = await this.userService.updateUserWithFile(updateData, file);
+    return user;
+  }
+
+  @Role('super', 'admin')
   @Delete('delete')
   async delete(@Body('username') username: string): Promise<ResponseDto> {
     const user = await this.userService.deleteUser(username);

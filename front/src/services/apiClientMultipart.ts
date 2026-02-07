@@ -123,6 +123,7 @@ export class ApiMultipartClient {
     url: string,
     data: Record<string, any>,
     file?: File,
+    requestType: "POST" | "PUT" = "POST",
   ): Promise<T> {
     const formData = new FormData();
 
@@ -146,7 +147,7 @@ export class ApiMultipartClient {
     }
 
     return this.request<T>(url, {
-      method: "POST",
+      method: requestType,
       body: formData,
     });
   }

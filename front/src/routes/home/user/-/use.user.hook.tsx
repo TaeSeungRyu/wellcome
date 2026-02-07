@@ -8,6 +8,7 @@ import {
   requestUserDetail,
   requestUserList,
   requestUserUpdate,
+  requestUserUpdateWithFile,
 } from "./user.repository";
 import { useForm } from "react-hook-form";
 import { updatedUserSchema, userSchema, type User } from "./user.schema";
@@ -174,7 +175,7 @@ export const useUserAlter = () => {
         if (param.phone === "") delete param.phone;
         if (param.email === "") delete param.email;
         if (param.password === "") delete param.password;
-        return await requestUserUpdate(param);
+        return await requestUserUpdateWithFile(param, file[0]);
       } else {
         if (param.phone === "") delete param.phone;
         if (param.email === "") delete param.email;

@@ -254,6 +254,61 @@ export class UserService {
     }
   }
 
+  async updateUserWithFile(
+    updateData: UpdateUserDto,
+    file?: Express.Multer.File,
+  ): Promise<ResponseDto> {
+    try {
+      const { username, password } = updateData;
+
+      if (password) {
+        updateData.password = await hashPassword(password);
+      }
+
+      // 파일 처리 로직 (파일이 존재할 경우)
+      if (file) {
+        const filename = file.filename;
+        const profileImageUrl = `/uploads/${filename}`;
+        updateData['profileImage'] = profileImageUrl; // DB 스키마에 이 필드가 있어야 합니다.
+      }
+
+      const updateResult = await this.userModel
+        .findOneAndUpdate({ username }, updateData, {
+          new: true,
+          runValidators: true,
+        })
+        .select('-password')
+        .exec();
+
+      if (!updateResult) {
+        throw new BadRequestException(
+          new ResponseDto(
+            { success: false },
+            'user_not_found',
+            '해당 사용자를 찾을 수 없습니다.',
+          ),
+        );
+      }
+
+      return new ResponseDto(
+        { success: true, data: updateResult },
+        '',
+        '사용자 정보가 성공적으로 업데이트되었습니다.',
+        200,
+      );
+    } catch (error) {
+      throw new BadRequestException(
+        new ResponseDto(
+          { success: false },
+          'update_error',
+          error instanceof Error
+            ? error.message
+            : '사용자 업데이트 중 오류가 발생했습니다.',
+        ),
+      );
+    }
+  }
+
   async deleteUser(username: string): Promise<ResponseDto> {
     try {
       // 1. 사용자 삭제 시도

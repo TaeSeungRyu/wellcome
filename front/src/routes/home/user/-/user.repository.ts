@@ -75,6 +75,11 @@ const requestUserUpdate = async (data: any) => {
   };
   return apiClient.request(API.USER_UPDATE, params);
 };
+const requestUserUpdateWithFile = async (data: any, file?: File) => {
+  const apiClient = ApiMultipartClient.getInstance();
+  return apiClient.postMultipart(API.USER_UPDATE_FILE, data, file, "PUT");
+};
+
 export {
   requestUserList,
   requestUserAuthList,
@@ -84,4 +89,5 @@ export {
   requestUserDelete,
   requestUserUpdate,
   requestUserCreateWithFile,
+  requestUserUpdateWithFile,
 };
