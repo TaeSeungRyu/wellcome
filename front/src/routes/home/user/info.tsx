@@ -99,8 +99,7 @@ function RouteComponent() {
             <div className="flex flex-col gap-2">
               <span className="text-gray-500">프로필 이미지</span>
               <img
-                src={info.profileImage}
-                alt="프로필 이미지"
+                src={`http://localhost:8080/user${info.profileImage}`}
                 className="w-24 h-24 rounded-full object-contain border border-gray-300"
               />
             </div>

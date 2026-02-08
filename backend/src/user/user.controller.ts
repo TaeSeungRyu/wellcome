@@ -109,11 +109,12 @@ export class UserController {
     return user;
   }
 
-  @Role('super', 'admin')
-  @Get(':filename')
+  // @Role('super', 'admin')
+  @Get('uploads/:filename')
   streamFile(@Param('filename') filename: string, @Res() res: Response) {
     // 🔒 경로 고정 (path traversal 방지)
     const filePath = join(process.cwd(), 'uploads', filename);
+    console.log('filePath', filePath);
     if (!existsSync(filePath)) {
       throw new NotFoundException('파일이 존재하지 않습니다.');
     }
