@@ -10,6 +10,9 @@ import {
   UseGuards,
   UploadedFile,
   UseInterceptors,
+  Res,
+  Param,
+  NotFoundException,
 } from '@nestjs/common';
 import { ResponseDto } from 'src/common/common.dto';
 import { UserService } from './user.service';
@@ -17,6 +20,9 @@ import { UpdateUserDto, UserDto } from './user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Role } from 'src/auth/role.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { createReadStream, existsSync } from 'fs';
+import { Response } from 'express';
+import { join } from 'path';
 
 @Controller('user')
 export class UserController {
@@ -101,6 +107,25 @@ export class UserController {
   ): Promise<ResponseDto> {
     const user = await this.userService.updateUserWithFile(updateData, file);
     return user;
+  }
+
+  @Role('super', 'admin')
+  @Get(':filename')
+  streamFile(@Param('filename') filename: string, @Res() res: Response) {
+    // 🔒 경로 고정 (path traversal 방지)
+    const filePath = join(process.cwd(), 'uploads', filename);
+    if (!existsSync(filePath)) {
+      throw new NotFoundException('파일이 존재하지 않습니다.');
+    }
+    const contentType = 'application/octet-stream';
+    res.setHeader('Content-Type', contentType);
+    // 다운로드 강제
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${encodeURIComponent(filename)}"`,
+    );
+    const fileStream = createReadStream(filePath);
+    fileStream.pipe(res);
   }
 
   @Role('super', 'admin')

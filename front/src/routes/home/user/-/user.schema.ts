@@ -12,6 +12,7 @@ export interface User {
   createdAt?: string;
   updatedAt?: string;
   file?: any;
+  profileImage?: string;
 }
 
 export const userSchema = z.object({

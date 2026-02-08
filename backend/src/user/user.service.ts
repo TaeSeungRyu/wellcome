@@ -54,7 +54,7 @@ export class UserService {
       const [users, total] = await Promise.all([
         this.userModel
           .find()
-          .select('-password') // 비밀번호 제외
+          .select('-password -profileImage') // 비밀번호 제외
           .skip(skip)
           .limit(limit)
           .sort({ createdAt: -1 }) // 최신순 정렬

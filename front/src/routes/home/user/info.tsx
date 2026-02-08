@@ -95,6 +95,16 @@ function RouteComponent() {
               info?.updatedAt ? new Date(info.updatedAt).toLocaleString() : "-"
             }
           />
+          {info?.profileImage && (
+            <div className="flex flex-col gap-2">
+              <span className="text-gray-500">프로필 이미지</span>
+              <img
+                src={info.profileImage}
+                alt="프로필 이미지"
+                className="w-24 h-24 rounded-full object-contain border border-gray-300"
+              />
+            </div>
+          )}
         </div>
 
         <div className="px-6 flex gap-2 justify-end py-4 border-t border-gray-200">
