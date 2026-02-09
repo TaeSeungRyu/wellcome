@@ -5,15 +5,22 @@ import {
   setAccessToken,
 } from "@/context/auth.context";
 
+interface RequestInitDefaults extends RequestInit {
+  contentType?: "json" | "blob";
+}
+
 const _performFetch = async (
   url: string,
-  currentOptions: RequestInit,
+  currentOptions: RequestInitDefaults,
   currentToken: string | null,
 ): Promise<any> => {
   const res = await fetch(url, {
     ...currentOptions,
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type":
+        currentOptions.contentType === "blob"
+          ? "application/octet-stream"
+          : "application/json",
       ...(currentOptions?.headers || {}),
       ...(currentToken ? { Authorization: `Bearer ${currentToken}` } : {}),
     },
@@ -26,6 +33,11 @@ const _performFetch = async (
     throw new Error(
       `HTTP error! status: ${res.status}, message: ${errorBody.message}`,
     );
+  }
+
+  const contentType = res.headers.get("content-type");
+  if (!contentType || !contentType.includes("application/json")) {
+    return res.blob() as Promise<any>;
   }
   return res.json() as Promise<any>;
 };

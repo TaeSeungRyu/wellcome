@@ -1,4 +1,4 @@
-import { API } from "@/const";
+import { API, API_BASE_URL } from "@/const";
 import { ApiClient } from "@/services/apiClient";
 import { ApiMultipartClient } from "@/services/apiClientMultipart";
 
@@ -80,6 +80,14 @@ const requestUserUpdateWithFile = async (data: any, file?: File) => {
   return apiClient.postMultipart(API.USER_UPDATE_FILE, data, file, "PUT");
 };
 
+const requestImagePreview = async (imagePath: string) => {
+  const apiClient = ApiClient.getInstance();
+  return apiClient.request(`${API_BASE_URL}${imagePath}`, {
+    method: "get",
+    contentType: "blob",
+  });
+};
+
 export {
   requestUserList,
   requestUserAuthList,
@@ -90,4 +98,5 @@ export {
   requestUserUpdate,
   requestUserCreateWithFile,
   requestUserUpdateWithFile,
+  requestImagePreview,
 };

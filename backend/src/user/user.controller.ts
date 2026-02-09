@@ -109,7 +109,7 @@ export class UserController {
     return user;
   }
 
-  // @Role('super', 'admin')
+  @Role('super', 'admin')
   @Get('uploads/:filename')
   streamFile(@Param('filename') filename: string, @Res() res: Response) {
     // 🔒 경로 고정 (path traversal 방지)

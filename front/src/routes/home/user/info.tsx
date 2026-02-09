@@ -1,8 +1,10 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useUserAlter, useUserDetail } from "./-/use.user.hook";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useModal } from "@/context/modal.context";
 import { useToast } from "@/context/toast.context";
+import { useAuth } from "@/context/auth.context";
+import { requestImagePreview } from "./-/user.repository";
 
 export const Route = createFileRoute("/home/user/info")({
   component: RouteComponent,
@@ -71,6 +73,22 @@ function RouteComponent() {
     });
   };
 
+  // 이미지 미리보기 처리
+  const [imgSrc, setImgSrc] = useState("");
+  useEffect(() => {
+    if (info?.profileImage) {
+      requestImagePreview(info.profileImage).then((blob) => {
+        const url = URL.createObjectURL(blob);
+        setImgSrc(url);
+      });
+    }
+    return () => {
+      if (imgSrc) {
+        URL.revokeObjectURL(imgSrc);
+      }
+    };
+  }, [info]);
+
   return (
     <div className="max-w-3xl mx-auto p-6">
       <div className="bg-white rounded-2xl shadow-md border border-gray-200">
@@ -98,10 +116,12 @@ function RouteComponent() {
           {info?.profileImage && (
             <div className="flex flex-col gap-2">
               <span className="text-gray-500">프로필 이미지</span>
-              <img
-                src={`http://localhost:8080/user${info.profileImage}`}
-                className="w-24 h-24 rounded-full object-contain border border-gray-300"
-              />
+              {imgSrc && (
+                <img
+                  src={imgSrc}
+                  className="w-24 h-24 rounded-full object-contain border border-gray-300"
+                />
+              )}
             </div>
           )}
         </div>

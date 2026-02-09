@@ -30,6 +30,9 @@ export class UserService {
         ),
       );
     }
+    if (user.profileImage) {
+      user.profileImage = `/user${user.profileImage}`;
+    }
     return new Promise((resolve) => {
       resolve(
         new ResponseDto(
