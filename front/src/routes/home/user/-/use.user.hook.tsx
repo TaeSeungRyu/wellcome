@@ -193,14 +193,13 @@ export const useUserAlter = () => {
 
 export const useUserDetail = (username: string) => {
   return useQuery({
-    queryKey: ["requestUserDetail", username],
+    queryKey: ["requestUserDetail"],
     queryFn: async () => {
       return await requestUserDetail(username);
     },
-    enabled: username.length > 0,
+    enabled: false,
     gcTime: 0,
     staleTime: 0,
-    placeholderData: (prev) => prev,
     select(data) {
       return (data?.result?.data as User) ?? null;
     },

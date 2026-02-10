@@ -3,7 +3,6 @@ import { useUserAlter, useUserDetail } from "./-/use.user.hook";
 import { useEffect, useState } from "react";
 import { useModal } from "@/context/modal.context";
 import { useToast } from "@/context/toast.context";
-import { useAuth } from "@/context/auth.context";
 import { requestImagePreview } from "./-/user.repository";
 
 export const Route = createFileRoute("/home/user/info")({
@@ -25,7 +24,11 @@ function RouteComponent() {
   const { showToast } = useToast();
   const { mutateAsync, data: deleteResult } = useUserAlter();
   const { username } = Route.useSearch();
-  const { data: info } = useUserDetail(username);
+  const { data: info, refetch } = useUserDetail(username);
+
+  useEffect(() => {
+    refetch();
+  }, [refetch, username]);
 
   useEffect(() => {
     if (deleteResult) {

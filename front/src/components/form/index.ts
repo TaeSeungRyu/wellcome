@@ -17,6 +17,7 @@ export interface InputOption {
   offErrorMessage?: boolean;
   direction?: "row" | "column";
   onChange?: (e: React.ChangeEvent<any>) => void;
+  accept?: string; // For file input accept attribute
 }
 
 export interface InputFieldProps {

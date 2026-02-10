@@ -7,6 +7,7 @@ import { formatPhoneNumber } from "@/services/util";
 import type { UserForm } from "./user.schema";
 import type { UseFormReturn } from "react-hook-form";
 import type { BaseSyntheticEvent } from "react";
+import InputFile from "@/components/form/input.file";
 
 interface UserFormViewProps {
   form: UseFormReturn<UserForm | any>; // 타입이 섞여있다면 any 혹은 공통 타입 사용
@@ -116,8 +117,13 @@ export const UserFormView = ({
           errors={errors}
           option={{ direction: "row" }}
         />
-        <input type="file" {...register("file")} />
-
+        <InputFile
+          name="file"
+          register={register}
+          setValue={setValue}
+          errors={errors}
+          watch={watch}
+        />
         <button
           className="tailwind-blue-button"
           type="submit"
