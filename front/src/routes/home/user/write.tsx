@@ -56,7 +56,6 @@ function RouteComponent() {
   }, [alterData]);
 
   const askCheckUserExist = async () => {
-    console.log("check user exist called");
     if (!username) {
       showToast("아이디를 입력하세요.", { type: "error" });
       return;

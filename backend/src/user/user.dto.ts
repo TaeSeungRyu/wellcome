@@ -50,4 +50,8 @@ export class UpdateUserDto extends PartialType(UserDto) {
   @IsOptional()
   @IsString()
   password?: string;
+
+  @IsOptional()
+  @IsString()
+  profileImage?: string;
 }

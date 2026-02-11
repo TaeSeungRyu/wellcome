@@ -1,5 +1,9 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useUserAlter, useUserDetail } from "./-/use.user.hook";
+import {
+  useUserAlter,
+  useUserDetail,
+  useUserImageUrl,
+} from "./-/use.user.hook";
 import { useEffect, useState } from "react";
 import { useModal } from "@/context/modal.context";
 import { useToast } from "@/context/toast.context";
@@ -77,20 +81,7 @@ function RouteComponent() {
   };
 
   // 이미지 미리보기 처리
-  const [imgSrc, setImgSrc] = useState("");
-  useEffect(() => {
-    if (info?.profileImage) {
-      requestImagePreview(info.profileImage).then((blob) => {
-        const url = URL.createObjectURL(blob);
-        setImgSrc(url);
-      });
-    }
-    return () => {
-      if (imgSrc) {
-        URL.revokeObjectURL(imgSrc);
-      }
-    };
-  }, [info]);
+  const imgSrc = useUserImageUrl(info?.profileImage || "");
 
   return (
     <div className="max-w-3xl mx-auto p-6">

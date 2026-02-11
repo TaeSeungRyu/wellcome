@@ -39,6 +39,7 @@ export const userSchema = z.object({
 
 export const updatedUserSchema = userSchema.extend({
   password: z.string().optional(),
+  profileImage: z.string().optional(),
 });
 
 export type UserForm = z.infer<typeof userSchema>;

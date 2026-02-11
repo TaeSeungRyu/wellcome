@@ -12,7 +12,7 @@ export const Route = createFileRoute("/home/user/alter/$username")({
 
 function RouteComponent() {
   const username = Route.useParams().username;
-  const { form } = useUserForm(username);
+  const { form, refetch } = useUserForm(username);
   const { openModal, closeTopModal: closeConfirmModal } = useModal();
   const { mutate: userAlterMutate, data: alterData } = useUserAlter();
   const { showToast } = useToast();
@@ -54,6 +54,9 @@ function RouteComponent() {
     }
   }, [alterData, showToast, closeConfirmModal]);
 
+  useEffect(() => {
+    refetch();
+  }, [refetch, username]);
   return (
     <div className="py-2">
       <UserFormView form={form} onSubmit={onSubmit} submitLabel="변경" isEdit />

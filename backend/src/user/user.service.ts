@@ -218,6 +218,9 @@ export class UserService {
     if (file) {
       await FileHelper.deleteFile(user.profileImage); // 기존 파일 삭제 (추출된 헬퍼 사용)
       updateData['profileImage'] = `/uploads/${file.filename}`;
+    } else if (updateData.profileImage === '') {
+      await FileHelper.deleteFile(user.profileImage); // 기존 파일 삭제 (추출된 헬퍼 사용)
+      updateData['profileImage'] = '';
     }
 
     const updated = await this.userModel

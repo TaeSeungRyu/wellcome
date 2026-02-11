@@ -8,6 +8,7 @@ import type { UserForm } from "./user.schema";
 import type { UseFormReturn } from "react-hook-form";
 import type { BaseSyntheticEvent } from "react";
 import InputFile from "@/components/form/input.file";
+import { useUserImageUrl } from "./use.user.hook";
 
 interface UserFormViewProps {
   form: UseFormReturn<UserForm | any>; // 타입이 섞여있다면 any 혹은 공통 타입 사용
@@ -49,6 +50,11 @@ export const UserFormView = ({
     setValue("phone", formatPhoneNumber(e.target.value));
   };
 
+  const [imgSrc, setImgSrc] = useUserImageUrl(form.watch("profileImage") || "");
+  const removeImage = () => {
+    setImgSrc("");
+    setValue("profileImage", "");
+  };
   return (
     <form
       className="p-4 max-w-2xl mx-auto bg-white shadow-md rounded-xl"
@@ -57,7 +63,6 @@ export const UserFormView = ({
       <div className="mb-2 text-lg font-semibold">
         사용자 {isEdit ? "수정" : "등록"}
       </div>
-
       <div className="flex flex-col gap-4">
         <div className="relative">
           <InputText
@@ -71,7 +76,6 @@ export const UserFormView = ({
           />
           {extraButtons}
         </div>
-
         <InputPassword
           name={fields[1]}
           label="비밀번호"
@@ -96,7 +100,6 @@ export const UserFormView = ({
           errors={errors}
           watch={watch}
         />
-
         <InputText
           name={fields[4]}
           label="전화번호"
@@ -107,7 +110,6 @@ export const UserFormView = ({
           option={{ onChange: phoneValueHandler }}
           watch={watch}
         />
-
         <InputCheckbox
           name={fields[5]}
           label="역할 선택"
@@ -117,6 +119,23 @@ export const UserFormView = ({
           errors={errors}
           option={{ direction: "row" }}
         />
+        {imgSrc && typeof imgSrc === "string" && (
+          <div className="flex flex-col gap-2">
+            <span className="text-gray-500">프로필 이미지</span>
+            <img
+              src={imgSrc}
+              className="w-24 h-24 rounded-full object-contain border border-gray-300"
+            />
+            <button
+              className="tailwind-red-button w-[100px] text-center"
+              type="button"
+              onClick={removeImage}
+            >
+              삭제
+            </button>
+          </div>
+        )}
+
         <InputFile
           name="file"
           register={register}

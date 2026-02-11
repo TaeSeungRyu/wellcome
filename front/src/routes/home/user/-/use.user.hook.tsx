@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  requestImagePreview,
   requestUserAuthList,
   requestUserCheckExist,
   requestUserCreate,
@@ -13,7 +14,7 @@ import {
 import { useForm } from "react-hook-form";
 import { updatedUserSchema, userSchema, type User } from "./user.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const queryKey = ["requestUserList", "requestUserAlter"] as const;
 //LIST 조회용 HOOK
@@ -72,6 +73,7 @@ export const useUserForm = (username?: string) => {
       role: [],
       email: "",
       phone: "",
+      profileImage: "",
     },
     shouldUnregister: false,
   });
@@ -93,6 +95,7 @@ export const useUserForm = (username?: string) => {
             ...auth,
             selected: info.role?.includes(auth.value),
           })),
+          profileImage: info.profileImage || "",
         });
         isInitialized.current = true; // 초기화 완료 표시
       }, 1);
@@ -105,6 +108,7 @@ export const useUserForm = (username?: string) => {
           ...auth,
           selected: false,
         })),
+        profileImage: "",
       });
       isInitialized.current = true; // 초기화 완료 표시
     }
@@ -143,6 +147,7 @@ export const useUserAlter = () => {
       isDelete,
       isUpdate,
       file,
+      profileImage,
     }: {
       username?: string;
       password?: string;
@@ -153,6 +158,7 @@ export const useUserAlter = () => {
       isDelete?: boolean;
       isUpdate?: boolean;
       file?: any;
+      profileImage?: string;
     }) => {
       const param = {
         username,
@@ -161,6 +167,7 @@ export const useUserAlter = () => {
         role,
         email: email,
         phone: phone,
+        profileImage,
       };
       param.role = role
         ?.filter((role: any) => {
@@ -204,4 +211,22 @@ export const useUserDetail = (username: string) => {
       return (data?.result?.data as User) ?? null;
     },
   });
+};
+
+export const useUserImageUrl = (profileImage: string) => {
+  const [imgSrc, setImgSrc] = useState<string>("");
+  useEffect(() => {
+    if (profileImage) {
+      requestImagePreview(profileImage).then((blob) => {
+        const url = URL.createObjectURL(blob);
+        setImgSrc(url);
+      });
+    }
+    return () => {
+      if (imgSrc) {
+        URL.revokeObjectURL(imgSrc);
+      }
+    };
+  }, [profileImage]);
+  return [imgSrc, setImgSrc] as const;
 };
