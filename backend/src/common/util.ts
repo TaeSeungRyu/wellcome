@@ -18,6 +18,7 @@ export async function comparePassword(
 
 export class FileHelper {
   static async deleteFile(imageUrl: string | undefined): Promise<void> {
+    console.log('FileHelper.deleteFile called with imageUrl:', imageUrl);
     if (!imageUrl || imageUrl === '/uploads') return;
     try {
       const fileName = imageUrl.split('/').pop() || Math.random().toString();

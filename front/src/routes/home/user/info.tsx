@@ -4,10 +4,9 @@ import {
   useUserDetail,
   useUserImageUrl,
 } from "./-/use.user.hook";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useModal } from "@/context/modal.context";
 import { useToast } from "@/context/toast.context";
-import { requestImagePreview } from "./-/user.repository";
 
 export const Route = createFileRoute("/home/user/info")({
   component: RouteComponent,
@@ -29,6 +28,8 @@ function RouteComponent() {
   const { mutateAsync, data: deleteResult } = useUserAlter();
   const { username } = Route.useSearch();
   const { data: info, refetch } = useUserDetail(username);
+  // 이미지 미리보기 처리
+  const [imgSrc] = useUserImageUrl(info?.profileImage || "");
 
   useEffect(() => {
     refetch();
@@ -80,9 +81,6 @@ function RouteComponent() {
     });
   };
 
-  // 이미지 미리보기 처리
-  const imgSrc = useUserImageUrl(info?.profileImage || "");
-
   return (
     <div className="max-w-3xl mx-auto p-6">
       <div className="bg-white rounded-2xl shadow-md border border-gray-200">
@@ -94,7 +92,10 @@ function RouteComponent() {
           <InfoRow label="이름" value={info?.name} />
           <InfoRow label="이메일" value={info?.email || "-"} />
           <InfoRow label="전화번호" value={info?.phone || "-"} />
-          <InfoRow label="역할" value={info?.role?.join(", ") || "-"} />
+          <InfoRow
+            label="역할"
+            value={info?.role?.map((r) => r.label).join(", ") || "-"}
+          />
           <InfoRow
             label="작성일"
             value={

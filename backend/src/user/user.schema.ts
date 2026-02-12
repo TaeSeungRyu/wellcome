@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { Auth } from 'src/auth/auth.schema';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -21,7 +22,7 @@ export class User {
   accessDate?: string;
 
   @Prop()
-  role?: string[];
+  role?: any[];
 
   @Prop()
   email?: string;
@@ -31,6 +32,13 @@ export class User {
 
   @Prop()
   profileImage?: string;
+
+  @Prop()
+  authList?: Auth[];
 }
+
+// export interface UserInfo extends User {
+//   authList: Auth[];
+// }
 
 export const UserSchema = SchemaFactory.createForClass(User);

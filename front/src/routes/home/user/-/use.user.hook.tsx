@@ -93,7 +93,7 @@ export const useUserForm = (username?: string) => {
           phone: info.phone || "",
           role: authList.map((auth: any) => ({
             ...auth,
-            selected: info.role?.includes(auth.value),
+            selected: info.role?.some((r) => r.value === auth.value) || false,
           })),
           profileImage: info.profileImage || "",
         });
@@ -200,7 +200,7 @@ export const useUserAlter = () => {
 
 export const useUserDetail = (username: string) => {
   return useQuery({
-    queryKey: ["requestUserDetail"],
+    queryKey: ["requestUserDetail", username],
     queryFn: async () => {
       return await requestUserDetail(username);
     },

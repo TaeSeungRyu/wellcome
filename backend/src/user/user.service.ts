@@ -14,7 +14,19 @@ export class UserService {
   ) {}
 
   private async findUserOrThrow(username: string): Promise<UserDocument> {
-    const user = await this.userModel.findOne({ username }).exec();
+    const result = await this.userModel.aggregate<UserDocument>([
+      { $match: { username: username } },
+      {
+        $lookup: {
+          from: 'auth',
+          localField: 'role',
+          foreignField: 'code',
+          as: 'authList',
+        },
+      },
+    ]);
+
+    const user = result[0];
     if (!user) {
       throw new BadRequestException(
         new ResponseDto(
@@ -29,11 +41,21 @@ export class UserService {
 
   async findByUsername(username: string): Promise<ResponseDto> {
     const user = await this.findUserOrThrow(username);
-    const data = user.toObject() as Partial<User>;
+    const data = user as Partial<User>;
     if (data.profileImage) data.profileImage = `/user${data.profileImage}`;
-    delete data.password;
+    if (data?.password) {
+      delete data.password;
+    }
+    if (data?.role) {
+      data.role = data.authList?.map((tt: { code: string; name: string }) => ({
+        value: tt.code,
+        label: tt.name,
+      }));
+      delete data.authList;
+    }
     return new ResponseDto({ success: true, data }, '', '성공', 200);
   }
+
   async findAll(page: number = 1, limit: number = 10): Promise<ResponseDto> {
     try {
       // 1. skip 계산 (예: 2페이지이고 limit이 10이면 앞에 10개를 건너뜀)
@@ -216,13 +238,17 @@ export class UserService {
     }
 
     if (file) {
-      await FileHelper.deleteFile(user.profileImage); // 기존 파일 삭제 (추출된 헬퍼 사용)
+      if (user.profileImage) {
+        const filePath = user.profileImage.replace(/^\/user/, '');
+        await FileHelper.deleteFile(filePath);
+      }
       updateData['profileImage'] = `/uploads/${file.filename}`;
     } else if (updateData.profileImage === '') {
       await FileHelper.deleteFile(user.profileImage); // 기존 파일 삭제 (추출된 헬퍼 사용)
       updateData['profileImage'] = '';
+    } else {
+      updateData.profileImage = user.profileImage;
     }
-
     const updated = await this.userModel
       .findOneAndUpdate({ username: updateData.username }, updateData, {
         new: true,
