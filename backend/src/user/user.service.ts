@@ -25,7 +25,6 @@ export class UserService {
         },
       },
     ]);
-
     const user = result[0];
     if (!user) {
       throw new BadRequestException(
@@ -58,20 +57,56 @@ export class UserService {
 
   async findAll(page: number = 1, limit: number = 10): Promise<ResponseDto> {
     try {
-      // 1. skip 계산 (예: 2페이지이고 limit이 10이면 앞에 10개를 건너뜀)
       const skip = (page - 1) * limit;
-      // 2. 데이터 조회와 전체 개수 파악을 동시에 실행 (성능 최적화)
-      const [users, total] = await Promise.all([
-        this.userModel
-          .find()
-          .select('-password -profileImage') // 비밀번호 제외
-          .skip(skip)
-          .limit(limit)
-          .sort({ createdAt: -1 }) // 최신순 정렬
-          .exec(),
-        this.userModel.countDocuments().exec(), // 전체 사용자 수
+
+      const [result] = await this.userModel.aggregate<{
+        users: any[];
+        totalCount: Array<{ count: number }>;
+      }>([
+        {
+          $facet: {
+            users: [
+              { $sort: { createdAt: -1 } },
+              { $skip: skip },
+              { $limit: limit },
+              // 🔥 auth 컬렉션과 조인
+              {
+                $lookup: {
+                  from: 'auth', // auth 컬렉션 이름
+                  localField: 'role', // 배열
+                  foreignField: 'code',
+                  as: 'authList',
+                  pipeline: [
+                    {
+                      $project: {
+                        _id: 0,
+                        code: 1,
+                        name: 1,
+                      },
+                    },
+                  ],
+                },
+              },
+              {
+                $set: {
+                  role: '$authList', // 🔥 role을 authList로 교체
+                },
+              },
+              // 비밀번호 제거
+              {
+                $project: {
+                  password: 0,
+                  profileImage: 0,
+                },
+              },
+            ],
+
+            totalCount: [{ $count: 'count' }],
+          },
+        },
       ]);
-      // 3. 응답 데이터 구성 (현재 페이지, 전체 페이지 등 추가 정보 제공)
+      const users = result.users;
+      const total = result.totalCount[0]?.count ?? 0;
       const paginationData = {
         users,
         total,
@@ -91,7 +126,7 @@ export class UserService {
       throw new BadRequestException(
         new ResponseDto(
           { success: false },
-          'save_error',
+          'find_error',
           error instanceof Error
             ? error.message
             : '사용자 조회 중 오류가 발생했습니다.',
