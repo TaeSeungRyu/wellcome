@@ -16,7 +16,6 @@ export const API = {
   BOARD_COMMENT_ADD: `${API_BASE_URL}/board/add-comment`,
   BOARD_COMMENT_DELETE: `${API_BASE_URL}/board/remove-comment`,
   USER: `${API_BASE_URL}/user/list`,
-  AUTH_LIST: `${API_BASE_URL}/auth-code/list`,
   USER_CREATE: `${API_BASE_URL}/user/create`,
   USER_CHECK_EXIST: `${API_BASE_URL}/user/check-exist`,
   USER_DETAIL: `${API_BASE_URL}/user/find`,
@@ -24,6 +23,12 @@ export const API = {
   USER_UPDATE: `${API_BASE_URL}/user/update`,
   USER_CREATE_FILE: `${API_BASE_URL}/user/create-with-file`,
   USER_UPDATE_FILE: `${API_BASE_URL}/user/update-with-file`,
+
+  AUTH_LIST: `${API_BASE_URL}/auth-code/list`,
+  AUTH_CREATE: `${API_BASE_URL}/auth-code/create`,
+  AUTH_UPDATE: `${API_BASE_URL}/auth-code/update`,
+  AUTH_DELETE: `${API_BASE_URL}/auth-code/delete`,
+  AUTH_DETAIL: `${API_BASE_URL}/auth-code/find`,
 };
 
 export interface MenuItem {

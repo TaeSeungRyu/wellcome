@@ -3,12 +3,10 @@ import {
   requestImagePreview,
   requestUserAuthList,
   requestUserCheckExist,
-  requestUserCreate,
   requestUserCreateWithFile,
   requestUserDelete,
   requestUserDetail,
   requestUserList,
-  requestUserUpdate,
   requestUserUpdateWithFile,
 } from "./user.repository";
 import { useForm } from "react-hook-form";
