@@ -48,4 +48,9 @@ export const MENU_ITEMS: MenuItem[] = [
     key: "manage-user",
     link: "/home/user",
   },
+  {
+    label: "권한 관리",
+    key: "manage-auth",
+    link: "/home/auth",
+  },
 ];

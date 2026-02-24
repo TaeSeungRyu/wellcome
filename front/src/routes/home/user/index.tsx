@@ -84,7 +84,6 @@ function RouteComponent() {
   }, [result?.data]);
 
   const moveWritePage = () => {
-    console.log(121212);
     router.navigate({
       to: "/home/user/write",
     });

@@ -4,24 +4,38 @@ import { useAuthListHook } from "./-/use.auth.hook";
 import { PagingComponent } from "@/components/ui/paging.component";
 import { TableComponent } from "@/components/ui/table.component";
 import type { Column } from "@/const/type";
+import { requestAuthList } from "./-/auth.repository";
+
+// 1. Loader 함수 정의 : 샘플
+const projectLoader = async () => {
+  const res = await requestAuthList(1, 2);
+  return res.result;
+};
 
 export const Route = createFileRoute("/home/auth/")({
   component: RouteComponent,
+  loader: projectLoader, // 여기서 프리패칭이 일어남
 });
 
 function RouteComponent() {
   const router = useRouter();
-  const [totalPages, setTotalPages] = useState(0);
+
+  const preloadData = Route.useLoaderData();
   const [currentPage, setCurrentPage] = useState(1);
-  const [size, setSize] = useState(3);
-  const {
-    isFetching,
-    data: result,
-    refetch: search,
-  } = useAuthListHook(currentPage, size);
+  const [size] = useState(2);
+  const { isFetching, data: result } = useAuthListHook(
+    currentPage,
+    size,
+    currentPage === 1 ? preloadData : undefined,
+  );
+
+  const authData = result?.data?.auths || [];
+  const total = result?.data?.total || 0;
+  const totalPages = Math.ceil(total / (result?.data?.limit || size));
   const currentPageFromApi = result?.data?.page || 1;
 
   const onPageChange = (page: number) => {
+    console.log("페이지 변경:", page);
     setCurrentPage(page);
   };
 
@@ -30,20 +44,7 @@ function RouteComponent() {
     console.log(row);
   };
 
-  useEffect(() => {
-    search();
-  }, [currentPage, size]);
-
-  useEffect(() => {
-    if (result?.data) {
-      setSize(result?.data?.limit);
-      setTotalPages(Math.ceil(result?.data?.total / result?.data?.limit));
-      setData(result?.data?.users || []);
-    }
-  }, [result?.data]);
-
   const moveWritePage = () => {
-    console.log(121212);
     router.navigate({
       to: "/home/auth/write",
     });
@@ -51,7 +52,7 @@ function RouteComponent() {
 
   const columns: Column<any>[] = [
     {
-      key: "auth",
+      key: "code",
       header: "권한",
       render(value) {
         return <strong className="text-red-300">{value as string}</strong>;
@@ -74,10 +75,10 @@ function RouteComponent() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-              사용자 관리
+              권한 관리
             </h1>
             <p className="text-slate-500 text-sm mt-1">
-              시스템에 등록된 전체 사용자 목록을 조회하고 관리합니다.
+              시스템에 등록된 전체 권한 목록을 조회하고 관리합니다.
             </p>
           </div>
           <div className="flex gap-2">
@@ -113,7 +114,7 @@ function RouteComponent() {
           {/* 테이블 헤더 필터 영역 (필요시 추가 가능) */}
           <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/30">
             <h3 className="text-sm font-semibold text-slate-700">
-              사용자 목록{" "}
+              권한 목록{" "}
               <span className="ml-2 text-blue-500 font-normal">
                 {result?.data?.total || 0}명
               </span>
@@ -123,7 +124,7 @@ function RouteComponent() {
           <div className="overflow-x-auto p-2">
             <TableComponent
               columns={columns}
-              data={data}
+              data={authData}
               onRowClick={onRowClick}
             />
           </div>
