@@ -5,6 +5,7 @@ import { PagingComponent } from "@/components/ui/paging.component";
 import { TableComponent } from "@/components/ui/table.component";
 import type { Column } from "@/const/type";
 import { requestAuthList } from "./-/auth.repository";
+import { useRouteQuerySync } from "../-/common.schema";
 
 // 1. Loader 함수 정의 : 샘플
 const projectLoader = async () => {
@@ -29,10 +30,10 @@ function RouteComponent() {
     currentPage === 1 ? preloadData : undefined,
   );
 
-  const authData = result?.data?.auths || [];
-  const total = result?.data?.total || 0;
-  const totalPages = Math.ceil(total / (result?.data?.limit || size));
-  const currentPageFromApi = result?.data?.page || 1;
+  const authData = result?.data || [];
+  const total = result?.total || 0;
+  const totalPages = Math.ceil(total / (result?.limit || size));
+  const currentPageFromApi = result?.page || 1;
 
   const onPageChange = (page: number) => {
     console.log("페이지 변경:", page);
@@ -67,6 +68,15 @@ function RouteComponent() {
       },
     },
   ];
+
+  const { handleSearch } = useRouteQuerySync(
+    {
+      currentPage,
+    },
+    (query: Record<string, any>) => {
+      console.log("callback", query);
+    },
+  );
 
   return (
     <div className="p-8 bg-slate-50 ">
@@ -116,7 +126,7 @@ function RouteComponent() {
             <h3 className="text-sm font-semibold text-slate-700">
               권한 목록{" "}
               <span className="ml-2 text-blue-500 font-normal">
-                {result?.data?.total || 0}명
+                {result?.total || 0}명
               </span>
             </h3>
           </div>
