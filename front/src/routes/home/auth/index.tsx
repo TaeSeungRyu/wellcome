@@ -1,11 +1,14 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import { useAuthListHook } from "./-/use.auth.hook";
 import { PagingComponent } from "@/components/ui/paging.component";
 import { TableComponent } from "@/components/ui/table.component";
 import type { Column } from "@/const/type";
 import { requestAuthList } from "./-/auth.repository";
-import { useRouteQuerySync } from "../-/common.schema";
+import InputText from "@/components/form/input.text";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod";
+import { authSearchSchema } from "./-/auth.schema";
 
 // 1. Loader 함수 정의 : 샘플
 const projectLoader = async () => {
@@ -14,20 +17,20 @@ const projectLoader = async () => {
 };
 
 export const Route = createFileRoute("/home/auth/")({
+  validateSearch: (search) => authSearchSchema.parse(search),
   component: RouteComponent,
   loader: projectLoader, // 여기서 프리패칭이 일어남
 });
 
 function RouteComponent() {
   const router = useRouter();
-
+  const navigate = Route.useNavigate();
+  const { page, size, search } = Route.useSearch(); // URL에서 직접 읽음
   const preloadData = Route.useLoaderData();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [size] = useState(2);
   const { isFetching, data: result } = useAuthListHook(
-    currentPage,
+    page,
     size,
-    currentPage === 1 ? preloadData : undefined,
+    page === 1 ? preloadData : undefined,
   );
 
   const authData = result?.data || [];
@@ -35,12 +38,13 @@ function RouteComponent() {
   const totalPages = Math.ceil(total / (result?.limit || size));
   const currentPageFromApi = result?.page || 1;
 
-  const onPageChange = (page: number) => {
-    console.log("페이지 변경:", page);
-    setCurrentPage(page);
+  // 페이지 변경 시 URL을 업데이트 (이것이 곧 상태 변경)
+  const onPageChange = (nextPage: number) => {
+    navigate({
+      search: (prev) => ({ ...prev, page: nextPage }),
+    });
   };
 
-  const [data, setData] = useState<any[]>([]);
   const onRowClick = (row: any) => {
     console.log(row);
   };
@@ -69,14 +73,32 @@ function RouteComponent() {
     },
   ];
 
-  const { handleSearch } = useRouteQuerySync(
-    {
-      currentPage,
+  const form = useForm({
+    resolver: zodResolver(
+      z.object({
+        search: z.string().optional(),
+      }),
+    ),
+    mode: "all",
+    defaultValues: {
+      search: search || "",
     },
-    (query: Record<string, any>) => {
-      console.log("callback", query);
-    },
-  );
+    shouldUnregister: false,
+  });
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = form;
+
+  const onSearchSubmit = (values: any) => {
+    navigate({
+      search: (prev) => ({ ...prev, search: values.search, page: 1 }), // 검색 시 1페이지로 이동
+    });
+  };
 
   return (
     <div className="p-8 bg-slate-50 ">
@@ -129,6 +151,26 @@ function RouteComponent() {
                 {result?.total || 0}명
               </span>
             </h3>
+
+            <div className="flex items-center gap-4">
+              <div className="w-50">
+                <InputText
+                  name={"search"}
+                  label="검색"
+                  register={register}
+                  setValue={setValue}
+                  errors={errors}
+                  watch={watch}
+                  placeholder="검색어를 입력해주세요."
+                />
+              </div>
+              <button
+                className="tailwind-blue-button mt-2"
+                onClick={handleSubmit(onSearchSubmit)}
+              >
+                검색
+              </button>
+            </div>
           </div>
 
           <div className="overflow-x-auto p-2">

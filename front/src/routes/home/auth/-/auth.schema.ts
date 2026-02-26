@@ -14,3 +14,11 @@ export const authSchema = z.object({
 });
 
 export type AuthForm = z.infer<typeof authSchema>;
+
+export const authSearchSchema = z.object({
+  page: z.number().catch(1),
+  size: z.number().catch(2),
+  search: z.string().optional(),
+});
+
+export type AuthSearch = z.infer<typeof authSearchSchema>;
