@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export interface Auth {
-  _id: string;
+  _id?: string;
   code: string;
   name: string;
   desc: string;

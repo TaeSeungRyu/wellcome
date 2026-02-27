@@ -53,4 +53,11 @@ export class AuthController {
     const authCode = await this.authService.findById(id);
     return authCode;
   }
+
+  @Role('admin', 'super')
+  @Get('check-code')
+  async checkCode(@Query('code') code: string): Promise<ResponseDto> {
+    const isExist = await this.authService.isCodeInUse(code);
+    return isExist;
+  }
 }

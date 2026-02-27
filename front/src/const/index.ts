@@ -29,6 +29,7 @@ export const API = {
   AUTH_UPDATE: `${API_BASE_URL}/auth-code/update`,
   AUTH_DELETE: `${API_BASE_URL}/auth-code/delete`,
   AUTH_DETAIL: `${API_BASE_URL}/auth-code/find`,
+  AUTH_CODE_EXIST: `${API_BASE_URL}/auth-code/check-code`,
 };
 
 export interface MenuItem {

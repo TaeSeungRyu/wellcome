@@ -339,4 +339,18 @@ export class AuthService {
       );
     }
   }
+
+  public async isCodeInUse(code: string): Promise<ResponseDto> {
+    const isExist = await this.isExistCode(code);
+    return new ResponseDto(
+      {
+        success: !isExist,
+        data: { isInUse: isExist },
+      },
+      '',
+      isExist
+        ? '해당 권한 코드를 사용하는 사용자가 있습니다.'
+        : '해당 권한 코드를 사용하는 사용자가 없습니다.',
+    );
+  }
 }

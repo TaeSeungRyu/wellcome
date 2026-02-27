@@ -49,10 +49,20 @@ const requestAuthUpdate = async (data: any) => {
   return apiClient.request(API.AUTH_UPDATE, params);
 };
 
+const requestIsAuthCodeExist = async (code: string) => {
+  const apiClient = ApiClient.getInstance();
+  const params = {
+    method: "get",
+    query: { code },
+  };
+  return apiClient.request(`${API.AUTH_CODE_EXIST}`, params);
+};
+
 export {
   requestAuthList,
   requestAuthCreate,
   requestAuthDetail,
   requestAuthDelete,
   requestAuthUpdate,
+  requestIsAuthCodeExist,
 };
