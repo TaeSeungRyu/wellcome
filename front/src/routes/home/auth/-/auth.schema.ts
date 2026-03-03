@@ -15,9 +15,11 @@ export const authSchema = z.object({
 
 export type AuthForm = z.infer<typeof authSchema>;
 
+export const AUTH_PAGE_SIZE = 3;
+
 export const authSearchSchema = z.object({
   page: z.number().catch(1),
-  size: z.number().catch(2),
+  size: z.number().catch(AUTH_PAGE_SIZE),
   search: z.string().optional(),
 });
 

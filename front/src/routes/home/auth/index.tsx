@@ -8,11 +8,11 @@ import InputText from "@/components/form/input.text";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
-import { authSearchSchema } from "./-/auth.schema";
+import { AUTH_PAGE_SIZE, authSearchSchema } from "./-/auth.schema";
 
 // 1. Loader 함수 정의 : 샘플
 const projectLoader = async () => {
-  const res = await requestAuthList(1, 2);
+  const res = await requestAuthList(1, AUTH_PAGE_SIZE);
   return res.result;
 };
 

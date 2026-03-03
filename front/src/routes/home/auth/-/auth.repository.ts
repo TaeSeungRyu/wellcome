@@ -22,20 +22,20 @@ const requestAuthCreate = async (data: any) => {
   return apiClient.request(API.AUTH_CREATE, params);
 };
 
-const requestAuthDetail = async (username: string) => {
+const requestAuthDetail = async (_id: string) => {
   const apiClient = ApiClient.getInstance();
   const params = {
     method: "get",
-    query: { username },
+    query: { _id },
   };
   return apiClient.request(`${API.AUTH_DETAIL}`, params);
 };
 
-const requestAuthDelete = async (username: string) => {
+const requestAuthDelete = async (_id: string) => {
   const apiClient = ApiClient.getInstance();
   const params = {
     method: "delete",
-    body: JSON.stringify({ username }),
+    body: JSON.stringify({ _id }),
   };
   return apiClient.request(`${API.AUTH_DELETE}`, params);
 };

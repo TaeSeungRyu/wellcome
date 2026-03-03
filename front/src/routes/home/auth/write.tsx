@@ -1,16 +1,21 @@
 import InputText from "@/components/form/input.text";
-import { createFileRoute } from "@tanstack/react-router";
-import { useAuthCodeExist, useAuthForm } from "./-/use.auth.hook";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { useAuthAlter, useAuthCodeExist, useAuthForm } from "./-/use.auth.hook";
 import type { Auth, AuthForm } from "./-/auth.schema";
 import { useModal } from "@/context/modal.context";
+import { useEffect, useState } from "react";
+import { useToast } from "@/context/toast.context";
 
 export const Route = createFileRoute("/home/auth/write")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const router = useRouter();
   const { openModal, closeTopModal: closeConfirmModal } = useModal();
+  const { showToast } = useToast();
   const fields: (keyof AuthForm)[] = ["code", "name", "desc"];
+  const { mutateAsync } = useAuthAlter();
   const {
     register,
     handleSubmit,
@@ -19,12 +24,41 @@ function RouteComponent() {
     formState: { errors },
   } = useAuthForm();
   const { refetch: requestCodeExist } = useAuthCodeExist(watch("code"));
-
+  const [isCodeVerified, setIsCodeVerified] = useState(false);
+  useEffect(() => {
+    setIsCodeVerified(false);
+  }, [watch("code")]);
   const toAlter = (data: Auth) => {
     console.log("Alter Data:", data);
+    mutateAsync(data)
+      .then((res) => {
+        if (res?.result?.success) {
+          router.history.go(-1);
+          showToast(res.message || "등록 하였습니다.", {
+            type: "success",
+          });
+        } else {
+          showToast(res?.message || "등록에 실패하였습니다.", {
+            type: "error",
+          });
+        }
+        closeConfirmModal();
+      })
+      .catch((err) => {
+        showToast(err?.message || "등록 중 오류가 발생하였습니다.", {
+          type: "error",
+        });
+        closeConfirmModal();
+      });
   };
 
   const onSubmit = (data: Auth) => {
+    if (!isCodeVerified) {
+      showToast("코드 중복 확인을 해주세요.", {
+        type: "error",
+      });
+      return;
+    }
     openModal({
       content: (
         <div>
@@ -47,13 +81,25 @@ function RouteComponent() {
     });
   };
   const checkCodeExist = async () => {
-    requestCodeExist()
-      .then(({ data }) => {
-        console.log(data);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    if (!watch("code")) return;
+
+    try {
+      const { data } = await requestCodeExist();
+      if (!data?.success) {
+        showToast("이미 존재하는 코드입니다.", {
+          type: "error",
+        });
+        setIsCodeVerified(false);
+      } else {
+        showToast("사용 가능한 코드입니다.", {
+          type: "success",
+        });
+        setIsCodeVerified(true);
+      }
+    } catch (err) {
+      console.error(err);
+      setIsCodeVerified(false);
+    }
   };
   return (
     <form
@@ -73,10 +119,20 @@ function RouteComponent() {
           />
           <button
             type="button"
-            className={`bg-gray-200 text-gray-700 px-5 py-1 rounded w-40 h-11 mt-2 ${errors.code ? "cursor-not-allowed opacity-50 !mt-0 mb-4" : "hover:bg-gray-300"}`}
             onClick={checkCodeExist}
+            disabled={isCodeVerified}
+            className={`
+    px-5 py-1 rounded w-40 h-11 mt-2 text-white transition-colors
+    ${
+      errors.code
+        ? "cursor-not-allowed opacity-50"
+        : isCodeVerified
+          ? "bg-green-700 cursor-default"
+          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+    }
+  `}
           >
-            중복 확인
+            {isCodeVerified ? "확인 완료" : "중복 확인"}
           </button>
         </div>
         <div className="relative">

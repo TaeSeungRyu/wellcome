@@ -18,6 +18,14 @@ function HomeLayout() {
   const constRef = useRef(constObject);
 
   useEffect(() => {
+    console.log("HomeLayout mounted. Current token:", token);
+    if (!token) {
+      alert("인증이 필요합니다. 로그인 페이지로 이동합니다.");
+      logout();
+    }
+  }, [token, alert, logout]);
+
+  useEffect(() => {
     constRef.current = constObject;
   }, [constObject]);
 
