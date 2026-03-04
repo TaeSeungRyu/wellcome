@@ -1,6 +1,8 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   requestAuthCreate,
+  requestAuthDelete,
+  requestAuthDetail,
   requestAuthList,
   requestIsAuthCodeExist,
 } from "./auth.repository";
@@ -91,6 +93,7 @@ export const useAuthAlter = () => {
     }) => {
       if (isUpdate) {
       } else if (isDelete) {
+        return await requestAuthDelete(_id!);
       } else {
         return await requestAuthCreate({ code, name, desc });
       }
@@ -100,6 +103,21 @@ export const useAuthAlter = () => {
     },
     onError: (error: Error) => {
       throw error;
+    },
+  });
+};
+
+export const useAuthDetail = (_id: string) => {
+  return useQuery({
+    queryKey: ["useAuthDetail", _id],
+    queryFn: async () => {
+      return await requestAuthDetail(_id);
+    },
+    select(data) {
+      if (data?.result) {
+        return resultMapper<Auth>(data.result, "data");
+      }
+      return null;
     },
   });
 };

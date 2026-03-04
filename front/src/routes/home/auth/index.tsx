@@ -47,6 +47,10 @@ function RouteComponent() {
 
   const onRowClick = (row: any) => {
     console.log(row);
+    router.navigate({
+      to: "/home/auth/info",
+      search: (prev) => ({ ...prev, id: row._id }),
+    });
   };
 
   const moveWritePage = () => {
