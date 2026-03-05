@@ -1,5 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useAuthDetail } from "./-/use.auth.hook";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { useAuthAlter, useAuthDetail } from "./-/use.auth.hook";
+import { useModal } from "@/context/modal.context";
+import { useEffect } from "react";
+import { useToast } from "@/context/toast.context";
 
 export const Route = createFileRoute("/home/auth/info")({
   component: RouteComponent,
@@ -17,8 +20,48 @@ export const Route = createFileRoute("/home/auth/info")({
 });
 
 function RouteComponent() {
+  const router = useRouter();
   const { id } = Route.useSearch();
   const { data: info } = useAuthDetail(id);
+  const { openModal, closeTopModal: closeConfirmModal } = useModal();
+  const { mutateAsync, data: deleteResult } = useAuthAlter();
+  const { showToast } = useToast();
+
+  const runConfirmModal = () => {
+    openModal({
+      content: (
+        <div>
+          <h2>확인</h2>
+          <p>권한 코드를 삭제 하시겠습니까?</p>
+          <button
+            className="bg-red-500 text-white px-4 py-2 rounded mr-2"
+            onClick={closeConfirmModal}
+          >
+            취소
+          </button>
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+            onClick={() => mutateAsync({ _id: id, isDelete: true })}
+          >
+            삭제
+          </button>
+        </div>
+      ),
+    });
+  };
+
+  useEffect(() => {
+    if (deleteResult) {
+      closeConfirmModal();
+      showToast(deleteResult?.message || "삭제 하였습니다.", {
+        type: "success",
+      });
+      setTimeout(() => {
+        router.history.back();
+      }, 100);
+    }
+  }, [deleteResult]);
+
   return (
     <div className="flex flex-col  p-4 max-w-2xl mx-auto bg-white shadow-md rounded-xl gap-4">
       <h1>권한 코드 상세 정보</h1>
@@ -36,7 +79,10 @@ function RouteComponent() {
             </p>
           </div>
           <div className="flex">
-            <button className="bg-red-500 text-white px-4 py-2 rounded mr-2">
+            <button
+              className="bg-red-500 text-white px-4 py-2 rounded mr-2"
+              onClick={runConfirmModal}
+            >
               삭제
             </button>
             <button className="bg-blue-500 text-white px-4 py-2 rounded">

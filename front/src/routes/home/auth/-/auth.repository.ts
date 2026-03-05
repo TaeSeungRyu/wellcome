@@ -35,7 +35,7 @@ const requestAuthDelete = async (_id: string) => {
   const apiClient = ApiClient.getInstance();
   const params = {
     method: "delete",
-    body: JSON.stringify({ _id }),
+    query: { _id },
   };
   return apiClient.request(`${API.AUTH_DELETE}`, params);
 };
