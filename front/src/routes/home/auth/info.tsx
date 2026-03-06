@@ -62,6 +62,10 @@ function RouteComponent() {
     }
   }, [deleteResult]);
 
+  const movePage = () => {
+    router.history.push(`/home/auth/alter?id=${id}`);
+  };
+
   return (
     <div className="flex flex-col  p-4 max-w-2xl mx-auto bg-white shadow-md rounded-xl gap-4">
       <h1>권한 코드 상세 정보</h1>
@@ -85,7 +89,10 @@ function RouteComponent() {
             >
               삭제
             </button>
-            <button className="bg-blue-500 text-white px-4 py-2 rounded">
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+              onClick={movePage}
+            >
               수정
             </button>
           </div>

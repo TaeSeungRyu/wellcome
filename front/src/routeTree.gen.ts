@@ -21,6 +21,7 @@ import { Route as HomeUserWriteRouteImport } from './routes/home/user/write'
 import { Route as HomeUserInfoRouteImport } from './routes/home/user/info'
 import { Route as HomeAuthWriteRouteImport } from './routes/home/auth/write'
 import { Route as HomeAuthInfoRouteImport } from './routes/home/auth/info'
+import { Route as HomeAuthAlterRouteImport } from './routes/home/auth/alter'
 import { Route as HomeUserAlterUsernameRouteImport } from './routes/home/user/alter.$username'
 
 const LoginRouteRoute = LoginRouteRouteImport.update({
@@ -83,6 +84,11 @@ const HomeAuthInfoRoute = HomeAuthInfoRouteImport.update({
   path: '/auth/info',
   getParentRoute: () => HomeRouteRoute,
 } as any)
+const HomeAuthAlterRoute = HomeAuthAlterRouteImport.update({
+  id: '/auth/alter',
+  path: '/auth/alter',
+  getParentRoute: () => HomeRouteRoute,
+} as any)
 const HomeUserAlterUsernameRoute = HomeUserAlterUsernameRouteImport.update({
   id: '/user/alter/$username',
   path: '/user/alter/$username',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/home/dashboard': typeof HomeDashboardRouteRoute
   '/login/signin': typeof LoginSigninRouteRoute
   '/login/signup': typeof LoginSignupRouteRoute
+  '/home/auth/alter': typeof HomeAuthAlterRoute
   '/home/auth/info': typeof HomeAuthInfoRoute
   '/home/auth/write': typeof HomeAuthWriteRoute
   '/home/user/info': typeof HomeUserInfoRoute
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/home/dashboard': typeof HomeDashboardRouteRoute
   '/login/signin': typeof LoginSigninRouteRoute
   '/login/signup': typeof LoginSignupRouteRoute
+  '/home/auth/alter': typeof HomeAuthAlterRoute
   '/home/auth/info': typeof HomeAuthInfoRoute
   '/home/auth/write': typeof HomeAuthWriteRoute
   '/home/user/info': typeof HomeUserInfoRoute
@@ -125,6 +133,7 @@ export interface FileRoutesById {
   '/home/dashboard': typeof HomeDashboardRouteRoute
   '/login/signin': typeof LoginSigninRouteRoute
   '/login/signup': typeof LoginSignupRouteRoute
+  '/home/auth/alter': typeof HomeAuthAlterRoute
   '/home/auth/info': typeof HomeAuthInfoRoute
   '/home/auth/write': typeof HomeAuthWriteRoute
   '/home/user/info': typeof HomeUserInfoRoute
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/home/dashboard'
     | '/login/signin'
     | '/login/signup'
+    | '/home/auth/alter'
     | '/home/auth/info'
     | '/home/auth/write'
     | '/home/user/info'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
     | '/home/dashboard'
     | '/login/signin'
     | '/login/signup'
+    | '/home/auth/alter'
     | '/home/auth/info'
     | '/home/auth/write'
     | '/home/user/info'
@@ -170,6 +181,7 @@ export interface FileRouteTypes {
     | '/home/dashboard'
     | '/login/signin'
     | '/login/signup'
+    | '/home/auth/alter'
     | '/home/auth/info'
     | '/home/auth/write'
     | '/home/user/info'
@@ -271,6 +283,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeAuthInfoRouteImport
       parentRoute: typeof HomeRouteRoute
     }
+    '/home/auth/alter': {
+      id: '/home/auth/alter'
+      path: '/auth/alter'
+      fullPath: '/home/auth/alter'
+      preLoaderRoute: typeof HomeAuthAlterRouteImport
+      parentRoute: typeof HomeRouteRoute
+    }
     '/home/user/alter/$username': {
       id: '/home/user/alter/$username'
       path: '/user/alter/$username'
@@ -283,6 +302,7 @@ declare module '@tanstack/react-router' {
 
 interface HomeRouteRouteChildren {
   HomeDashboardRouteRoute: typeof HomeDashboardRouteRoute
+  HomeAuthAlterRoute: typeof HomeAuthAlterRoute
   HomeAuthInfoRoute: typeof HomeAuthInfoRoute
   HomeAuthWriteRoute: typeof HomeAuthWriteRoute
   HomeUserInfoRoute: typeof HomeUserInfoRoute
@@ -294,6 +314,7 @@ interface HomeRouteRouteChildren {
 
 const HomeRouteRouteChildren: HomeRouteRouteChildren = {
   HomeDashboardRouteRoute: HomeDashboardRouteRoute,
+  HomeAuthAlterRoute: HomeAuthAlterRoute,
   HomeAuthInfoRoute: HomeAuthInfoRoute,
   HomeAuthWriteRoute: HomeAuthWriteRoute,
   HomeUserInfoRoute: HomeUserInfoRoute,
