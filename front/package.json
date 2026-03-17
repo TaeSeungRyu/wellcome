@@ -19,9 +19,11 @@
     "@tanstack/router-plugin": "^1.132.0",
     "@types/event-source-polyfill": "^1.0.5",
     "event-source-polyfill": "^1.0.31",
+    "jwt-decode": "^4.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.68.0",
+    "swr": "^2.4.1",
     "zod": "^4.1.13",
     "zustand": "^5.0.10"
   },

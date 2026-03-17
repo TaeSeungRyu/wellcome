@@ -14,6 +14,7 @@ import { Route as HomeRouteRouteImport } from './routes/home/route'
 import { Route as RouteRouteImport } from './routes/route'
 import { Route as LoginSignupRouteRouteImport } from './routes/login/signup/route'
 import { Route as LoginSigninRouteRouteImport } from './routes/login/signin/route'
+import { Route as HomeDashboardSwrRouteRouteImport } from './routes/home/dashboard-swr/route'
 import { Route as HomeDashboardRouteRouteImport } from './routes/home/dashboard/route'
 import { Route as HomeUserIndexRouteImport } from './routes/home/user/index'
 import { Route as HomeAuthIndexRouteImport } from './routes/home/auth/index'
@@ -48,6 +49,11 @@ const LoginSigninRouteRoute = LoginSigninRouteRouteImport.update({
   id: '/signin',
   path: '/signin',
   getParentRoute: () => LoginRouteRoute,
+} as any)
+const HomeDashboardSwrRouteRoute = HomeDashboardSwrRouteRouteImport.update({
+  id: '/dashboard-swr',
+  path: '/dashboard-swr',
+  getParentRoute: () => HomeRouteRoute,
 } as any)
 const HomeDashboardRouteRoute = HomeDashboardRouteRouteImport.update({
   id: '/dashboard',
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/home': typeof HomeRouteRouteWithChildren
   '/login': typeof LoginRouteRouteWithChildren
   '/home/dashboard': typeof HomeDashboardRouteRoute
+  '/home/dashboard-swr': typeof HomeDashboardSwrRouteRoute
   '/login/signin': typeof LoginSigninRouteRoute
   '/login/signup': typeof LoginSignupRouteRoute
   '/home/auth/alter': typeof HomeAuthAlterRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByTo {
   '/home': typeof HomeRouteRouteWithChildren
   '/login': typeof LoginRouteRouteWithChildren
   '/home/dashboard': typeof HomeDashboardRouteRoute
+  '/home/dashboard-swr': typeof HomeDashboardSwrRouteRoute
   '/login/signin': typeof LoginSigninRouteRoute
   '/login/signup': typeof LoginSignupRouteRoute
   '/home/auth/alter': typeof HomeAuthAlterRoute
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/home': typeof HomeRouteRouteWithChildren
   '/login': typeof LoginRouteRouteWithChildren
   '/home/dashboard': typeof HomeDashboardRouteRoute
+  '/home/dashboard-swr': typeof HomeDashboardSwrRouteRoute
   '/login/signin': typeof LoginSigninRouteRoute
   '/login/signup': typeof LoginSignupRouteRoute
   '/home/auth/alter': typeof HomeAuthAlterRoute
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/login'
     | '/home/dashboard'
+    | '/home/dashboard-swr'
     | '/login/signin'
     | '/login/signup'
     | '/home/auth/alter'
@@ -163,6 +173,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/login'
     | '/home/dashboard'
+    | '/home/dashboard-swr'
     | '/login/signin'
     | '/login/signup'
     | '/home/auth/alter'
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/login'
     | '/home/dashboard'
+    | '/home/dashboard-swr'
     | '/login/signin'
     | '/login/signup'
     | '/home/auth/alter'
@@ -233,6 +245,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/login/signin'
       preLoaderRoute: typeof LoginSigninRouteRouteImport
       parentRoute: typeof LoginRouteRoute
+    }
+    '/home/dashboard-swr': {
+      id: '/home/dashboard-swr'
+      path: '/dashboard-swr'
+      fullPath: '/home/dashboard-swr'
+      preLoaderRoute: typeof HomeDashboardSwrRouteRouteImport
+      parentRoute: typeof HomeRouteRoute
     }
     '/home/dashboard': {
       id: '/home/dashboard'
@@ -302,6 +321,7 @@ declare module '@tanstack/react-router' {
 
 interface HomeRouteRouteChildren {
   HomeDashboardRouteRoute: typeof HomeDashboardRouteRoute
+  HomeDashboardSwrRouteRoute: typeof HomeDashboardSwrRouteRoute
   HomeAuthAlterRoute: typeof HomeAuthAlterRoute
   HomeAuthInfoRoute: typeof HomeAuthInfoRoute
   HomeAuthWriteRoute: typeof HomeAuthWriteRoute
@@ -314,6 +334,7 @@ interface HomeRouteRouteChildren {
 
 const HomeRouteRouteChildren: HomeRouteRouteChildren = {
   HomeDashboardRouteRoute: HomeDashboardRouteRoute,
+  HomeDashboardSwrRouteRoute: HomeDashboardSwrRouteRoute,
   HomeAuthAlterRoute: HomeAuthAlterRoute,
   HomeAuthInfoRoute: HomeAuthInfoRoute,
   HomeAuthWriteRoute: HomeAuthWriteRoute,

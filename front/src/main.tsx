@@ -14,6 +14,7 @@ import ModalProvider from "./components/modal/modal.provider.tsx";
 import ToastProvider from "./components/toast/toast.provider.tsx";
 import { AuthProvider } from "./context/auth.context.tsx";
 import { globalToast } from "./context/toast.context.tsx";
+import { SWRProviders } from "./context/swr.context.tsx";
 
 const router = createRouter({
   routeTree,
@@ -72,13 +73,15 @@ if (rootElement && !rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <ToastProvider>
-            <ModalProvider>
-              <RouterProvider router={router} />
-            </ModalProvider>
-          </ToastProvider>
-        </AuthProvider>
+        <SWRProviders>
+          <AuthProvider>
+            <ToastProvider>
+              <ModalProvider>
+                <RouterProvider router={router} />
+              </ModalProvider>
+            </ToastProvider>
+          </AuthProvider>
+        </SWRProviders>
       </QueryClientProvider>
     </StrictMode>,
   );

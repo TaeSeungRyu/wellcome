@@ -45,6 +45,11 @@ export const MENU_ITEMS: MenuItem[] = [
     link: "/home/dashboard",
   },
   {
+    label: "게시글 관리 (SWR)",
+    key: "manage-board-swr",
+    link: "/home/dashboard-swr",
+  },
+  {
     label: "사용자 관리",
     key: "manage-user",
     link: "/home/user",
