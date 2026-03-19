@@ -38,11 +38,11 @@ const logger: Middleware = (useSWRNext: SWRHook) => {
   return (key, fetcher, config) => {
     const swr = useSWRNext(key, fetcher, config);
     useEffect(() => {
-      console.log("SWR 인스턴스 실행:", key);
+      // console.log("SWR 인스턴스 실행:", key);
     }, [key]);
     useEffect(() => {
-      if (swr.data) console.log("데이터 수신:", key, swr.data);
-      if (swr.error) console.error("에러 발생:", key, swr.error);
+      // if (swr.data) console.log("데이터 수신:", key, swr.data);
+      // if (swr.error) console.error("에러 발생:", key, swr.error);
     }, [swr.data, swr.error, key]);
     return swr;
   };
