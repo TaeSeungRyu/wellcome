@@ -5,6 +5,8 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { useSSEHook } from "./-/use.sse.hook";
 import { useCallback, useEffect, useRef } from "react";
 import { useConstState } from "@/state/useConstState";
+import { preload } from "swr";
+import { requestBoardList } from "./dashboard/-/board.repository";
 
 export const Route = createFileRoute("/home")({
   component: HomeLayout,
@@ -16,6 +18,12 @@ function HomeLayout() {
   const roles = getRole();
   const constObject = useConstState((s) => s.sharedValue);
   const constRef = useRef(constObject);
+
+  // route 파일 상단이나 별도의 스크립트 영역
+  preload(["boardList-infinite", 1, 5], async () => {
+    const result = await requestBoardList(1, 5);
+    return [result.result.data.boards]; // 주의: useSWRInfinite는 2차원 배열 구조를 기대합니다.
+  });
 
   useEffect(() => {
     //console.log("HomeLayout mounted. Current token:", token);

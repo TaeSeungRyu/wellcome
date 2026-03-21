@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import useSWR from "swr";
+import { preload } from "swr";
 import useSWRMutation from "swr/mutation";
 import useSWRInfinite from "swr/infinite"; // 1. 전용 훅 임포트
 import {
@@ -111,6 +111,14 @@ function RouteComponent() {
       );
     }
   }, [infiniteData]);
+
+  //preload
+  // useEffect(() => {
+  //   preload(["boardList-infinite", 1, limit], async () => {
+  //     const result = await requestBoardList(1, limit);
+  //     return result.result.data.boards;
+  //   });
+  // }, [limit]);
   return (
     <div>
       <h1> 목록</h1>
