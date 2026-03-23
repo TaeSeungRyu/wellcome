@@ -15,6 +15,8 @@ import ToastProvider from "./components/toast/toast.provider.tsx";
 import { AuthProvider } from "./context/auth.context.tsx";
 import { globalToast } from "./context/toast.context.tsx";
 import { SWRProviders } from "./context/swr.context.tsx";
+import { ErrorBoundary } from "react-error-boundary";
+import { ErrorBoundaryFallback } from "./components/layout/error.boundary.fallback.tsx";
 
 const router = createRouter({
   routeTree,
@@ -72,17 +74,27 @@ if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <SWRProviders>
-          <AuthProvider>
-            <ToastProvider>
-              <ModalProvider>
-                <RouterProvider router={router} />
-              </ModalProvider>
-            </ToastProvider>
-          </AuthProvider>
-        </SWRProviders>
-      </QueryClientProvider>
+      <ErrorBoundary
+        FallbackComponent={ErrorBoundaryFallback}
+        onError={(error, info) => {
+          console.error("전역 에러 캐치:", error, info);
+        }}
+        onReset={() => {
+          console.log("에러 바운더리 리셋");
+        }}
+      >
+        <QueryClientProvider client={queryClient}>
+          <SWRProviders>
+            <AuthProvider>
+              <ToastProvider>
+                <ModalProvider>
+                  <RouterProvider router={router} />
+                </ModalProvider>
+              </ToastProvider>
+            </AuthProvider>
+          </SWRProviders>
+        </QueryClientProvider>
+      </ErrorBoundary>
     </StrictMode>,
   );
 }

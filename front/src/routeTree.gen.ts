@@ -14,6 +14,7 @@ import { Route as HomeRouteRouteImport } from './routes/home/route'
 import { Route as RouteRouteImport } from './routes/route'
 import { Route as LoginSignupRouteRouteImport } from './routes/login/signup/route'
 import { Route as LoginSigninRouteRouteImport } from './routes/login/signin/route'
+import { Route as HomeSampleErrorRouteRouteImport } from './routes/home/sample-error/route'
 import { Route as HomeDashboardSwrRouteRouteImport } from './routes/home/dashboard-swr/route'
 import { Route as HomeDashboardRouteRouteImport } from './routes/home/dashboard/route'
 import { Route as HomeUserIndexRouteImport } from './routes/home/user/index'
@@ -49,6 +50,11 @@ const LoginSigninRouteRoute = LoginSigninRouteRouteImport.update({
   id: '/signin',
   path: '/signin',
   getParentRoute: () => LoginRouteRoute,
+} as any)
+const HomeSampleErrorRouteRoute = HomeSampleErrorRouteRouteImport.update({
+  id: '/sample-error',
+  path: '/sample-error',
+  getParentRoute: () => HomeRouteRoute,
 } as any)
 const HomeDashboardSwrRouteRoute = HomeDashboardSwrRouteRouteImport.update({
   id: '/dashboard-swr',
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRouteRouteWithChildren
   '/home/dashboard': typeof HomeDashboardRouteRoute
   '/home/dashboard-swr': typeof HomeDashboardSwrRouteRoute
+  '/home/sample-error': typeof HomeSampleErrorRouteRoute
   '/login/signin': typeof LoginSigninRouteRoute
   '/login/signup': typeof LoginSignupRouteRoute
   '/home/auth/alter': typeof HomeAuthAlterRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRouteRouteWithChildren
   '/home/dashboard': typeof HomeDashboardRouteRoute
   '/home/dashboard-swr': typeof HomeDashboardSwrRouteRoute
+  '/home/sample-error': typeof HomeSampleErrorRouteRoute
   '/login/signin': typeof LoginSigninRouteRoute
   '/login/signup': typeof LoginSignupRouteRoute
   '/home/auth/alter': typeof HomeAuthAlterRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRouteRouteWithChildren
   '/home/dashboard': typeof HomeDashboardRouteRoute
   '/home/dashboard-swr': typeof HomeDashboardSwrRouteRoute
+  '/home/sample-error': typeof HomeSampleErrorRouteRoute
   '/login/signin': typeof LoginSigninRouteRoute
   '/login/signup': typeof LoginSignupRouteRoute
   '/home/auth/alter': typeof HomeAuthAlterRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/home/dashboard'
     | '/home/dashboard-swr'
+    | '/home/sample-error'
     | '/login/signin'
     | '/login/signup'
     | '/home/auth/alter'
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/home/dashboard'
     | '/home/dashboard-swr'
+    | '/home/sample-error'
     | '/login/signin'
     | '/login/signup'
     | '/home/auth/alter'
@@ -191,6 +202,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/home/dashboard'
     | '/home/dashboard-swr'
+    | '/home/sample-error'
     | '/login/signin'
     | '/login/signup'
     | '/home/auth/alter'
@@ -245,6 +257,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/login/signin'
       preLoaderRoute: typeof LoginSigninRouteRouteImport
       parentRoute: typeof LoginRouteRoute
+    }
+    '/home/sample-error': {
+      id: '/home/sample-error'
+      path: '/sample-error'
+      fullPath: '/home/sample-error'
+      preLoaderRoute: typeof HomeSampleErrorRouteRouteImport
+      parentRoute: typeof HomeRouteRoute
     }
     '/home/dashboard-swr': {
       id: '/home/dashboard-swr'
@@ -322,6 +341,7 @@ declare module '@tanstack/react-router' {
 interface HomeRouteRouteChildren {
   HomeDashboardRouteRoute: typeof HomeDashboardRouteRoute
   HomeDashboardSwrRouteRoute: typeof HomeDashboardSwrRouteRoute
+  HomeSampleErrorRouteRoute: typeof HomeSampleErrorRouteRoute
   HomeAuthAlterRoute: typeof HomeAuthAlterRoute
   HomeAuthInfoRoute: typeof HomeAuthInfoRoute
   HomeAuthWriteRoute: typeof HomeAuthWriteRoute
@@ -335,6 +355,7 @@ interface HomeRouteRouteChildren {
 const HomeRouteRouteChildren: HomeRouteRouteChildren = {
   HomeDashboardRouteRoute: HomeDashboardRouteRoute,
   HomeDashboardSwrRouteRoute: HomeDashboardSwrRouteRoute,
+  HomeSampleErrorRouteRoute: HomeSampleErrorRouteRoute,
   HomeAuthAlterRoute: HomeAuthAlterRoute,
   HomeAuthInfoRoute: HomeAuthInfoRoute,
   HomeAuthWriteRoute: HomeAuthWriteRoute,

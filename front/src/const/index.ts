@@ -50,6 +50,11 @@ export const MENU_ITEMS: MenuItem[] = [
     link: "/home/dashboard-swr",
   },
   {
+    label: "에러 샘플",
+    key: "sample-error",
+    link: "/home/sample-error",
+  },
+  {
     label: "사용자 관리",
     key: "manage-user",
     link: "/home/user",
