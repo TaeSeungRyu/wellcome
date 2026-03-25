@@ -60,6 +60,11 @@ export const MENU_ITEMS: MenuItem[] = [
     link: "/home/user",
   },
   {
+    label: "각종 ui/ux연습 ",
+    key: "ui-ux-practice",
+    link: "/home/ui-ux-practice",
+  },
+  {
     label: "권한 관리",
     key: "manage-auth",
     link: "/home/auth",

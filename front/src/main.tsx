@@ -17,6 +17,7 @@ import { globalToast } from "./context/toast.context.tsx";
 import { SWRProviders } from "./context/swr.context.tsx";
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorBoundaryFallback } from "./components/layout/error.boundary.fallback.tsx";
+import { Toaster } from "sonner";
 
 const router = createRouter({
   routeTree,
@@ -74,6 +75,7 @@ if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
+      <Toaster />
       <ErrorBoundary
         FallbackComponent={ErrorBoundaryFallback}
         onError={(error, info) => {
