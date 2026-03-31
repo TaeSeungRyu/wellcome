@@ -20,6 +20,7 @@
     "@types/event-source-polyfill": "^1.0.5",
     "event-source-polyfill": "^1.0.31",
     "jwt-decode": "^4.0.0",
+    "lucide-react": "^1.7.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-error-boundary": "^6.1.1",

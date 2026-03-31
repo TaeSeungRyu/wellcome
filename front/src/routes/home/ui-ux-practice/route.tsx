@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { Heart, Home, Settings } from "lucide-react";
 
 export const Route = createFileRoute("/home/ui-ux-practice")({
   component: RouteComponent,
@@ -9,6 +10,13 @@ function RouteComponent() {
   return (
     <>
       <div>Hello "/ui-ux-practice"!</div>
+      <div>
+        <Heart />
+        <Home />
+        <Settings />
+        <Heart size={32} color="red" strokeWidth={3} className="my-icon" />
+      </div>
+
       <button
         className="px-4 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600"
         onClick={() => {
