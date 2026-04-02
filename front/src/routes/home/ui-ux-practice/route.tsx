@@ -16,7 +16,7 @@ function RouteComponent() {
         <Home />
         <Settings />
         <Heart size={32} color="red" strokeWidth={3} className="my-icon" />
-        <Button variant="outline" size="sm">
+        <Button variant="secondary" size="sm">
           Button
         </Button>
       </div>
