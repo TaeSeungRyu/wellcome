@@ -2,6 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Heart, Home, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/home/ui-ux-practice")({
   component: RouteComponent,
@@ -11,6 +19,17 @@ function RouteComponent() {
   return (
     <>
       <div>Hello "/ui-ux-practice"!</div>
+
+      <Dialog>
+        <DialogTrigger>Open</DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>dialog title?</DialogTitle>
+            <DialogDescription>dialog description</DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
       <div>
         <Heart />
         <Home />
