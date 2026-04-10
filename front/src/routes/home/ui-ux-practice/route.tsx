@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Button2 } from "@/components/ui/button2";
 
 export const Route = createFileRoute("/home/ui-ux-practice")({
   component: RouteComponent,
@@ -38,6 +39,9 @@ function RouteComponent() {
         <Button variant="secondary" size="sm">
           Button
         </Button>
+        <Button2 variant="outline" size="lg">
+          Button2
+        </Button2>
       </div>
 
       <button
