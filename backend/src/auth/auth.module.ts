@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from './jwt.strategy';
-import ms from 'ms';
-import { AuthService } from './auth.service';
-import { LoginSchema, LoginUser } from 'src/login/login.schema';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { RedisModule } from 'src/redis/redis.module';
-import { Auth, AuthSchema } from './auth.schema';
+import { JwtModule } from '@nestjs/jwt';
+import { MongooseModule } from '@nestjs/mongoose';
+import { PassportModule } from '@nestjs/passport';
+import ms from 'ms';
+import { ConstModule } from '../const/const.module';
+import { RedisModule } from '../redis/redis.module';
+import { SseModule } from '../sse/sse.module';
 import { AuthController } from './auth.controller';
-import { ConstService } from 'src/const/const.service';
-import { SseModule } from 'src/sse/sse.module';
+import { AuthService } from './auth.service';
+import { Auth, AuthSchema } from './schemas/auth.schema';
+import { LoginUser, LoginUserSchema } from './schemas/login-user.schema';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -28,21 +28,15 @@ import { SseModule } from 'src/sse/sse.module';
       }),
     }),
     MongooseModule.forFeature([
-      { name: LoginUser.name, schema: LoginSchema },
+      { name: LoginUser.name, schema: LoginUserSchema },
       { name: Auth.name, schema: AuthSchema },
     ]),
     RedisModule,
     SseModule,
+    ConstModule,
   ],
-  providers: [JwtStrategy, AuthService, ConstService],
-  exports: [JwtModule, AuthService],
+  providers: [JwtStrategy, AuthService],
   controllers: [AuthController],
+  exports: [JwtModule, AuthService],
 })
-export class AuthModule {
-  constructor() {
-    // console.log(
-    //   process.env.JWT_ACCESS_SECRET,
-    //   process.env.JWT_ACCESS_EXPIRES_IN,
-    // );
-  }
-}
+export class AuthModule {}

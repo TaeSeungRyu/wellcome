@@ -1,18 +1,13 @@
-// src/types/express.d.ts
-import { Auth } from 'src/modules/user/domain/auth.entity.js';
+import { JwtPayload } from '../common/interfaces/jwt-payload.interface';
 
+/**
+ * Express Request 의 user 필드를 JwtStrategy 가 반환하는 타입으로 보강한다.
+ * tsconfig.json 의 typeRoots 에 "./src/types" 가 포함되어 있어 자동으로 로드된다.
+ */
 declare global {
   namespace Express {
-    interface User {
-      username: string; // 사용자 ID
-      name: string;
-      email: string; // 사용자 이메일
-      iat: number; // 발급 시간
-      exp: number; // 만료 시간
-      role?: Auth[]; // 사용자 역할
-    }
-    interface Request {
-      user: User;
-    }
+    interface User extends JwtPayload {}
   }
 }
+
+export {};

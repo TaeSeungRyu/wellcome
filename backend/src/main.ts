@@ -1,26 +1,25 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
-import { getValidationPipe } from './init';
-import { winstonOptions } from './init/logger.config';
 import { WinstonModule } from 'nest-winston';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { AppModule } from './app.module';
+import { getValidationPipe } from './common/pipes/validation.pipe';
+import { winstonOptions } from './config/logger.config';
 
 async function bootstrap() {
   const isSchedulerOnly = process.env.SCHEDULER_ONLY === 'true';
 
   const app = await NestFactory.create(AppModule);
-  if (app) {
-    app.use(cookieParser());
-    app.useGlobalPipes(getValidationPipe());
-    app.useLogger(WinstonModule.createLogger(winstonOptions));
-  }
+  app.use(cookieParser());
+  app.useGlobalPipes(getValidationPipe());
+  app.useLogger(WinstonModule.createLogger(winstonOptions));
+
   if (!isSchedulerOnly) {
     const config = new DocumentBuilder()
       .setTitle('API')
       .setDescription('API 문서')
       .setVersion('1.0')
-      .addBearerAuth() //JWT
+      .addBearerAuth()
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
@@ -31,6 +30,7 @@ async function bootstrap() {
     await NestFactory.createApplicationContext(AppModule);
   }
 }
+
 bootstrap().catch((err) => {
   console.error('Error during app bootstrap:', err);
   process.exit(1);

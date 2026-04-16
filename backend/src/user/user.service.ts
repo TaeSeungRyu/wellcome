@@ -1,21 +1,23 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User, UserDocument } from './user.schema';
-import { ResponseDto } from 'src/common/common.dto';
-import { UpdateUserDto, UserDto } from './user.dto';
-import { FileHelper, hashPassword } from 'src/common/util';
+import { ResponseDto } from '../common/dto/response.dto';
+import { FileHelper } from '../common/utils/file.util';
+import { hashPassword } from '../common/utils/hash.util';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { User, UserDocument } from './schemas/user.schema';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name)
-    private userModel: Model<UserDocument>,
+    private readonly userModel: Model<UserDocument>,
   ) {}
 
   private async findUserOrThrow(username: string): Promise<UserDocument> {
     const result = await this.userModel.aggregate<UserDocument>([
-      { $match: { username: username } },
+      { $match: { username } },
       {
         $lookup: {
           from: 'auth',
@@ -42,9 +44,7 @@ export class UserService {
     const user = await this.findUserOrThrow(username);
     const data = user as Partial<User>;
     if (data.profileImage) data.profileImage = `/user${data.profileImage}`;
-    if (data?.password) {
-      delete data.password;
-    }
+    if (data?.password) delete data.password;
     if (data?.role) {
       data.role = data.authList?.map((tt: { code: string; name: string }) => ({
         value: tt.code,
@@ -69,54 +69,28 @@ export class UserService {
               { $sort: { createdAt: -1 } },
               { $skip: skip },
               { $limit: limit },
-              // 🔥 auth 컬렉션과 조인
               {
                 $lookup: {
-                  from: 'auth', // auth 컬렉션 이름
-                  localField: 'role', // 배열
+                  from: 'auth',
+                  localField: 'role',
                   foreignField: 'code',
                   as: 'authList',
-                  pipeline: [
-                    {
-                      $project: {
-                        _id: 0,
-                        code: 1,
-                        name: 1,
-                      },
-                    },
-                  ],
+                  pipeline: [{ $project: { _id: 0, code: 1, name: 1 } }],
                 },
               },
-              {
-                $set: {
-                  role: '$authList', // 🔥 role을 authList로 교체
-                },
-              },
-              // 비밀번호 제거
-              {
-                $project: {
-                  password: 0,
-                  profileImage: 0,
-                },
-              },
+              { $set: { role: '$authList' } },
+              { $project: { password: 0, profileImage: 0 } },
             ],
-
             totalCount: [{ $count: 'count' }],
           },
         },
       ]);
       const users = result.users;
       const total = result.totalCount[0]?.count ?? 0;
-      const paginationData = {
-        users,
-        total,
-        page,
-        limit,
-      };
       return new ResponseDto(
         {
           success: true,
-          data: paginationData,
+          data: { users, total, page, limit },
         },
         '',
         '사용자 목록을 성공적으로 조회했습니다.',
@@ -137,30 +111,21 @@ export class UserService {
 
   async checkExistUser(username: string): Promise<ResponseDto> {
     const user = await this.userModel.findOne({ username }).exec();
-    if (user) {
-      return new ResponseDto(
-        { success: true, data: { exists: true } },
-        '',
-        '사용자가 존재합니다.',
-        200,
-      );
-    } else {
-      return new ResponseDto(
-        { success: true, data: { exists: false } },
-        '',
-        '사용자가 존재하지 않습니다.',
-        200,
-      );
-    }
+    const exists = !!user;
+    return new ResponseDto(
+      { success: true, data: { exists } },
+      '',
+      exists ? '사용자가 존재합니다.' : '사용자가 존재하지 않습니다.',
+      200,
+    );
   }
 
-  async createUser(userData: UserDto): Promise<ResponseDto> {
+  async createUser(userData: CreateUserDto): Promise<ResponseDto> {
     try {
-      // 1. 중복 체크
-      const check = await this.findByUsername(userData.username).catch(
+      const exists = await this.findByUsername(userData.username).catch(
         () => null,
       );
-      if (check?.result?.success) {
+      if (exists?.result?.success) {
         throw new BadRequestException(
           new ResponseDto(
             { success: false },
@@ -170,11 +135,9 @@ export class UserService {
           ),
         );
       }
-      // 2. 비밀번호 해싱
+
       userData.password = await hashPassword(userData.password);
-      const newUser = new this.userModel(userData);
-      const result = await newUser.save();
-      // 3. result 확인 (성공 시)
+      const result = await new this.userModel(userData).save();
       if (result) {
         return new ResponseDto(
           { success: true, data: result },
@@ -205,10 +168,10 @@ export class UserService {
       }
       const updateResult = await this.userModel
         .findOneAndUpdate({ username }, updateData, {
-          new: true, // 업데이트 후의 문서를 반환
-          runValidators: true, // 업데이트 시에도 스키마 유효성 검사 실행
+          new: true,
+          runValidators: true,
         })
-        .select('-password') // 비밀번호 필드 제외
+        .select('-password')
         .exec();
       if (!updateResult) {
         throw new BadRequestException(
@@ -226,28 +189,33 @@ export class UserService {
         200,
       );
     } catch (error) {
-      // DB 에러 또는 유효성 검사 실패 시
       throw new BadRequestException(
         new ResponseDto(
           { success: false },
           'update_error',
           error instanceof Error
             ? error.message
-            : '사용자 생성 중 오류가 발생했습니다.',
+            : '사용자 수정 중 오류가 발생했습니다.',
         ),
       );
     }
   }
 
   async createUserWithFile(
-    userData: UserDto,
+    userData: CreateUserDto,
     file?: Express.Multer.File,
   ): Promise<ResponseDto> {
-    // 1. 중복 체크
     const exists = await this.userModel.exists({ username: userData.username });
-    if (exists) throw new BadRequestException(/* 중복 에러 DTO */);
+    if (exists) {
+      throw new BadRequestException(
+        new ResponseDto(
+          { success: false },
+          'user_already_exists',
+          '이미 존재하는 사용자 이름입니다.',
+        ),
+      );
+    }
 
-    // 2. 가공 및 저장
     userData.password = await hashPassword(userData.password);
     const profileImage = file ? `/uploads/${file.filename}` : '/uploads';
 
@@ -263,7 +231,13 @@ export class UserService {
     file?: Express.Multer.File,
   ): Promise<ResponseDto> {
     if (!updateData.username) {
-      throw new BadRequestException(/* 사용자 이름 누락 에러 DTO */);
+      throw new BadRequestException(
+        new ResponseDto(
+          { success: false },
+          'username_required',
+          '사용자 이름이 필요합니다.',
+        ),
+      );
     }
 
     const user = await this.findUserOrThrow(updateData.username);
@@ -277,13 +251,14 @@ export class UserService {
         const filePath = user.profileImage.replace(/^\/user/, '');
         await FileHelper.deleteFile(filePath);
       }
-      updateData['profileImage'] = `/uploads/${file.filename}`;
+      updateData.profileImage = `/uploads/${file.filename}`;
     } else if (updateData.profileImage === '') {
-      await FileHelper.deleteFile(user.profileImage); // 기존 파일 삭제 (추출된 헬퍼 사용)
-      updateData['profileImage'] = '';
+      await FileHelper.deleteFile(user.profileImage);
+      updateData.profileImage = '';
     } else {
       updateData.profileImage = user.profileImage;
     }
+
     const updated = await this.userModel
       .findOneAndUpdate({ username: updateData.username }, updateData, {
         new: true,
@@ -296,9 +271,8 @@ export class UserService {
 
   async deleteUser(username: string): Promise<ResponseDto> {
     const user = await this.findUserOrThrow(username);
-    await FileHelper.deleteFile(user.profileImage); // 삭제 시 이미지도 함께 제거
+    await FileHelper.deleteFile(user.profileImage);
     await user.deleteOne();
-
     return new ResponseDto({ success: true }, '', '삭제 완료');
   }
 }

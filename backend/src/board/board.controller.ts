@@ -7,83 +7,73 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { Roles } from '../common/decorators/roles.decorator';
+import { ResponseDto } from '../common/dto/response.dto';
 import { BoardService } from './board.service';
-import { ResponseDto } from 'src/common/common.dto';
-import { BoardDto, CommentDto, UpdateBoardDto } from './board.dto';
-import { Role } from 'src/auth/role.decorator';
-import { Request } from 'express';
-import { GetUser } from 'src/auth/username.decorator';
+import { CreateBoardDto } from './dto/create-board.dto';
+import { CreateCommentDto } from './dto/create-comment.dto';
+import { UpdateBoardDto } from './dto/update-board.dto';
 
 @Controller('board')
 export class BoardController {
-  constructor(private boardService: BoardService) {}
+  constructor(private readonly boardService: BoardService) {}
 
-  @Role('admin', 'super', 'manager')
+  @Roles('admin', 'super', 'manager')
   @Get('find')
-  async find(@Query('boardId') boardId: string): Promise<ResponseDto> {
-    const user = await this.boardService.findById(boardId);
-    return user;
+  find(@Query('boardId') boardId: string): Promise<ResponseDto> {
+    return this.boardService.findById(boardId);
   }
 
-  @Role('admin', 'super', 'manager')
+  @Roles('admin', 'super', 'manager')
   @Get('list')
-  async list(
+  list(
     @Query('page') page: number,
     @Query('limit') limit: number,
   ): Promise<ResponseDto> {
-    const users = await this.boardService.findAll(page, limit);
-    return users;
+    return this.boardService.findAll(page, limit);
   }
 
-  @Role('admin', 'super', 'manager')
+  @Roles('admin', 'super', 'manager')
   @Post('create')
-  async create(
-    @Body() boardData: BoardDto,
-    @GetUser('username') username: string,
+  create(
+    @Body() boardData: CreateBoardDto,
+    @CurrentUser('username') username: string,
   ): Promise<ResponseDto> {
-    const board = await this.boardService.create(boardData, username);
-    return board;
+    return this.boardService.create(boardData, username);
   }
 
-  @Role('admin', 'super', 'manager')
+  @Roles('admin', 'super', 'manager')
   @Put('update')
-  async update(
+  update(
     @Body() boardData: UpdateBoardDto,
-    @GetUser('username') username: string,
+    @CurrentUser('username') username: string,
   ): Promise<ResponseDto> {
-    const board = await this.boardService.update(boardData, username);
-    return board;
+    return this.boardService.update(boardData, username);
   }
 
-  @Role('admin', 'super', 'manager')
+  @Roles('admin', 'super', 'manager')
   @Delete('delete')
-  async delete(
+  delete(
     @Query('boardId') boardId: string,
-    @GetUser('username') username: string,
+    @CurrentUser('username') username: string,
   ): Promise<ResponseDto> {
-    const board = await this.boardService.delete(boardId, username);
-    return board;
+    return this.boardService.delete(boardId, username);
   }
 
-  @Role('admin', 'super', 'manager')
+  @Roles('admin', 'super', 'manager')
   @Post('add-comment')
-  async addComment(@Body() commentData: CommentDto): Promise<ResponseDto> {
-    const board = await this.boardService.addComment(commentData);
-    return board;
+  addComment(@Body() commentData: CreateCommentDto): Promise<ResponseDto> {
+    return this.boardService.addComment(commentData);
   }
 
-  @Role('admin', 'super', 'manager')
+  @Roles('admin', 'super', 'manager')
   @Delete('remove-comment')
-  async removeComment(
+  removeComment(
     @Query('boardId') boardId: string,
     @Query('commentId') commentId: string,
-    @GetUser('username') username: string,
+    @CurrentUser('username') username: string,
   ): Promise<ResponseDto> {
-    const board = await this.boardService.removeComment(
-      boardId,
-      commentId,
-      username,
-    );
-    return board;
+    return this.boardService.removeComment(boardId, commentId, username);
   }
 }

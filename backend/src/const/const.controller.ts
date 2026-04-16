@@ -1,6 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { ResponseDto } from 'src/common/common.dto';
-import { Request } from 'express';
+import { ResponseDto } from '../common/dto/response.dto';
 import { ConstService } from './const.service';
 
 @Controller('const')

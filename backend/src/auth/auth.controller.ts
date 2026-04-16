@@ -6,58 +6,91 @@ import {
   Post,
   Put,
   Query,
+  Req,
+  Res,
 } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Request, Response } from 'express';
+import { Roles } from '../common/decorators/roles.decorator';
+import { ResponseDto } from '../common/dto/response.dto';
 import { AuthService } from './auth.service';
-import { Role } from './role.decorator';
-import { ResponseDto } from 'src/common/common.dto';
-import { AuthDto, UpdateAuthDto } from './auth.dto';
+import { CreateAuthDto } from './dto/create-auth.dto';
+import { LoginDto } from './dto/login.dto';
+import { UpdateAuthDto } from './dto/update-auth.dto';
 
-@Controller('auth-code')
+@ApiTags('Auth')
+@Controller()
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
-  //@Role('admin', 'super')
-  @Get('list')
-  async list(
+  // ==============================
+  // 로그인 / 토큰 재발급
+  // ==============================
+
+  @ApiOperation({
+    summary: '로그인',
+    description:
+      '아이디와 비밀번호로 로그인하고 Access / Refresh Token을 발급합니다.',
+  })
+  @ApiBody({ type: LoginDto, description: '로그인 요청 정보' })
+  @ApiResponse({ status: 201, type: ResponseDto })
+  @Post('auth/login')
+  async login(
+    @Body() loginDto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ResponseDto> {
+    const result = await this.authService.generateTokens(loginDto, res);
+    this.authService.setRefreshToken(res, result.result?.refreshToken ?? '');
+    return result;
+  }
+
+  @ApiOperation({
+    summary: '리프레시',
+    description:
+      '저장된 쿠키의 Refresh Token으로 Access / Refresh Token을 재발급합니다.',
+  })
+  @ApiResponse({ status: 201, type: ResponseDto })
+  @Get('auth/refresh')
+  refreshToken(@Req() req: Request): Promise<ResponseDto> {
+    return this.authService.refreshToken(req);
+  }
+
+  // ==============================
+  // 권한 코드 CRUD
+  // ==============================
+
+  @Get('auth-code/list')
+  list(
     @Query('page') page: number,
     @Query('limit') limit: number,
   ): Promise<ResponseDto> {
-    const codeList = await this.authService.findAuthAll(page, limit);
-    return codeList;
+    return this.authService.findAuthAll(page, limit);
   }
 
-  //@Role('admin', 'super')
-  @Post('create')
-  async createAuthCode(@Body() authData: AuthDto): Promise<ResponseDto> {
-    const newAuthCode = await this.authService.createCode(authData);
-    return newAuthCode;
+  @Post('auth-code/create')
+  createAuthCode(@Body() authData: CreateAuthDto): Promise<ResponseDto> {
+    return this.authService.createCode(authData);
   }
 
-  //@Role('admin', 'super')
-  @Put('update')
-  async updateAuthCode(@Body() authData: UpdateAuthDto): Promise<ResponseDto> {
-    const updatedAuthCode = await this.authService.updateCode(authData);
-    return updatedAuthCode;
+  @Put('auth-code/update')
+  updateAuthCode(@Body() authData: UpdateAuthDto): Promise<ResponseDto> {
+    return this.authService.updateCode(authData);
   }
 
-  //@Role('admin', 'super')
-  @Delete('delete')
-  async deleteAuthCode(@Query('_id') id: string): Promise<ResponseDto> {
-    const deletedAuthCode = await this.authService.deleteCode(id);
-    return deletedAuthCode;
+  @Delete('auth-code/delete')
+  deleteAuthCode(@Query('_id') id: string): Promise<ResponseDto> {
+    return this.authService.deleteCode(id);
   }
 
-  @Role('admin', 'super')
-  @Get('find')
-  async find(@Query('_id') id: string): Promise<ResponseDto> {
-    const authCode = await this.authService.findById(id);
-    return authCode;
+  @Roles('admin', 'super')
+  @Get('auth-code/find')
+  find(@Query('_id') id: string): Promise<ResponseDto> {
+    return this.authService.findById(id);
   }
 
-  @Role('admin', 'super')
-  @Get('check-code')
-  async checkCode(@Query('code') code: string): Promise<ResponseDto> {
-    const isExist = await this.authService.isCodeInUse(code);
-    return isExist;
+  @Roles('admin', 'super')
+  @Get('auth-code/check-code')
+  checkCode(@Query('code') code: string): Promise<ResponseDto> {
+    return this.authService.isCodeInUse(code);
   }
 }
