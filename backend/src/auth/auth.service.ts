@@ -227,15 +227,16 @@ export class AuthService {
 
       await this.updateUserRoles(prevCode, authData.code);
 
+      // 권한 코드 변경은 모든 관리자 콘솔에 즉시 반영되어야 하므로
+      // targetUserId 없이 토픽 기반 브로드캐스트.
       this.sseService.publishEvent({
-        event: 'event',
+        topic: this.constService.getConstList().SSE_AUTH_CODE_UPDATE,
         data: {
           _id: updatedAuth._id,
           newCode: updatedAuth.code,
           beforeCode: prevCode,
           event: this.constService.getConstList().SSE_AUTH_CODE_UPDATE,
         },
-        id: '',
       });
 
       return new ResponseDto(
@@ -263,13 +264,12 @@ export class AuthService {
       await this.updateUserRoles(existingCode.code);
 
       this.sseService.publishEvent({
-        event: 'event',
+        topic: this.constService.getConstList().SSE_AUTH_CODE_DELETE,
         data: {
           _id: existingCode._id,
           code: existingCode.code,
           event: this.constService.getConstList().SSE_AUTH_CODE_DELETE,
         },
-        id: '',
       });
 
       return new ResponseDto(
