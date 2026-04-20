@@ -64,6 +64,7 @@ export class AuthController {
     description: '페이지네이션으로 권한 코드 목록을 조회합니다.',
   })
   @ApiResponse({ status: 200, type: ResponseDto })
+  @Roles('admin', 'super')
   @Get('auth-code/list')
   list(
     @Query('page') page: number,
@@ -78,6 +79,7 @@ export class AuthController {
   })
   @ApiBody({ type: CreateAuthDto, description: '권한 코드 생성 정보' })
   @ApiResponse({ status: 201, type: ResponseDto })
+  @Roles('admin', 'super')
   @Post('auth-code/create')
   createAuthCode(@Body() authData: CreateAuthDto): Promise<ResponseDto> {
     return this.authService.createCode(authData);
@@ -89,6 +91,7 @@ export class AuthController {
   })
   @ApiBody({ type: UpdateAuthDto, description: '권한 코드 수정 정보' })
   @ApiResponse({ status: 200, type: ResponseDto })
+  @Roles('admin', 'super')
   @Put('auth-code/update')
   updateAuthCode(@Body() authData: UpdateAuthDto): Promise<ResponseDto> {
     return this.authService.updateCode(authData);
@@ -99,6 +102,7 @@ export class AuthController {
     description: '_id로 지정한 권한 코드를 삭제합니다.',
   })
   @ApiResponse({ status: 200, type: ResponseDto })
+  @Roles('admin', 'super')
   @Delete('auth-code/delete')
   deleteAuthCode(@Query('_id') id: string): Promise<ResponseDto> {
     return this.authService.deleteCode(id);

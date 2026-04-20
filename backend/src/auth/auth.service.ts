@@ -23,6 +23,7 @@ import { LoginUser, LoginUserDocument } from './schemas/login-user.schema';
 const REFRESH_TOKEN_TTL_SECONDS = 60 * 60 * 24 * 7; // 7일
 const REFRESH_COOKIE_MAX_AGE_MS = 1000 * 60 * 60 * 24; // 1일
 const REFRESH_TOKEN_EXPIRES_IN = '1d';
+const REFRESH_COOKIE_NAME = 'refresh_token';
 
 @Injectable()
 export class AuthService {
@@ -78,6 +79,7 @@ export class AuthService {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload),
       this.jwtService.signAsync(payload, {
+        secret: process.env.JWT_REFRESH_SECRET as string,
         expiresIn: REFRESH_TOKEN_EXPIRES_IN,
       }),
     ]);
@@ -102,9 +104,8 @@ export class AuthService {
   }
 
   setRefreshToken(res: Response, refreshToken: string): void {
-    const cookieName = process.env.JWT_REFRESH_SECRET as string;
     if (refreshToken) {
-      res.cookie(cookieName, refreshToken, {
+      res.cookie(REFRESH_COOKIE_NAME, refreshToken, {
         httpOnly: true,
         secure: false, // 로컬/Postman → false
         sameSite: 'lax',
@@ -112,7 +113,7 @@ export class AuthService {
         maxAge: REFRESH_COOKIE_MAX_AGE_MS,
       });
     } else {
-      res.clearCookie(cookieName);
+      res.clearCookie(REFRESH_COOKIE_NAME);
     }
   }
 
@@ -124,13 +125,11 @@ export class AuthService {
   }
 
   async refreshToken(req: Request): Promise<ResponseDto> {
-    const key = process.env.JWT_REFRESH_SECRET as string;
-    const refreshToken = req.cookies[key] as string;
-    const payload: Record<string, unknown> =
-      this.jwtService.decode(refreshToken);
-    const savedToken = await this.redis.get(`refresh:${payload?.username}`);
+    const refreshToken = req.cookies?.[REFRESH_COOKIE_NAME] as
+      | string
+      | undefined;
 
-    if (!refreshToken || !savedToken || savedToken !== refreshToken) {
+    if (!refreshToken) {
       throw new UnauthorizedException(
         new ResponseDto(
           { accessToken: '', refreshToken: '', success: false },
@@ -140,9 +139,35 @@ export class AuthService {
       );
     }
 
+    let payload: { username: string; role: string[] };
+    try {
+      payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET as string,
+      });
+    } catch {
+      throw new UnauthorizedException(
+        new ResponseDto(
+          { accessToken: '', refreshToken: '', success: false },
+          'invalid_refresh_token',
+          '리프레시 토큰이 유효하지 않습니다.',
+        ),
+      );
+    }
+
+    const savedToken = await this.redis.get(`refresh:${payload.username}`);
+    if (!savedToken || savedToken !== refreshToken) {
+      throw new UnauthorizedException(
+        new ResponseDto(
+          { accessToken: '', refreshToken: '', success: false },
+          'invalid_refresh_token',
+          '리프레시 토큰이 유효하지 않습니다.',
+        ),
+      );
+    }
+
     const accessToken = await this.jwtService.signAsync({
-      username: payload.username as string,
-      role: payload.role as string[],
+      username: payload.username,
+      role: payload.role,
     });
 
     return new ResponseDto(
