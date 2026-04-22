@@ -1,23 +1,11 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateBoardDto {
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  username: string;
+  title!: string;
 
   @IsNotEmpty()
   @IsString()
-  title: string;
-
-  @IsNotEmpty()
-  @IsString()
-  contents?: string;
-
-  @IsOptional()
-  @IsString()
-  createDate?: string;
-
-  @IsOptional()
-  @IsString()
-  updateDate?: string;
+  contents!: string;
 }

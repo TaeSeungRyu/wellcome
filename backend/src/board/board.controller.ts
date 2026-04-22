@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -49,8 +51,8 @@ export class BoardController {
   @Roles('admin', 'super', 'manager')
   @Get('list')
   list(
-    @Query('page') page: number,
-    @Query('limit') limit: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
   ): Promise<ResponseDto> {
     return this.boardService.findAll(page, limit);
   }
@@ -111,8 +113,11 @@ export class BoardController {
   @ApiResponse({ status: 201, type: ResponseDto })
   @Roles('admin', 'super', 'manager')
   @Post('add-comment')
-  addComment(@Body() commentData: CreateCommentDto): Promise<ResponseDto> {
-    return this.boardService.addComment(commentData);
+  addComment(
+    @Body() commentData: CreateCommentDto,
+    @CurrentUser('username') username: string,
+  ): Promise<ResponseDto> {
+    return this.boardService.addComment(commentData, username);
   }
 
   @ApiOperation({

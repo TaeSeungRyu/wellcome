@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import dayjs from 'dayjs';
 import { Model } from 'mongoose';
@@ -15,11 +20,46 @@ export class BoardService {
     private readonly boardModel: Model<BoardDocument>,
   ) {}
 
+  private now(): string {
+    return dayjs().format('YYYY-MM-DD HH:mm:ss');
+  }
+
+  private async findBoardOrThrow(boardId: string): Promise<BoardDocument> {
+    const board = await this.boardModel.findById(boardId).exec();
+    if (!board) {
+      throw new NotFoundException(
+        new ResponseDto(
+          { success: false },
+          'board_not_found',
+          '게시판 글을 찾을 수 없습니다.',
+        ),
+      );
+    }
+    return board;
+  }
+
+  private assertOwner(owner: string, username: string, action: string): void {
+    if (owner !== username) {
+      throw new ForbiddenException(
+        new ResponseDto(
+          { success: false },
+          'forbidden',
+          `${action} 권한이 없습니다.`,
+        ),
+      );
+    }
+  }
+
   async findAll(page: number = 1, limit: number = 10): Promise<ResponseDto> {
     const skip = (page - 1) * limit;
     const [boards, total] = await Promise.all([
-      this.boardModel.find().skip(skip).limit(limit).sort({ createdAt: -1 }),
-      this.boardModel.countDocuments(),
+      this.boardModel
+        .find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .exec(),
+      this.boardModel.countDocuments().exec(),
     ]);
     return new ResponseDto(
       { success: true, data: { boards, total, page, limit } },
@@ -30,24 +70,13 @@ export class BoardService {
   }
 
   async findById(boardId: string): Promise<ResponseDto> {
-    try {
-      const board = await this.boardModel.findById(boardId);
-      if (!board) {
-        throw new Error('게시판 글을 찾을 수 없습니다.');
-      }
-      return new ResponseDto(
-        { success: true, data: board },
-        '',
-        '게시판 글을 성공적으로 조회했습니다.',
-        200,
-      );
-    } catch (error) {
-      throw new Error(
-        error instanceof Error
-          ? error.message
-          : '게시판 글 조회 중 오류가 발생했습니다.',
-      );
-    }
+    const board = await this.findBoardOrThrow(boardId);
+    return new ResponseDto(
+      { success: true, data: board },
+      '',
+      '게시판 글을 성공적으로 조회했습니다.',
+      200,
+    );
   }
 
   async create(
@@ -55,9 +84,11 @@ export class BoardService {
     usernameInAuth: string,
   ): Promise<ResponseDto> {
     try {
-      boardData.createDate = dayjs().format('YYYY-MM-DD HH:mm:ss');
-      boardData.username = usernameInAuth;
-      const savedBoard = await new this.boardModel(boardData).save();
+      const savedBoard = await new this.boardModel({
+        ...boardData,
+        username: usernameInAuth,
+        createDate: this.now(),
+      }).save();
       return new ResponseDto(
         { success: true, data: savedBoard },
         '',
@@ -65,108 +96,91 @@ export class BoardService {
         201,
       );
     } catch (error) {
-      throw new Error(
-        error instanceof Error
-          ? error.message
-          : '게시판 글 생성 중 오류가 발생했습니다.',
+      throw new BadRequestException(
+        new ResponseDto(
+          { success: false },
+          'save_error',
+          error instanceof Error
+            ? error.message
+            : '게시판 글 생성 중 오류가 발생했습니다.',
+        ),
       );
     }
-  }
-
-  private async isYourBoard(
-    boardId: string,
-    username: string,
-  ): Promise<boolean> {
-    const board = await this.boardModel.findById(boardId);
-    if (!board) {
-      throw new Error('게시판 글을 찾을 수 없습니다.');
-    }
-    return board.username === username;
   }
 
   async update(
     updateData: UpdateBoardDto,
     usernameInAuth: string,
   ): Promise<ResponseDto> {
-    try {
-      const isOwner = await this.isYourBoard(updateData._id, usernameInAuth);
-      if (!isOwner) {
-        throw new Error('게시판 글 수정 권한이 없습니다.');
-      }
+    const { _id, ...rest } = updateData;
+    const board = await this.findBoardOrThrow(_id);
+    this.assertOwner(board.username, usernameInAuth, '게시판 글 수정');
 
-      const { _id } = updateData;
-      updateData.updateDate = dayjs().format('YYYY-MM-DD HH:mm:ss');
-      updateData.username = usernameInAuth;
-      const updatedBoard = await this.boardModel.findByIdAndUpdate(
+    const updatedBoard = await this.boardModel
+      .findByIdAndUpdate(
         _id,
-        updateData,
+        { ...rest, username: usernameInAuth, updateDate: this.now() },
         { new: true },
-      );
-      if (!updatedBoard) {
-        throw new Error('게시판 글을 찾을 수 없습니다.');
-      }
-      return new ResponseDto(
-        { success: true, data: updatedBoard },
-        '',
-        '게시판 글이 성공적으로 수정되었습니다.',
-        200,
-      );
-    } catch (error) {
-      throw new Error(
-        error instanceof Error
-          ? error.message
-          : '게시판 글 수정 중 오류가 발생했습니다.',
+      )
+      .exec();
+    if (!updatedBoard) {
+      throw new NotFoundException(
+        new ResponseDto(
+          { success: false },
+          'board_not_found',
+          '게시판 글을 찾을 수 없습니다.',
+        ),
       );
     }
+    return new ResponseDto(
+      { success: true, data: updatedBoard },
+      '',
+      '게시판 글이 성공적으로 수정되었습니다.',
+      200,
+    );
   }
 
   async delete(boardId: string, usernameInAuth: string): Promise<ResponseDto> {
-    try {
-      const isOwner = await this.isYourBoard(boardId, usernameInAuth);
-      if (!isOwner) {
-        throw new Error('게시판 글 삭제 권한이 없습니다.');
-      }
-      const deletedBoard = await this.boardModel.findByIdAndDelete(boardId);
-      if (!deletedBoard) {
-        throw new Error('게시판 글을 찾을 수 없습니다.');
-      }
-      return new ResponseDto(
-        { success: true, data: deletedBoard },
-        '',
-        '게시판 글이 성공적으로 삭제되었습니다.',
-        200,
-      );
-    } catch (error) {
-      throw new Error(
-        error instanceof Error
-          ? error.message
-          : '게시판 글 삭제 중 오류가 발생했습니다.',
+    const board = await this.findBoardOrThrow(boardId);
+    this.assertOwner(board.username, usernameInAuth, '게시판 글 삭제');
+
+    const deletedBoard = await this.boardModel
+      .findByIdAndDelete(boardId)
+      .exec();
+    if (!deletedBoard) {
+      throw new NotFoundException(
+        new ResponseDto(
+          { success: false },
+          'board_not_found',
+          '게시판 글을 찾을 수 없습니다.',
+        ),
       );
     }
+    return new ResponseDto(
+      { success: true, data: deletedBoard },
+      '',
+      '게시판 글이 성공적으로 삭제되었습니다.',
+      200,
+    );
   }
 
-  async addComment(commentData: CreateCommentDto): Promise<ResponseDto> {
-    try {
-      const board = await this.boardModel.findById(commentData.boardId);
-      if (!board) {
-        throw new Error('게시판 글을 찾을 수 없습니다.');
-      }
-      commentData.date = dayjs().format('YYYY-MM-DD HH:mm:ss');
-      board.comments.push(commentData);
-      const updatedBoard = await board.save();
-      return new ResponseDto(
-        { success: true, data: updatedBoard },
-        '',
-        '댓글이 성공적으로 추가되었습니다.',
-        200,
-      );
-    } catch (error) {
-      throw new Error(
-        error instanceof Error
-          ? error.message
-          : '댓글 추가 중 오류가 발생했습니다.',
-      );
-    }
+  async addComment(
+    commentData: CreateCommentDto,
+    usernameInAuth: string,
+  ): Promise<ResponseDto> {
+    const board = await this.findBoardOrThrow(commentData.boardId);
+    board.comments.push({
+      username: usernameInAuth,
+      comment: commentData.comment,
+      date: this.now(),
+    });
+    const updatedBoard = await board.save();
+    return new ResponseDto(
+      { success: true, data: updatedBoard },
+      '',
+      '댓글이 성공적으로 추가되었습니다.',
+      201,
+    );
   }
 
   async removeComment(
@@ -174,34 +188,30 @@ export class BoardService {
     commentId: string,
     usernameInAuth: string,
   ): Promise<ResponseDto> {
-    try {
-      const board = await this.boardModel.findById(boardId);
-      if (!board) {
-        throw new Error('게시판 글을 찾을 수 없습니다.');
-      }
-      board.comments.find((comment) => {
-        if (comment._id?.toString() === commentId) {
-          if (comment.username !== usernameInAuth) {
-            throw new Error('댓글 삭제 권한이 없습니다.');
-          }
-        }
-      });
-      board.comments = board.comments.filter(
-        (comment) => comment?._id?.toString() !== commentId,
-      );
-      const updatedBoard = await board.save();
-      return new ResponseDto(
-        { success: true, data: updatedBoard },
-        '',
-        '댓글이 성공적으로 삭제되었습니다.',
-        200,
-      );
-    } catch (error) {
-      throw new Error(
-        error instanceof Error
-          ? error.message
-          : '댓글 삭제 중 오류가 발생했습니다.',
+    const board = await this.findBoardOrThrow(boardId);
+    const target = board.comments.find(
+      (comment) => comment?._id?.toString() === commentId,
+    );
+    if (!target) {
+      throw new NotFoundException(
+        new ResponseDto(
+          { success: false },
+          'comment_not_found',
+          '댓글을 찾을 수 없습니다.',
+        ),
       );
     }
+    this.assertOwner(target.username, usernameInAuth, '댓글 삭제');
+
+    board.comments = board.comments.filter(
+      (comment) => comment?._id?.toString() !== commentId,
+    );
+    const updatedBoard = await board.save();
+    return new ResponseDto(
+      { success: true, data: updatedBoard },
+      '',
+      '댓글이 성공적으로 삭제되었습니다.',
+      200,
+    );
   }
 }
