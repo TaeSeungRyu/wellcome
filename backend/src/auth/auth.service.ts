@@ -124,6 +124,38 @@ export class AuthService {
     return payload['username'] as string;
   }
 
+  async logout(req: Request, res: Response): Promise<ResponseDto> {
+    const refreshToken = req.cookies?.[REFRESH_COOKIE_NAME] as
+      | string
+      | undefined;
+
+    let username: string | undefined;
+    if (refreshToken) {
+      try {
+        const payload = await this.jwtService.verifyAsync<{
+          username: string;
+        }>(refreshToken, {
+          secret: process.env.JWT_REFRESH_SECRET as string,
+        });
+        username = payload?.username;
+      } catch {
+        username = undefined;
+      }
+    }
+
+    if (username) {
+      await this.redis.del(`refresh:${username}`);
+    }
+    this.setRefreshToken(res, '');
+
+    return new ResponseDto(
+      { success: true },
+      '',
+      '로그아웃 되었습니다.',
+      200,
+    );
+  }
+
   async refreshToken(req: Request): Promise<ResponseDto> {
     const refreshToken = req.cookies?.[REFRESH_COOKIE_NAME] as
       | string

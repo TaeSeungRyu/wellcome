@@ -10,6 +10,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { Request, Response } from 'express';
 import { Roles } from '../common/decorators/roles.decorator';
 import { ResponseDto } from '../common/dto/response.dto';
@@ -34,6 +35,7 @@ export class AuthController {
   })
   @ApiBody({ type: LoginDto, description: '로그인 요청 정보' })
   @ApiResponse({ status: 201, type: ResponseDto })
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post('auth/login')
   async login(
     @Body() loginDto: LoginDto,
@@ -50,9 +52,24 @@ export class AuthController {
       '저장된 쿠키의 Refresh Token으로 Access / Refresh Token을 재발급합니다.',
   })
   @ApiResponse({ status: 201, type: ResponseDto })
+  @Throttle({ default: { limit: 20, ttl: 60_000 } })
   @Get('auth/refresh')
   refreshToken(@Req() req: Request): Promise<ResponseDto> {
     return this.authService.refreshToken(req);
+  }
+
+  @ApiOperation({
+    summary: '로그아웃',
+    description:
+      'Refresh Token 쿠키를 제거하고 Redis 에 저장된 토큰을 무효화합니다.',
+  })
+  @ApiResponse({ status: 200, type: ResponseDto })
+  @Post('auth/logout')
+  async logout(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ResponseDto> {
+    return this.authService.logout(req, res);
   }
 
   // ==============================

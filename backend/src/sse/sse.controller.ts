@@ -1,5 +1,6 @@
 import { Controller, Get, Param, Query, Sse } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { SkipThrottle } from '@nestjs/throttler';
 import { Observable } from 'rxjs';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -31,6 +32,7 @@ export class SseController {
     required: false,
     description: '콤마 구분 토픽 필터 (예: auth.code.update,board.comment)',
   })
+  @SkipThrottle()
   @Roles('admin', 'super', 'manager')
   @Sse('sse/:id')
   sse(
