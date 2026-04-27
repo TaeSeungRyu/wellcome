@@ -214,7 +214,9 @@ export class UserController {
   @ApiBody({
     schema: {
       type: 'object',
-      properties: { username: { type: 'string', description: '삭제할 사용자 아이디' } },
+      properties: {
+        username: { type: 'string', description: '삭제할 사용자 아이디' },
+      },
     },
   })
   @ApiResponse({ status: 200, type: ResponseDto })
