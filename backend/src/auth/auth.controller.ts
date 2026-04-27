@@ -12,6 +12,7 @@ import {
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Request, Response } from 'express';
+import { AuditLog } from '../audit/decorators/audit-log.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { ResponseDto } from '../common/dto/response.dto';
 import { AuthService } from './auth.service';
@@ -36,6 +37,7 @@ export class AuthController {
   @ApiBody({ type: LoginDto, description: '로그인 요청 정보' })
   @ApiResponse({ status: 201, type: ResponseDto })
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
+  @AuditLog({ action: 'AUTH_LOGIN', target: 'auth', targetIdBody: 'username' })
   @Post('auth/login')
   async login(
     @Body() loginDto: LoginDto,
@@ -64,6 +66,7 @@ export class AuthController {
       'Refresh Token 쿠키를 제거하고 Redis 에 저장된 토큰을 무효화합니다.',
   })
   @ApiResponse({ status: 200, type: ResponseDto })
+  @AuditLog({ action: 'AUTH_LOGOUT', target: 'auth' })
   @Post('auth/logout')
   async logout(
     @Req() req: Request,
@@ -97,6 +100,11 @@ export class AuthController {
   @ApiBody({ type: CreateAuthDto, description: '권한 코드 생성 정보' })
   @ApiResponse({ status: 201, type: ResponseDto })
   @Roles('admin', 'super')
+  @AuditLog({
+    action: 'AUTH_CODE_CREATE',
+    target: 'auth_code',
+    targetIdBody: 'code',
+  })
   @Post('auth-code/create')
   createAuthCode(@Body() authData: CreateAuthDto): Promise<ResponseDto> {
     return this.authService.createCode(authData);
@@ -109,6 +117,11 @@ export class AuthController {
   @ApiBody({ type: UpdateAuthDto, description: '권한 코드 수정 정보' })
   @ApiResponse({ status: 200, type: ResponseDto })
   @Roles('admin', 'super')
+  @AuditLog({
+    action: 'AUTH_CODE_UPDATE',
+    target: 'auth_code',
+    targetIdBody: '_id',
+  })
   @Put('auth-code/update')
   updateAuthCode(@Body() authData: UpdateAuthDto): Promise<ResponseDto> {
     return this.authService.updateCode(authData);
@@ -120,6 +133,11 @@ export class AuthController {
   })
   @ApiResponse({ status: 200, type: ResponseDto })
   @Roles('admin', 'super')
+  @AuditLog({
+    action: 'AUTH_CODE_DELETE',
+    target: 'auth_code',
+    targetIdQuery: '_id',
+  })
   @Delete('auth-code/delete')
   deleteAuthCode(@Query('_id') id: string): Promise<ResponseDto> {
     return this.authService.deleteCode(id);

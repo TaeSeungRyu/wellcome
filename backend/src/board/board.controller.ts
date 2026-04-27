@@ -16,6 +16,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AuditLog } from '../audit/decorators/audit-log.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { ResponseDto } from '../common/dto/response.dto';
@@ -65,6 +66,7 @@ export class BoardController {
   @ApiBody({ type: CreateBoardDto, description: '게시글 생성 정보' })
   @ApiResponse({ status: 201, type: ResponseDto })
   @Roles('admin', 'super', 'manager')
+  @AuditLog({ action: 'BOARD_CREATE', target: 'board' })
   @Post('create')
   create(
     @Body() boardData: CreateBoardDto,
@@ -80,6 +82,7 @@ export class BoardController {
   @ApiBody({ type: UpdateBoardDto, description: '게시글 수정 정보' })
   @ApiResponse({ status: 200, type: ResponseDto })
   @Roles('admin', 'super', 'manager')
+  @AuditLog({ action: 'BOARD_UPDATE', target: 'board', targetIdBody: '_id' })
   @Put('update')
   update(
     @Body() boardData: UpdateBoardDto,
@@ -96,6 +99,11 @@ export class BoardController {
   @ApiQuery({ name: 'boardId', description: '삭제할 게시글 ID' })
   @ApiResponse({ status: 200, type: ResponseDto })
   @Roles('admin', 'super', 'manager')
+  @AuditLog({
+    action: 'BOARD_DELETE',
+    target: 'board',
+    targetIdQuery: 'boardId',
+  })
   @Delete('delete')
   delete(
     @Query('boardId') boardId: string,
@@ -112,6 +120,11 @@ export class BoardController {
   @ApiBody({ type: CreateCommentDto, description: '댓글 생성 정보' })
   @ApiResponse({ status: 201, type: ResponseDto })
   @Roles('admin', 'super', 'manager')
+  @AuditLog({
+    action: 'COMMENT_CREATE',
+    target: 'board',
+    targetIdBody: 'boardId',
+  })
   @Post('add-comment')
   addComment(
     @Body() commentData: CreateCommentDto,
@@ -129,6 +142,11 @@ export class BoardController {
   @ApiQuery({ name: 'commentId', description: '삭제할 댓글 ID' })
   @ApiResponse({ status: 200, type: ResponseDto })
   @Roles('admin', 'super', 'manager')
+  @AuditLog({
+    action: 'COMMENT_DELETE',
+    target: 'board',
+    targetIdQuery: 'boardId',
+  })
   @Delete('remove-comment')
   removeComment(
     @Query('boardId') boardId: string,

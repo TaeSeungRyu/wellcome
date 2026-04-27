@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const m = require\\('mongoose'\\); console.log\\(Object.keys\\(m\\).filter\\(k => k.toLowerCase\\(\\).includes\\('filter'\\) || k.toLowerCase\\(\\).includes\\('query'\\)\\).slice\\(0,30\\)\\)\")"
+    ]
+  }
+}

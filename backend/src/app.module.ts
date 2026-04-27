@@ -7,11 +7,13 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { WinstonModule } from 'nest-winston';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuditModule } from './audit/audit.module';
 import { AuthModule } from './auth/auth.module';
 import { BoardModule } from './board/board.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { winstonOptions } from './config/logger.config';
 import { ConstModule } from './const/const.module';
+import { HealthModule } from './health/health.module';
 import { SseModule } from './sse/sse.module';
 import { TaskModule } from './task/task.module';
 import { UserModule } from './user/user.module';
@@ -32,6 +34,8 @@ import { UserModule } from './user/user.module';
     SseModule,
     ConstModule,
     TaskModule,
+    HealthModule,
+    AuditModule,
   ],
   controllers: [AppController],
   providers: [

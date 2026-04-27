@@ -27,6 +27,7 @@ import {
 import { Response } from 'express';
 import { createReadStream, existsSync } from 'fs';
 import { join } from 'path';
+import { AuditLog } from '../audit/decorators/audit-log.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { ResponseDto } from '../common/dto/response.dto';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -98,6 +99,11 @@ export class UserController {
   @ApiBody({ type: CreateUserDto, description: '사용자 생성 정보' })
   @ApiResponse({ status: 201, type: ResponseDto })
   @Roles('super', 'admin')
+  @AuditLog({
+    action: 'USER_CREATE',
+    target: 'user',
+    targetIdBody: 'username',
+  })
   @Post('create')
   create(@Body() userData: CreateUserDto): Promise<ResponseDto> {
     return this.userService.createUser(userData);
@@ -112,6 +118,11 @@ export class UserController {
   @ApiBody({ type: CreateUserDto, description: '사용자 생성 정보 및 파일' })
   @ApiResponse({ status: 201, type: ResponseDto })
   @Roles('super', 'admin')
+  @AuditLog({
+    action: 'USER_CREATE',
+    target: 'user',
+    targetIdBody: 'username',
+  })
   @Post('create-with-file')
   @UseInterceptors(FileInterceptor('file'))
   createWithFile(
@@ -141,6 +152,11 @@ export class UserController {
   @ApiBody({ type: UpdateUserDto, description: '사용자 수정 정보' })
   @ApiResponse({ status: 200, type: ResponseDto })
   @Roles('super', 'admin')
+  @AuditLog({
+    action: 'USER_UPDATE',
+    target: 'user',
+    targetIdBody: 'username',
+  })
   @Put('update')
   update(@Body() updateData: UpdateUserDto): Promise<ResponseDto> {
     return this.userService.updateUser(updateData);
@@ -155,6 +171,11 @@ export class UserController {
   @ApiBody({ type: UpdateUserDto, description: '사용자 수정 정보 및 파일' })
   @ApiResponse({ status: 200, type: ResponseDto })
   @Roles('super', 'admin')
+  @AuditLog({
+    action: 'USER_UPDATE',
+    target: 'user',
+    targetIdBody: 'username',
+  })
   @Put('update-with-file')
   @UseInterceptors(FileInterceptor('file'))
   updateWithFile(
@@ -198,6 +219,11 @@ export class UserController {
   })
   @ApiResponse({ status: 200, type: ResponseDto })
   @Roles('super', 'admin')
+  @AuditLog({
+    action: 'USER_DELETE',
+    target: 'user',
+    targetIdBody: 'username',
+  })
   @Delete('delete')
   delete(@Body('username') username: string): Promise<ResponseDto> {
     return this.userService.deleteUser(username);
