@@ -44,9 +44,7 @@ function RouteComponent() {
     }
   }, [info?.data]);
 
-  const toAlter = (data: Auth) => {
-    console.log("Alter Data:", data);
-  };
+  const toAlter = (_data: Auth) => {};
 
   const onSubmit = (data: Auth) => {
     openModal({

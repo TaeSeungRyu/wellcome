@@ -62,7 +62,6 @@ function RouteComponent() {
   //상세는 search로 세부 수정은 path로 예정!
   const [data, setData] = useState<any[]>([]);
   const onRowClick = (row: any) => {
-    console.log(row);
     router.navigate({
       to: "/home/user/info",
       search: {

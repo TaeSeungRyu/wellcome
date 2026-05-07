@@ -28,7 +28,6 @@ function HomeLayout() {
   });
 
   useEffect(() => {
-    //console.log("HomeLayout mounted. Current token:", token);
     if (!token) {
       alert("인증이 필요합니다. 로그인 페이지로 이동합니다.");
       logout();
@@ -43,7 +42,6 @@ function HomeLayout() {
     (arg: Record<string, any>) => {
       if (arg && arg.data) {
         const sseData = JSON.parse(arg.data);
-        console.log("roles:", roles);
         if (sseData.event) {
           if (sseData.event.includes("DELETE")) {
             const { code } = sseData;

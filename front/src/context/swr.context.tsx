@@ -33,21 +33,6 @@ const laggy: Middleware = (useSWRNext: SWRHook) => {
   };
 };
 
-// SWR 미들웨어: 로깅 기능 추가
-const logger: Middleware = (useSWRNext: SWRHook) => {
-  return (key, fetcher, config) => {
-    const swr = useSWRNext(key, fetcher, config);
-    useEffect(() => {
-      // console.log("SWR 인스턴스 실행:", key);
-    }, [key]);
-    useEffect(() => {
-      // if (swr.data) console.log("데이터 수신:", key, swr.data);
-      // if (swr.error) console.error("에러 발생:", key, swr.error);
-    }, [swr.data, swr.error, key]);
-    return swr;
-  };
-};
-
 export function SWRProviders({ children }: any) {
   return (
     <SWRConfig
@@ -56,7 +41,7 @@ export function SWRProviders({ children }: any) {
           //에러를 전역으로 처리 가능
           console.error(`Error fetching data for key: ${key}`, error);
         },
-        use: [logger, laggy],
+        use: [laggy],
       }}
     >
       {children}

@@ -81,9 +81,7 @@ if (rootElement && !rootElement.innerHTML) {
         onError={(error, info) => {
           console.error("전역 에러 캐치:", error, info);
         }}
-        onReset={() => {
-          console.log("에러 바운더리 리셋");
-        }}
+        onReset={() => {}}
       >
         <QueryClientProvider client={queryClient}>
           <SWRProviders>

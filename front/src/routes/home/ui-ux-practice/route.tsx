@@ -48,7 +48,6 @@ function RouteComponent() {
         className="px-4 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600"
         onClick={() => {
           toast("This is a toast");
-          console.log("Toast should have been rendered");
         }}
       >
         Render toast

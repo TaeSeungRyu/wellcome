@@ -29,7 +29,6 @@ function RouteComponent() {
     setIsCodeVerified(false);
   }, [watch("code")]);
   const toAlter = (data: Auth) => {
-    console.log("Alter Data:", data);
     mutateAsync(data)
       .then((res) => {
         if (res?.result?.success) {
