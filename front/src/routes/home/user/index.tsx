@@ -4,7 +4,7 @@ import { TableComponent } from "@/components/ui/table.component";
 import { PagingComponent } from "@/components/ui/paging.component";
 import type { Column } from "@/const/type";
 import { requestUserList } from "./-/user.repository";
-import { USER_PAGE_SIZE, userSearchSchema } from "./-/user.schema";
+import { USER_PAGE_SIZE, type User, userSearchSchema } from "./-/user.schema";
 
 const projectLoader = async () => {
   const res = await requestUserList(1, USER_PAGE_SIZE);
@@ -28,10 +28,10 @@ function RouteComponent() {
     page === 1 ? preloadData : undefined,
   );
 
-  const userData = result?.data?.users || [];
-  const total = result?.data?.total || 0;
-  const totalPages = Math.ceil(total / (result?.data?.limit || size));
-  const currentPageFromApi = result?.data?.page || 1;
+  const userData = result?.data || [];
+  const total = result?.total || 0;
+  const totalPages = Math.ceil(total / (result?.limit || size));
+  const currentPageFromApi = result?.page || 1;
 
   const onPageChange = (nextPage: number) => {
     navigate({
@@ -39,7 +39,7 @@ function RouteComponent() {
     });
   };
 
-  const columns: Column<any>[] = [
+  const columns: Column<User>[] = [
     {
       key: "username",
       header: "아이디",
@@ -73,7 +73,7 @@ function RouteComponent() {
     },
   ];
 
-  const onRowClick = (row: any) => {
+  const onRowClick = (row: User) => {
     router.navigate({
       to: "/home/user/info",
       search: {

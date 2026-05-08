@@ -1,102 +1,78 @@
 import { API } from "@/const";
-import { ApiClient } from "@/services/apiClient";
+import { api } from "@/services/api";
+import type { ApiResponse } from "../../-/common.schema";
+import type { Board, Comment } from "./board.schema";
 
-const requestBoardList = async (page: number, limit: number) => {
-  const apiClient = ApiClient.getInstance();
-  const params = {
-    method: "get",
-    query: {
-      page,
-      limit,
-    },
+export interface BoardListResult {
+  success?: boolean;
+  data: {
+    boards: Board[];
+    total: number;
+    page: number;
+    limit: number;
   };
-  return apiClient.request(API.BOARD, params);
-};
+}
 
-const requestBoardDetail = async (_id: string) => {
-  const apiClient = ApiClient.getInstance();
-  const params = {
-    method: "get",
-    query: {
-      boardId: _id,
-    },
-  };
-  return apiClient.request(API.BOARD_DETAIL, params);
-};
+export interface BoardDetailResult {
+  success?: boolean;
+  data: Board;
+}
 
-const requestBoardInsert = async (title: string, contents: string) => {
-  const apiClient = ApiClient.getInstance();
-  const params = {
-    method: "post",
-    body: JSON.stringify({
-      title,
-      contents,
-    }),
-  };
-  return apiClient.request(API.BOARD_CREATE, params);
-};
+export interface BoardMutationResult {
+  success?: boolean;
+  data?: Board;
+}
 
-const requestBoardUpdate = async (
-  _id: string,
-  title: string,
-  contents: string
-) => {
-  const apiClient = ApiClient.getInstance();
-  const params = {
-    method: "put",
-    body: JSON.stringify({
-      _id,
-      title,
-      contents,
-    }),
-  };
-  return apiClient.request(API.BOARD_UPDATE, params);
-};
+export interface CommentMutationResult {
+  success?: boolean;
+  data?: Comment;
+}
 
-const requestBoardDelete = async (_id: string) => {
-  const apiClient = ApiClient.getInstance();
-  const params = {
-    method: "delete",
-    query: {
-      boardId: _id,
-    },
-  };
-  return apiClient.request(API.BOARD_DELETE, params);
-};
+const requestBoardList = (page: number, limit: number) =>
+  api.get<ApiResponse<BoardListResult>>(API.BOARD, { page, limit });
 
-const requestAddComment = async (
+const requestBoardDetail = (_id: string) =>
+  api.get<ApiResponse<BoardDetailResult>>(API.BOARD_DETAIL, { boardId: _id });
+
+const requestBoardInsert = (title: string, contents: string) =>
+  api.post<ApiResponse<BoardMutationResult>>(API.BOARD_CREATE, {
+    title,
+    contents,
+  });
+
+const requestBoardUpdate = (_id: string, title: string, contents: string) =>
+  api.put<ApiResponse<BoardMutationResult>>(API.BOARD_UPDATE, {
+    _id,
+    title,
+    contents,
+  });
+
+const requestBoardDelete = (_id: string) =>
+  api.delete<ApiResponse<BoardMutationResult>>(API.BOARD_DELETE, {
+    boardId: _id,
+  });
+
+const requestAddComment = (
   boardId: string,
   comment: string,
-  username: string
-) => {
-  const apiClient = ApiClient.getInstance();
-  const params = {
-    method: "post",
-    body: JSON.stringify({
-      boardId,
-      comment,
-      username,
-    }),
-  };
-  return apiClient.request(API.BOARD_COMMENT_ADD, params);
-};
+  username: string,
+) =>
+  api.post<ApiResponse<CommentMutationResult>>(API.BOARD_COMMENT_ADD, {
+    boardId,
+    comment,
+    username,
+  });
 
-const requestCommentDelete = async (
+const requestCommentDelete = (
   boardId: string,
   commentId: string,
-  username: string
-) => {
-  const apiClient = ApiClient.getInstance();
-  const params = {
-    method: "delete",
-    query: {
-      boardId,
-      commentId,
-      username,
-    },
-  };
-  return apiClient.request(API.BOARD_COMMENT_DELETE, params);
-};
+  username: string,
+) =>
+  api.delete<ApiResponse<CommentMutationResult>>(API.BOARD_COMMENT_DELETE, {
+    boardId,
+    commentId,
+    username,
+  });
 
 export {
   requestBoardList,

@@ -26,7 +26,7 @@ function RouteComponent() {
   } = useBoardListHook(currentPage, size);
 
   const sharedValue = useBoardState((state) => state.sharedValue);
-  const currentPageFromApi = result?.data?.page || 1;
+  const currentPageFromApi = result?.page || 1;
 
   const onPageChange = (page: number) => {
     setCurrentPage(page);
@@ -59,12 +59,12 @@ function RouteComponent() {
   };
 
   useEffect(() => {
-    if (result?.data) {
-      setSize(result?.data?.limit);
-      setTotalPages(Math.ceil(result?.data?.total / result?.data?.limit));
-      setData(result?.data?.boards || []);
+    if (result) {
+      setSize(result.limit);
+      setTotalPages(Math.ceil(result.total / result.limit));
+      setData(result.data || []);
     }
-  }, [result?.data]);
+  }, [result]);
 
   const runModal = (_id?: string, comments?: Comment[]) => {
     openModal({
@@ -127,7 +127,7 @@ function RouteComponent() {
             <h3 className="text-sm font-semibold text-slate-700">
               게시글 목록{" "}
               <span className="ml-2 text-blue-500 font-normal">
-                {result?.data?.total || 0}건
+                {result?.total || 0}건
               </span>
             </h3>
           </div>

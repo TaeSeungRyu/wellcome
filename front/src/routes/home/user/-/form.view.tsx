@@ -11,9 +11,9 @@ import InputFile from "@/components/form/input.file";
 import { useUserImageUrl } from "./use.user.hook";
 
 interface UserFormViewProps {
-  form: UseFormReturn<UserForm | any>; // 타입이 섞여있다면 any 혹은 공통 타입 사용
+  form: UseFormReturn<UserForm>;
   onSubmit: (
-    data: any,
+    data: UserForm,
     e: BaseSyntheticEvent<object, any, any> | undefined,
   ) => void;
   submitLabel: string;

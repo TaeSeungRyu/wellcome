@@ -1,17 +1,23 @@
 import { z } from "zod";
 
+export interface RoleOption {
+  value: string;
+  label: string;
+  selected: boolean;
+}
+
 export interface User {
   _id: string;
   username: string;
   password: string;
   name?: string;
   accessDate?: string;
-  role?: any[];
+  role?: RoleOption[];
   email?: string;
   phone?: string;
   createdAt?: string;
   updatedAt?: string;
-  file?: any;
+  file?: FileList;
   profileImage?: string;
 }
 
@@ -42,7 +48,9 @@ export const updatedUserSchema = userSchema.extend({
   profileImage: z.string().optional(),
 });
 
-export type UserForm = z.infer<typeof userSchema>;
+// 등록·수정 폼이 같은 컴포넌트를 공유하므로, 더 넓은 형태(UpdatedUserForm)를
+// 단일 폼 타입으로 사용한다. password는 등록 시 zodResolver(userSchema)로 검증.
+export type UserForm = z.infer<typeof updatedUserSchema>;
 
 export const USER_PAGE_SIZE = 3;
 

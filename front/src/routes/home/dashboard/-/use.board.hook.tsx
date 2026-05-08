@@ -9,7 +9,8 @@ import {
   requestCommentDelete,
 } from "./board.repository";
 import { useForm } from "react-hook-form";
-import { boardSchema, commentSchema } from "./board.schema";
+import { type Board, boardSchema, commentSchema } from "./board.schema";
+import { resultMapper } from "../../-/common.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 
@@ -23,14 +24,15 @@ const queryKey = [
 export const useBoardListHook = (page: number, limit: number) => {
   return useQuery({
     queryKey: [...queryKey[0], page, limit],
-    queryFn: async () => {
-      return await requestBoardList(page, limit);
-    },
+    queryFn: async () => requestBoardList(page, limit),
     enabled: false,
     gcTime: 0,
     staleTime: 0,
     select(data) {
-      return data?.result ?? null;
+      if (data?.result) {
+        return resultMapper<Board[]>(data.result.data, "boards");
+      }
+      return null;
     },
     placeholderData: (prev) => prev,
   });
@@ -88,12 +90,6 @@ export const useBoardAlter = () => {
         return await requestBoardInsert(title, contents);
       }
     },
-    onSuccess: (response) => {
-      return response.result;
-    },
-    onError: (error: Error) => {
-      throw error;
-    },
   });
 };
 
@@ -109,7 +105,7 @@ export const useBoardCommentForm = (_id?: string) => {
   return { ...form };
 };
 
-//BOARD 등록/수정용 HOOK
+//BOARD COMMENT 등록/삭제용 HOOK
 export const useCommentAlter = () => {
   return useMutation({
     mutationKey: [...queryKey[3]],
@@ -129,12 +125,6 @@ export const useCommentAlter = () => {
       } else {
         return await requestAddComment(boardId, comment, username);
       }
-    },
-    onSuccess: (response) => {
-      return response.result;
-    },
-    onError: (error: Error) => {
-      throw error;
     },
   });
 };

@@ -8,28 +8,50 @@ import {
   requestUserDetail,
   requestUserList,
   requestUserUpdateWithFile,
+  type UserListResult,
 } from "./user.repository";
+import { resultMapper } from "../../-/common.schema";
 import { useForm } from "react-hook-form";
-import { updatedUserSchema, userSchema, type User } from "./user.schema";
+import {
+  type RoleOption,
+  type User,
+  type UserForm,
+  updatedUserSchema,
+  userSchema,
+} from "./user.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState } from "react";
 
 const queryKey = ["requestUserList", "requestUserAlter"] as const;
+
+// 폼/페이로드 공통 입력 타입 (생성/수정 양쪽에서 사용)
+export interface UserMutationInput {
+  username?: string;
+  password?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  role?: RoleOption[];
+  file?: FileList;
+  profileImage?: string;
+}
+
 //LIST 조회용 HOOK
 export const useUserListHook = (
   page: number,
   limit: number,
-  initialData: any = null,
+  initialData: UserListResult | null = null,
 ) => {
   return useQuery({
     queryKey: [...queryKey[0], page, limit],
-    queryFn: async () => {
-      return await requestUserList(page, limit);
-    },
+    queryFn: async () => requestUserList(page, limit),
     initialData: initialData ? { result: initialData } : undefined,
     staleTime: 0,
     select(data) {
-      return data?.result ?? null;
+      if (data?.result) {
+        return resultMapper<User[]>(data.result.data, "users");
+      }
+      return null;
     },
     placeholderData: (prev) => prev,
   });
@@ -46,11 +68,11 @@ export const useUserAuthListHook = () => {
       return result ?? null;
     },
     placeholderData: (prev) => prev,
-    select(data) {
+    select(data): RoleOption[] {
       return (
-        data?.data?.auths.map((key: Record<string, any>) => ({
-          value: key.code,
-          label: key.name,
+        data?.data?.auths.map((auth) => ({
+          value: auth.code,
+          label: auth.name,
           selected: false,
         })) ?? []
       );
@@ -64,7 +86,7 @@ export const useUserForm = (username?: string) => {
   // 리셋 여부를 기억할 flag (리렌더링 시에도 유지됨)
   const isInitialized = useRef(false);
 
-  const form = useForm({
+  const form = useForm<UserForm>({
     resolver: zodResolver(username ? updatedUserSchema : userSchema),
     mode: "all",
     defaultValues: {
@@ -92,7 +114,7 @@ export const useUserForm = (username?: string) => {
           name: info.name,
           email: info.email || "",
           phone: info.phone || "",
-          role: authList.map((auth: any) => ({
+          role: authList.map((auth) => ({
             ...auth,
             selected: info.role?.some((r) => r.value === auth.value) || false,
           })),
@@ -105,7 +127,7 @@ export const useUserForm = (username?: string) => {
     else if (!username && authList) {
       form.reset({
         ...form.getValues(),
-        role: authList.map((auth: any) => ({
+        role: authList.map((auth) => ({
           ...auth,
           selected: false,
         })),
@@ -135,13 +157,11 @@ export const useCheckExistUser = (username: string) => {
 };
 
 // 폼 데이터 → API payload 변환 (role 필터링 + 빈 문자열 정리)
-const buildUserPayload = (input: any) => {
+const buildUserPayload = (input: UserMutationInput) => {
   const { file, role, ...rest } = input;
-  const payload: any = {
+  const payload: Record<string, unknown> = {
     ...rest,
-    role: role
-      ?.filter((r: any) => r.selected)
-      .map((r: any) => r.value),
+    role: role?.filter((r) => r.selected).map((r) => r.value),
   };
   if (payload.phone === "") delete payload.phone;
   if (payload.email === "") delete payload.email;
@@ -151,7 +171,7 @@ const buildUserPayload = (input: any) => {
 export const useUserCreate = () => {
   return useMutation({
     mutationKey: [...queryKey[1], "create"],
-    mutationFn: async (input: any) => {
+    mutationFn: async (input: UserMutationInput) => {
       const { payload, file } = buildUserPayload(input);
       return requestUserCreateWithFile(payload, file);
     },
@@ -161,7 +181,7 @@ export const useUserCreate = () => {
 export const useUserUpdate = () => {
   return useMutation({
     mutationKey: [...queryKey[1], "update"],
-    mutationFn: async (input: any) => {
+    mutationFn: async (input: UserMutationInput) => {
       const { payload, file } = buildUserPayload(input);
       if (payload.password === "") delete payload.password;
       return requestUserUpdateWithFile(payload, file);

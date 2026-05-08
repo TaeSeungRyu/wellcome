@@ -1,92 +1,96 @@
 import { API, API_BASE_URL } from "@/const";
-import { ApiClient } from "@/services/apiClient";
-import { ApiMultipartClient } from "@/services/apiClientMultipart";
+import { api } from "@/services/api";
+import type { ApiResponse } from "../../-/common.schema";
+import type { Auth } from "../../auth/-/auth.schema";
+import type { User } from "./user.schema";
 
-const requestUserList = async (page: number, limit: number) => {
-  const apiClient = ApiClient.getInstance();
-  const params = {
-    method: "get",
-    query: {
-      page,
-      limit,
-    },
+export interface UserListResult {
+  success?: boolean;
+  data: {
+    users: User[];
+    total: number;
+    page: number;
+    limit: number;
   };
-  return apiClient.request(API.USER, params);
-};
+}
 
-const requestUserAuthList = async () => {
-  const apiClient = ApiClient.getInstance();
-  const params = {
-    method: "get",
-    query: {
-      page: 1,
-      limit: 10000,
-    },
+export interface UserAuthListResult {
+  success?: boolean;
+  data: {
+    auths: Auth[];
+    total: number;
+    page: number;
+    limit: number;
   };
-  return apiClient.request(API.AUTH_LIST, params);
-};
+}
 
-const requestUserCreate = async (data: any) => {
-  const apiClient = ApiClient.getInstance();
-  const params = {
-    method: "post",
-    body: JSON.stringify(data),
+export interface UserDetailResult {
+  success?: boolean;
+  data: User;
+}
+
+export interface UserMutationResult {
+  success?: boolean;
+  data?: User;
+}
+
+export interface UserExistsResult {
+  success?: boolean;
+  data: {
+    exists: boolean;
   };
-  return apiClient.request(API.USER_CREATE, params);
-};
+}
 
-const requestUserCreateWithFile = async (data: any, file?: File) => {
-  const apiClient = ApiMultipartClient.getInstance();
-  return apiClient.postMultipart(API.USER_CREATE_FILE, data, file);
-};
+const requestUserList = (page: number, limit: number) =>
+  api.get<ApiResponse<UserListResult>>(API.USER, { page, limit });
 
-const requestUserCheckExist = async (username: string) => {
-  const apiClient = ApiClient.getInstance();
-  const params = {
-    method: "get",
-    query: { username },
-  };
-  return apiClient.request(API.USER_CHECK_EXIST, params);
-};
-
-const requestUserDetail = async (username: string) => {
-  const apiClient = ApiClient.getInstance();
-  const params = {
-    method: "get",
-    query: { username },
-  };
-  return apiClient.request(`${API.USER_DETAIL}`, params);
-};
-
-const requestUserDelete = async (username: string) => {
-  const apiClient = ApiClient.getInstance();
-  const params = {
-    method: "delete",
-    body: JSON.stringify({ username }),
-  };
-  return apiClient.request(`${API.USER_DELETE}`, params);
-};
-
-const requestUserUpdate = async (data: any) => {
-  const apiClient = ApiClient.getInstance();
-  const params = {
-    method: "put",
-    body: JSON.stringify(data),
-  };
-  return apiClient.request(API.USER_UPDATE, params);
-};
-const requestUserUpdateWithFile = async (data: any, file?: File) => {
-  const apiClient = ApiMultipartClient.getInstance();
-  return apiClient.postMultipart(API.USER_UPDATE_FILE, data, file, "PUT");
-};
-
-const requestImagePreview = async (imagePath: string) => {
-  const apiClient = ApiClient.getInstance();
-  return apiClient.request(`${API_BASE_URL}${imagePath}`, {
-    method: "get",
-    contentType: "blob",
+const requestUserAuthList = () =>
+  api.get<ApiResponse<UserAuthListResult>>(API.AUTH_LIST, {
+    page: 1,
+    limit: 10000,
   });
-};
+
+const requestUserCreate = (data: User) =>
+  api.post<ApiResponse<UserMutationResult>>(API.USER_CREATE, data);
+
+const requestUserCreateWithFile = (
+  data: Record<string, unknown>,
+  file?: File,
+) =>
+  api.multipart.post<ApiResponse<UserMutationResult>>(
+    API.USER_CREATE_FILE,
+    data,
+    file,
+  );
+
+const requestUserCheckExist = (username: string) =>
+  api.get<ApiResponse<UserExistsResult>>(API.USER_CHECK_EXIST, { username });
+
+const requestUserDetail = (username: string) =>
+  api.get<ApiResponse<UserDetailResult>>(API.USER_DETAIL, { username });
+
+const requestUserDelete = (username: string) =>
+  api.delete<ApiResponse<UserMutationResult>>(
+    API.USER_DELETE,
+    undefined,
+    { username },
+  );
+
+const requestUserUpdate = (data: User) =>
+  api.put<ApiResponse<UserMutationResult>>(API.USER_UPDATE, data);
+
+const requestUserUpdateWithFile = (
+  data: Record<string, unknown>,
+  file?: File,
+) =>
+  api.multipart.put<ApiResponse<UserMutationResult>>(
+    API.USER_UPDATE_FILE,
+    data,
+    file,
+  );
+
+const requestImagePreview = (imagePath: string) =>
+  api.getBlob(`${API_BASE_URL}${imagePath}`);
 
 export {
   requestUserList,

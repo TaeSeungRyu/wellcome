@@ -20,6 +20,7 @@ const useSigninHook = () => {
     onSuccess: (response) => {
       if (response.result?.success == true) {
         const { accessToken, refreshToken, data } = response.result;
+        if (!accessToken || !refreshToken || !data) return;
         const decoded: Record<string, any> = jwtDecode(accessToken);
         login(accessToken, refreshToken, data.username, decoded.role);
       }

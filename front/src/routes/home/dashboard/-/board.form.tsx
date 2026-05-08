@@ -34,7 +34,7 @@ export function BoardFormComponent({
   const { mutateAsync, data: alterResult } = useBoardAlter();
   const { showToast } = useToast();
 
-  const toAlter = async (data: any) => {
+  const toAlter = async (data: BoardForm) => {
     await mutateAsync({
       _id,
       title: data.title,
@@ -53,7 +53,7 @@ export function BoardFormComponent({
     }
   }, [alterResult]);
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: BoardForm) => {
     openModal({
       content: (
         <div>

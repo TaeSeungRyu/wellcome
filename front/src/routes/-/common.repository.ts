@@ -1,12 +1,12 @@
 import { API } from "@/const";
-import { ApiClient } from "@/services/apiClient";
+import { api } from "@/services/api";
+import type { ApiResponse } from "../home/-/common.schema";
 
-const requestConstList = async () => {
-  const apiClient = ApiClient.getInstance();
-  const params = {
-    method: "get",
-  };
-  return apiClient.request(API.CONST_LIST, params);
-};
+export interface ConstListResult {
+  data: Record<string, string>;
+}
+
+const requestConstList = () =>
+  api.get<ApiResponse<ConstListResult>>(API.CONST_LIST);
 
 export { requestConstList };
