@@ -1,6 +1,6 @@
 import type { FileRouteTypes } from "@/routeTree.gen";
 
-export const API_BASE_URL = "/api";
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export const SIGNIN_PATH = "/login/signin";
 
 export const API = {

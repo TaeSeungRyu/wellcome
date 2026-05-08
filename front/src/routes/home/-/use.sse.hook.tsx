@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { EventSourcePolyfill } from "event-source-polyfill";
+import { API_BASE_URL } from "@/const";
 export const useSSEHook = (
   id: string | null,
   token: string | null,
@@ -11,7 +12,7 @@ export const useSSEHook = (
   useEffect(() => {
     if (!id || !token) return;
 
-    const es = new EventSourcePolyfill(`/api/events/sse/${id}`, {
+    const es = new EventSourcePolyfill(`${API_BASE_URL}/events/sse/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
