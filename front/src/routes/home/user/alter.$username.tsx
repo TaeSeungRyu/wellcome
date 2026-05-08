@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useUserAlter, useUserForm } from "./-/use.user.hook";
+import { useUserForm, useUserUpdate } from "./-/use.user.hook";
 
 import { useToast } from "@/context/toast.context";
 import { UserFormView } from "./-/form.view";
@@ -14,7 +14,7 @@ function RouteComponent() {
   const username = Route.useParams().username;
   const { form, refetch } = useUserForm(username);
   const { openModal, closeTopModal: closeConfirmModal } = useModal();
-  const { mutate: userAlterMutate, data: alterData } = useUserAlter();
+  const { mutate: userAlterMutate, data: alterData } = useUserUpdate();
   const { showToast } = useToast();
 
   const onSubmit = (
@@ -36,7 +36,7 @@ function RouteComponent() {
           </button>
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded"
-            onClick={() => userAlterMutate({ ...data, isUpdate: true })}
+            onClick={() => userAlterMutate(data)}
           >
             수정
           </button>

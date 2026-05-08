@@ -1,6 +1,6 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import {
-  useUserAlter,
+  useUserDelete,
   useUserDetail,
   useUserImageUrl,
 } from "./-/use.user.hook";
@@ -25,7 +25,7 @@ function RouteComponent() {
   const router = useRouter();
   const { openModal, closeTopModal: closeConfirmModal } = useModal();
   const { showToast } = useToast();
-  const { mutateAsync, data: deleteResult } = useUserAlter();
+  const { mutateAsync, data: deleteResult } = useUserDelete();
   const { username } = Route.useSearch();
   const { data: info, refetch } = useUserDetail(username);
   // 이미지 미리보기 처리
@@ -63,7 +63,7 @@ function RouteComponent() {
           </button>
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded"
-            onClick={() => mutateAsync({ username, isDelete: true })}
+            onClick={() => mutateAsync(username)}
           >
             삭제
           </button>

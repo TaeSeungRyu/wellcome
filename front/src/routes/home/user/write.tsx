@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
   useCheckExistUser,
-  useUserAlter,
+  useUserCreate,
   useUserForm,
 } from "./-/use.user.hook";
 import { useEffect, useState } from "react";
@@ -18,7 +18,7 @@ function RouteComponent() {
   const { form } = useUserForm();
   const { watch, setError, clearErrors } = form;
   const [isCheckingExistence, setIsCheckingExistence] = useState(false);
-  const { mutateAsync: toAlter, data: alterData } = useUserAlter();
+  const { mutateAsync: toAlter, data: alterData } = useUserCreate();
   const { refetch: refetchCheckExistUser } = useCheckExistUser(
     watch("username"),
   );

@@ -131,68 +131,45 @@ export const useCheckExistUser = (username: string) => {
   });
 };
 
-//BOARD 등록/수정용 HOOK
-export const useUserAlter = () => {
+// 폼 데이터 → API payload 변환 (role 필터링 + 빈 문자열 정리)
+const buildUserPayload = (input: any) => {
+  const { file, role, ...rest } = input;
+  const payload: any = {
+    ...rest,
+    role: role
+      ?.filter((r: any) => r.selected)
+      .map((r: any) => r.value),
+  };
+  if (payload.phone === "") delete payload.phone;
+  if (payload.email === "") delete payload.email;
+  return { payload, file: file?.[0] };
+};
+
+export const useUserCreate = () => {
   return useMutation({
-    mutationKey: [...queryKey[1]],
-    mutationFn: async ({
-      username,
-      password,
-      name,
-      role,
-      email,
-      phone,
-      isDelete,
-      isUpdate,
-      file,
-      profileImage,
-    }: {
-      username?: string;
-      password?: string;
-      name?: string;
-      role?: string[];
-      email?: string;
-      phone?: string;
-      isDelete?: boolean;
-      isUpdate?: boolean;
-      file?: any;
-      profileImage?: string;
-    }) => {
-      const param = {
-        username,
-        password,
-        name,
-        role,
-        email: email,
-        phone: phone,
-        profileImage,
-      };
-      param.role = role
-        ?.filter((role: any) => {
-          return role.selected;
-        })
-        .map((role: any) => {
-          return role.value;
-        });
-      if (isDelete && username) {
-        return await requestUserDelete(username);
-      } else if (username && isUpdate) {
-        if (param.phone === "") delete param.phone;
-        if (param.email === "") delete param.email;
-        if (param.password === "") delete param.password;
-        return await requestUserUpdateWithFile(param, file[0]);
-      } else {
-        if (param.phone === "") delete param.phone;
-        if (param.email === "") delete param.email;
-        return await requestUserCreateWithFile(param, file[0]);
-      }
+    mutationKey: [...queryKey[1], "create"],
+    mutationFn: async (input: any) => {
+      const { payload, file } = buildUserPayload(input);
+      return requestUserCreateWithFile(payload, file);
     },
-    onSuccess: (response) => {
-      return response.result;
+  });
+};
+
+export const useUserUpdate = () => {
+  return useMutation({
+    mutationKey: [...queryKey[1], "update"],
+    mutationFn: async (input: any) => {
+      const { payload, file } = buildUserPayload(input);
+      if (payload.password === "") delete payload.password;
+      return requestUserUpdateWithFile(payload, file);
     },
-    onError: (error: Error) => {
-      throw error;
-    },
+  });
+};
+
+export const useUserDelete = () => {
+  return useMutation({
+    mutationKey: [...queryKey[1], "delete"],
+    mutationFn: async (username: string) => requestUserDelete(username),
   });
 };
 

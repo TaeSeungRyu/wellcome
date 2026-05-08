@@ -1,6 +1,6 @@
 import InputText from "@/components/form/input.text";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useAuthAlter, useAuthCodeExist, useAuthForm } from "./-/use.auth.hook";
+import { useAuthCreate, useAuthCodeExist, useAuthForm } from "./-/use.auth.hook";
 import type { Auth, AuthForm } from "./-/auth.schema";
 import { useModal } from "@/context/modal.context";
 import { useEffect, useState } from "react";
@@ -15,7 +15,7 @@ function RouteComponent() {
   const { openModal, closeTopModal: closeConfirmModal } = useModal();
   const { showToast } = useToast();
   const fields: (keyof AuthForm)[] = ["code", "name", "desc"];
-  const { mutateAsync } = useAuthAlter();
+  const { mutateAsync } = useAuthCreate();
   const {
     register,
     handleSubmit,

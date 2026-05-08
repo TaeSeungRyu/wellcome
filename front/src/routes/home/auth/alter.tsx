@@ -1,5 +1,9 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useAuthDetail, useAuthForm } from "./-/use.auth.hook";
+import {
+  useAuthDetail,
+  useAuthForm,
+  useAuthUpdate,
+} from "./-/use.auth.hook";
 import InputText from "@/components/form/input.text";
 import { useModal } from "@/context/modal.context";
 import { useToast } from "@/context/toast.context";
@@ -27,6 +31,7 @@ function RouteComponent() {
   const { data: info } = useAuthDetail(id);
   const { openModal, closeTopModal: closeConfirmModal } = useModal();
   const { showToast } = useToast();
+  const { mutateAsync } = useAuthUpdate();
   const fields: (keyof AuthForm)[] = ["code", "name", "desc"];
   const {
     register,
@@ -44,7 +49,26 @@ function RouteComponent() {
     }
   }, [info?.data]);
 
-  const toAlter = (_data: Auth) => {};
+  const toAlter = (data: Auth) => {
+    mutateAsync({ ...data, _id: id })
+      .then((res) => {
+        if (res?.result?.success) {
+          router.history.go(-1);
+          showToast(res.message || "수정 하였습니다.", { type: "success" });
+        } else {
+          showToast(res?.message || "수정에 실패하였습니다.", {
+            type: "error",
+          });
+        }
+        closeConfirmModal();
+      })
+      .catch((err) => {
+        showToast(err?.message || "수정 중 오류가 발생하였습니다.", {
+          type: "error",
+        });
+        closeConfirmModal();
+      });
+  };
 
   const onSubmit = (data: Auth) => {
     openModal({

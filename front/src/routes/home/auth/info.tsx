@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useAuthAlter, useAuthDetail } from "./-/use.auth.hook";
+import { useAuthDelete, useAuthDetail } from "./-/use.auth.hook";
 import { useModal } from "@/context/modal.context";
 import { useEffect } from "react";
 import { useToast } from "@/context/toast.context";
@@ -24,7 +24,7 @@ function RouteComponent() {
   const { id } = Route.useSearch();
   const { data: info } = useAuthDetail(id);
   const { openModal, closeTopModal: closeConfirmModal } = useModal();
-  const { mutateAsync, data: deleteResult } = useAuthAlter();
+  const { mutateAsync, data: deleteResult } = useAuthDelete();
   const { showToast } = useToast();
 
   const runConfirmModal = () => {
@@ -41,7 +41,7 @@ function RouteComponent() {
           </button>
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded"
-            onClick={() => mutateAsync({ _id: id, isDelete: true })}
+            onClick={() => mutateAsync(id)}
           >
             삭제
           </button>

@@ -4,6 +4,7 @@ import {
   requestAuthDelete,
   requestAuthDetail,
   requestAuthList,
+  requestAuthUpdate,
   requestIsAuthCodeExist,
 } from "./auth.repository";
 import { resultMapper } from "../../-/common.schema";
@@ -72,38 +73,24 @@ export const useAuthForm = () => {
   });
 };
 
-//등록/수정용 HOOK
-export const useAuthAlter = () => {
+export const useAuthCreate = () => {
   return useMutation({
-    mutationKey: [...queryKey[1]],
-    mutationFn: async ({
-      code,
-      name,
-      desc,
-      isDelete = false,
-      isUpdate = false,
-      _id,
-    }: {
-      code?: string;
-      name?: string;
-      desc?: string;
-      isDelete?: boolean;
-      isUpdate?: boolean;
-      _id?: string;
-    }) => {
-      if (isUpdate) {
-      } else if (isDelete) {
-        return await requestAuthDelete(_id!);
-      } else {
-        return await requestAuthCreate({ code, name, desc });
-      }
-    },
-    onSuccess: (response) => {
-      return response;
-    },
-    onError: (error: Error) => {
-      throw error;
-    },
+    mutationKey: [...queryKey[1], "create"],
+    mutationFn: async (data: Auth) => requestAuthCreate(data),
+  });
+};
+
+export const useAuthUpdate = () => {
+  return useMutation({
+    mutationKey: [...queryKey[1], "update"],
+    mutationFn: async (data: Auth & { _id: string }) => requestAuthUpdate(data),
+  });
+};
+
+export const useAuthDelete = () => {
+  return useMutation({
+    mutationKey: [...queryKey[1], "delete"],
+    mutationFn: async (_id: string) => requestAuthDelete(_id),
   });
 };
 
