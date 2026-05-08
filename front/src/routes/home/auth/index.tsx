@@ -8,7 +8,7 @@ import InputText from "@/components/form/input.text";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
-import { AUTH_PAGE_SIZE, authSearchSchema } from "./-/auth.schema";
+import { AUTH_PAGE_SIZE, authSearchSchema, type Auth } from "./-/auth.schema";
 
 // 1. Loader 함수 정의 : 샘플
 const projectLoader = async () => {
@@ -45,10 +45,12 @@ function RouteComponent() {
     });
   };
 
-  const onRowClick = (row: any) => {
+  const onRowClick = (row: Auth) => {
+    if (!row._id) return;
+    const id = row._id;
     router.navigate({
       to: "/home/auth/info",
-      search: (prev) => ({ ...prev, id: row._id }),
+      search: (prev) => ({ ...prev, id }),
     });
   };
 
@@ -58,7 +60,7 @@ function RouteComponent() {
     });
   };
 
-  const columns: Column<any>[] = [
+  const columns: Column<Auth>[] = [
     {
       key: "code",
       header: "권한",
@@ -97,7 +99,7 @@ function RouteComponent() {
     formState: { errors },
   } = form;
 
-  const onSearchSubmit = (values: any) => {
+  const onSearchSubmit = (values: { search?: string }) => {
     navigate({
       search: (prev) => ({ ...prev, search: values.search, page: 1 }), // 검색 시 1페이지로 이동
     });

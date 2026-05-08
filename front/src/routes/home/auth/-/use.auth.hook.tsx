@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  type AuthListResult,
   requestAuthCreate,
   requestAuthDelete,
   requestAuthDetail,
@@ -17,13 +18,11 @@ const queryKey = ["requestAuthList", "requestAuthAlter"] as const;
 export const useAuthListHook = (
   page: number,
   limit: number,
-  initialData: any = null,
+  initialData: AuthListResult | null = null,
 ) => {
   return useQuery({
     queryKey: [...queryKey[0], page, limit],
-    queryFn: async () => {
-      return await requestAuthList(page, limit);
-    },
+    queryFn: async () => requestAuthList(page, limit),
     select(data) {
       if (data?.result) {
         return resultMapper<Auth[]>(data.result.data, "auths");
@@ -40,7 +39,7 @@ export const useAuthCodeExist = (code: string) => {
   return useQuery({
     queryKey: ["useAuthCodeExist"],
     queryFn: async () => {
-      if (!code) return false; // 코드가 없으면 존재하지 않는 것으로 간주
+      if (!code) return null; // 코드가 없으면 존재하지 않는 것으로 간주
       return await requestIsAuthCodeExist(code);
     },
     enabled: false,

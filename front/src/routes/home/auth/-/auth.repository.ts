@@ -1,61 +1,91 @@
 import { API } from "@/const";
 import { ApiClient } from "@/services/apiClient";
+import type { ApiResponse } from "../../-/common.schema";
+import type { Auth } from "./auth.schema";
 
-const requestAuthList = async (page: number, limit: number) => {
-  const apiClient = ApiClient.getInstance();
-  const params = {
-    method: "get",
-    query: {
-      page,
-      limit,
-    },
+export interface AuthListResult {
+  success?: boolean;
+  data: {
+    auths: Auth[];
+    total: number;
+    page: number;
+    limit: number;
   };
-  return apiClient.request(API.AUTH_LIST, params);
+}
+
+export interface AuthDetailResult {
+  success?: boolean;
+  data: Auth;
+}
+
+export interface AuthMutationResult {
+  success?: boolean;
+  data?: Auth;
+}
+
+export interface AuthCodeExistResult {
+  success: boolean;
+}
+
+const requestAuthList = async (
+  page: number,
+  limit: number,
+): Promise<ApiResponse<AuthListResult>> => {
+  const apiClient = ApiClient.getInstance();
+  return apiClient.request<ApiResponse<AuthListResult>>(API.AUTH_LIST, {
+    method: "get",
+    query: { page, limit },
+  });
 };
 
-const requestAuthCreate = async (data: any) => {
+const requestAuthCreate = async (
+  data: Auth,
+): Promise<ApiResponse<AuthMutationResult>> => {
   const apiClient = ApiClient.getInstance();
-  const params = {
+  return apiClient.request<ApiResponse<AuthMutationResult>>(API.AUTH_CREATE, {
     method: "post",
     body: JSON.stringify(data),
-  };
-  return apiClient.request(API.AUTH_CREATE, params);
+  });
 };
 
-const requestAuthDetail = async (_id: string) => {
+const requestAuthDetail = async (
+  _id: string,
+): Promise<ApiResponse<AuthDetailResult>> => {
   const apiClient = ApiClient.getInstance();
-  const params = {
+  return apiClient.request<ApiResponse<AuthDetailResult>>(API.AUTH_DETAIL, {
     method: "get",
     query: { _id },
-  };
-  return apiClient.request(`${API.AUTH_DETAIL}`, params);
+  });
 };
 
-const requestAuthDelete = async (_id: string) => {
+const requestAuthDelete = async (
+  _id: string,
+): Promise<ApiResponse<AuthMutationResult>> => {
   const apiClient = ApiClient.getInstance();
-  const params = {
+  return apiClient.request<ApiResponse<AuthMutationResult>>(API.AUTH_DELETE, {
     method: "delete",
     query: { _id },
-  };
-  return apiClient.request(`${API.AUTH_DELETE}`, params);
+  });
 };
 
-const requestAuthUpdate = async (data: any) => {
+const requestAuthUpdate = async (
+  data: Auth & { _id: string },
+): Promise<ApiResponse<AuthMutationResult>> => {
   const apiClient = ApiClient.getInstance();
-  const params = {
+  return apiClient.request<ApiResponse<AuthMutationResult>>(API.AUTH_UPDATE, {
     method: "put",
     body: JSON.stringify(data),
-  };
-  return apiClient.request(API.AUTH_UPDATE, params);
+  });
 };
 
-const requestIsAuthCodeExist = async (code: string) => {
+const requestIsAuthCodeExist = async (
+  code: string,
+): Promise<ApiResponse<AuthCodeExistResult>> => {
   const apiClient = ApiClient.getInstance();
-  const params = {
-    method: "get",
-    query: { code },
-  };
-  return apiClient.request(`${API.AUTH_CODE_EXIST}`, params);
+  return apiClient.request<ApiResponse<AuthCodeExistResult>>(
+    API.AUTH_CODE_EXIST,
+    { method: "get", query: { code } },
+  );
 };
 
 export {

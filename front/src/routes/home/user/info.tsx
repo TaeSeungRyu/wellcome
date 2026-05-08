@@ -42,9 +42,7 @@ function RouteComponent() {
         type: "success",
       });
       setTimeout(() => {
-        router.navigate({
-          to: "/home/user",
-        });
+        router.history.back();
       }, 100);
     }
   }, [deleteResult]);
