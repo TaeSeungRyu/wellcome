@@ -1,28 +1,42 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import { useUserListHook } from "./-/use.user.hook";
 import { TableComponent } from "@/components/ui/table.component";
 import { PagingComponent } from "@/components/ui/paging.component";
 import type { Column } from "@/const/type";
+import { requestUserList } from "./-/user.repository";
+import { USER_PAGE_SIZE, userSearchSchema } from "./-/user.schema";
+
+const projectLoader = async () => {
+  const res = await requestUserList(1, USER_PAGE_SIZE);
+  return res.result;
+};
 
 export const Route = createFileRoute("/home/user/")({
+  validateSearch: (search) => userSearchSchema.parse(search),
   component: RouteComponent,
+  loader: projectLoader,
 });
 
 function RouteComponent() {
   const router = useRouter();
-  const [totalPages, setTotalPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [size, setSize] = useState(3);
-  const {
-    isFetching,
-    data: result,
-    refetch: search,
-  } = useUserListHook(currentPage, size);
+  const navigate = Route.useNavigate();
+  const { page, size } = Route.useSearch();
+  const preloadData = Route.useLoaderData();
+  const { isFetching, data: result } = useUserListHook(
+    page,
+    size,
+    page === 1 ? preloadData : undefined,
+  );
+
+  const userData = result?.data?.users || [];
+  const total = result?.data?.total || 0;
+  const totalPages = Math.ceil(total / (result?.data?.limit || size));
   const currentPageFromApi = result?.data?.page || 1;
 
-  const onPageChange = (page: number) => {
-    setCurrentPage(page);
+  const onPageChange = (nextPage: number) => {
+    navigate({
+      search: (prev) => ({ ...prev, page: nextPage }),
+    });
   };
 
   const columns: Column<any>[] = [
@@ -59,8 +73,6 @@ function RouteComponent() {
     },
   ];
 
-  //상세는 search로 세부 수정은 path로 예정!
-  const [data, setData] = useState<any[]>([]);
   const onRowClick = (row: any) => {
     router.navigate({
       to: "/home/user/info",
@@ -69,18 +81,6 @@ function RouteComponent() {
       },
     });
   };
-
-  useEffect(() => {
-    search();
-  }, [currentPage, size]);
-
-  useEffect(() => {
-    if (result?.data) {
-      setSize(result?.data?.limit);
-      setTotalPages(Math.ceil(result?.data?.total / result?.data?.limit));
-      setData(result?.data?.users || []);
-    }
-  }, [result?.data]);
 
   const moveWritePage = () => {
     router.navigate({
@@ -136,7 +136,7 @@ function RouteComponent() {
             <h3 className="text-sm font-semibold text-slate-700">
               사용자 목록{" "}
               <span className="ml-2 text-blue-500 font-normal">
-                {result?.data?.total || 0}명
+                {total}명
               </span>
             </h3>
           </div>
@@ -144,7 +144,7 @@ function RouteComponent() {
           <div className="overflow-x-auto p-2">
             <TableComponent
               columns={columns}
-              data={data}
+              data={userData}
               onRowClick={onRowClick}
             />
           </div>

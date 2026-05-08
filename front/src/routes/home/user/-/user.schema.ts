@@ -43,3 +43,12 @@ export const updatedUserSchema = userSchema.extend({
 });
 
 export type UserForm = z.infer<typeof userSchema>;
+
+export const USER_PAGE_SIZE = 3;
+
+export const userSearchSchema = z.object({
+  page: z.number().catch(1),
+  size: z.number().catch(USER_PAGE_SIZE),
+});
+
+export type UserSearch = z.infer<typeof userSearchSchema>;

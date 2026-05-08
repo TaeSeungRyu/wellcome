@@ -16,14 +16,17 @@ import { useEffect, useRef, useState } from "react";
 
 const queryKey = ["requestUserList", "requestUserAlter"] as const;
 //LIST 조회용 HOOK
-export const useUserListHook = (page: number, limit: number) => {
+export const useUserListHook = (
+  page: number,
+  limit: number,
+  initialData: any = null,
+) => {
   return useQuery({
     queryKey: [...queryKey[0], page, limit],
     queryFn: async () => {
       return await requestUserList(page, limit);
     },
-    enabled: false,
-    gcTime: 0,
+    initialData: initialData ? { result: initialData } : undefined,
     staleTime: 0,
     select(data) {
       return data?.result ?? null;
