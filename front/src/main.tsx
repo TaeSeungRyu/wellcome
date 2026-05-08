@@ -14,7 +14,6 @@ import ModalProvider from "./components/modal/modal.provider.tsx";
 import ToastProvider from "./components/toast/toast.provider.tsx";
 import { AuthProvider } from "./context/auth.context.tsx";
 import { globalToast } from "./context/toast.context.tsx";
-import { SWRProviders } from "./context/swr.context.tsx";
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorBoundaryFallback } from "./components/layout/error.boundary.fallback.tsx";
 import { Toaster } from "sonner";
@@ -84,15 +83,13 @@ if (rootElement && !rootElement.innerHTML) {
         onReset={() => {}}
       >
         <QueryClientProvider client={queryClient}>
-          <SWRProviders>
-            <AuthProvider>
-              <ToastProvider>
-                <ModalProvider>
-                  <RouterProvider router={router} />
-                </ModalProvider>
-              </ToastProvider>
-            </AuthProvider>
-          </SWRProviders>
+          <AuthProvider>
+            <ToastProvider>
+              <ModalProvider>
+                <RouterProvider router={router} />
+              </ModalProvider>
+            </ToastProvider>
+          </AuthProvider>
         </QueryClientProvider>
       </ErrorBoundary>
     </StrictMode>,
