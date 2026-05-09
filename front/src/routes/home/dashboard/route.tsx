@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { useBoardListHook } from "./-/use.board.hook";
+import { useBoardListHook } from "@/features/board/hooks";
 import { PagingComponent } from "@/components/ui/paging.component";
 import { useModal } from "@/context/modal.context";
-import { BoardFormComponent } from "./-/board.form";
+import { BoardFormComponent } from "@/features/board/components/board.form";
 import { TableComponent } from "@/components/ui/table.component";
 import type { Column } from "@/const/type";
-import type { Board, Comment } from "./-/board.schema";
+import type { Board, Comment } from "@/features/board/schema";
 import { useBoardState } from "@/state/useBoardState";
 import { LoadingComponent } from "@/components/ui/loading.component";
 

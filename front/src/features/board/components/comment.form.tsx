@@ -1,6 +1,6 @@
 import InputText from "@/components/form/input.text";
-import type { Comment, CommentForm } from "./board.schema";
-import { useBoardCommentForm, useCommentAlter } from "./use.board.hook";
+import type { Comment, CommentForm } from "../schema";
+import { useBoardCommentForm, useCommentAlter } from "../hooks";
 import { getUserName } from "@/context/auth.context";
 import { useEffect } from "react";
 import { useToast } from "@/context/toast.context";

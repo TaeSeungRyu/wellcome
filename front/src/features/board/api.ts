@@ -1,7 +1,7 @@
 import { API } from "@/const";
 import { api } from "@/services/api";
 import type { ApiResponse } from "@/shared/api/types";
-import type { Board, Comment } from "./board.schema";
+import type { Board, Comment } from "./schema";
 
 export interface BoardListResult {
   success?: boolean;

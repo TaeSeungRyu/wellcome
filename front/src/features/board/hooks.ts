@@ -7,9 +7,9 @@ import {
   requestBoardList,
   requestBoardUpdate,
   requestCommentDelete,
-} from "./board.repository";
+} from "./api";
 import { useForm } from "react-hook-form";
-import { type Board, boardSchema, commentSchema } from "./board.schema";
+import { type Board, boardSchema, commentSchema } from "./schema";
 import { resultMapper } from "@/shared/api/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";

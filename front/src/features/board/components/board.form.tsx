@@ -1,6 +1,6 @@
 import InputText from "@/components/form/input.text";
-import type { BoardForm, Comment } from "./board.schema";
-import { useBoardAlter, useBoardForm } from "./use.board.hook";
+import type { BoardForm, Comment } from "../schema";
+import { useBoardAlter, useBoardForm } from "../hooks";
 import { useModal } from "@/context/modal.context";
 import { useEffect } from "react";
 import { useToast } from "@/context/toast.context";
