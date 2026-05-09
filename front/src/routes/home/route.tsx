@@ -2,7 +2,7 @@ import HeaderComponent from "@/components/layout/header";
 import { getRole, getUserName, useAuth } from "@/context/auth.context";
 import AuthGuard from "@/context/auth.guard";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { useSSEHook } from "./-/use.sse.hook";
+import { useSSEHook } from "@/shared/hooks/use-sse";
 import { useCallback, useEffect, useRef } from "react";
 import { useConstState } from "@/state/useConstState";
 import { ErrorBoundary } from "react-error-boundary";

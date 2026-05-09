@@ -3,7 +3,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { useEffect, useRef } from "react";
 import { useConstState } from "@/state/useConstState";
-import { requestConstList } from "./-/common.repository";
+import { requestConstList } from "@/shared/api/const";
 
 export const Route = createRootRoute({
   component: () => {

@@ -22,7 +22,7 @@ export const useSSEHook = (
     eventSourceRef.current = es;
 
     const handleMessage = (event: any) => {
-      onMessage(event); // 이제 여기서 콘솔이 찍힐 겁니다!
+      onMessage(event);
     };
 
     es.addEventListener("ping", handleMessage);
@@ -31,12 +31,11 @@ export const useSSEHook = (
     es.onerror = (error) => {
       console.error("SSE Error:", error);
       onError?.(error);
-      // ❌ 여기서 토큰 건드리지 않음
     };
 
     return () => {
       es.close();
       eventSourceRef.current = null;
     };
-  }, [id, token]); // 🔥 token 바뀌면 자동 재연결
+  }, [id, token]); // token 바뀌면 자동 재연결
 };
