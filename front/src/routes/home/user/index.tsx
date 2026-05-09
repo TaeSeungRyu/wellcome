@@ -1,10 +1,14 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useUserListHook } from "./-/use.user.hook";
+import { useUserListHook } from "@/features/user/hooks";
 import { TableComponent } from "@/components/ui/table.component";
 import { PagingComponent } from "@/components/ui/paging.component";
 import type { Column } from "@/const/type";
-import { requestUserList } from "./-/user.repository";
-import { USER_PAGE_SIZE, type User, userSearchSchema } from "./-/user.schema";
+import { requestUserList } from "@/features/user/api";
+import {
+  USER_PAGE_SIZE,
+  type User,
+  userSearchSchema,
+} from "@/features/user/schema";
 
 const projectLoader = async () => {
   const res = await requestUserList(1, USER_PAGE_SIZE);

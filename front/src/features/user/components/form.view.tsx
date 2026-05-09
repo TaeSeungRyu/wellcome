@@ -1,14 +1,12 @@
-// components/domain/user/UserFormView.tsx
-
 import InputText from "@/components/form/input.text";
 import InputPassword from "@/components/form/input.password";
 import InputCheckbox from "@/components/form/input.check";
 import { formatPhoneNumber } from "@/services/util";
-import type { UserForm } from "./user.schema";
+import type { UserForm } from "../schema";
 import type { UseFormReturn } from "react-hook-form";
 import type { BaseSyntheticEvent } from "react";
 import InputFile from "@/components/form/input.file";
-import { useUserImageUrl } from "./use.user.hook";
+import { useUserImageUrl } from "../hooks";
 
 interface UserFormViewProps {
   form: UseFormReturn<UserForm>;

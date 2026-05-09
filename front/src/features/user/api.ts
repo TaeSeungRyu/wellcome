@@ -2,7 +2,7 @@ import { API, API_BASE_URL } from "@/const";
 import { api } from "@/services/api";
 import type { ApiResponse } from "@/shared/api/types";
 import type { Auth } from "@/features/auth/schema";
-import type { User } from "./user.schema";
+import type { User } from "./schema";
 
 export interface UserListResult {
   success?: boolean;

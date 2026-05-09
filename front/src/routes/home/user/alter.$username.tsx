@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useUserForm, useUserUpdate } from "./-/use.user.hook";
+import { useUserForm, useUserUpdate } from "@/features/user/hooks";
 
 import { useToast } from "@/context/toast.context";
-import { UserFormView } from "./-/form.view";
+import { UserFormView } from "@/features/user/components/form.view";
 import { useEffect, type BaseSyntheticEvent } from "react";
 import { useModal } from "@/context/modal.context";
 

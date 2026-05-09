@@ -3,7 +3,7 @@ import {
   useUserDelete,
   useUserDetail,
   useUserImageUrl,
-} from "./-/use.user.hook";
+} from "@/features/user/hooks";
 import { useEffect } from "react";
 import { useModal } from "@/context/modal.context";
 import { useToast } from "@/context/toast.context";

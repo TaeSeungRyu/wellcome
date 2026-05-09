@@ -9,7 +9,7 @@ import {
   requestUserList,
   requestUserUpdateWithFile,
   type UserListResult,
-} from "./user.repository";
+} from "./api";
 import { resultMapper } from "@/shared/api/types";
 import { useForm } from "react-hook-form";
 import {
@@ -18,7 +18,7 @@ import {
   type UserForm,
   updatedUserSchema,
   userSchema,
-} from "./user.schema";
+} from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState } from "react";
 

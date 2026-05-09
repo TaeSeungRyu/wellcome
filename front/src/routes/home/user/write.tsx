@@ -3,11 +3,11 @@ import {
   useCheckExistUser,
   useUserCreate,
   useUserForm,
-} from "./-/use.user.hook";
+} from "@/features/user/hooks";
 import { useEffect, useState } from "react";
 import { useModal } from "@/context/modal.context";
 import { useToast } from "@/context/toast.context";
-import { UserFormView } from "./-/form.view";
+import { UserFormView } from "@/features/user/components/form.view";
 
 export const Route = createFileRoute("/home/user/write")({
   component: RouteComponent,
