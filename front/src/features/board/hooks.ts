@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  type BoardListResult,
   requestAddComment,
   requestBoardDelete,
   requestBoardDetail,
@@ -21,12 +22,15 @@ const queryKey = [
   "useCommentAlter",
 ] as const;
 //BOARD LIST 조회용 HOOK
-export const useBoardListHook = (page: number, limit: number) => {
+export const useBoardListHook = (
+  page: number,
+  limit: number,
+  initialData: BoardListResult | null = null,
+) => {
   return useQuery({
     queryKey: [...queryKey[0], page, limit],
     queryFn: async () => requestBoardList(page, limit),
-    enabled: false,
-    gcTime: 0,
+    initialData: initialData ? { result: initialData } : undefined,
     staleTime: 0,
     select(data) {
       if (data?.result) {

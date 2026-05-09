@@ -29,3 +29,12 @@ export const commentSchema = z.object({
 });
 
 export type CommentForm = z.infer<typeof commentSchema>;
+
+export const BOARD_PAGE_SIZE = 5;
+
+export const boardSearchSchema = z.object({
+  page: z.number().catch(1),
+  size: z.number().catch(BOARD_PAGE_SIZE),
+});
+
+export type BoardSearch = z.infer<typeof boardSearchSchema>;

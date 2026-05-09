@@ -1,39 +1,62 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useBoardListHook } from "@/features/board/hooks";
 import { PagingComponent } from "@/components/ui/paging.component";
 import { useModal } from "@/context/modal.context";
 import { BoardFormComponent } from "@/features/board/components/board.form";
 import { TableComponent } from "@/components/ui/table.component";
 import type { Column } from "@/const/type";
-import type { Board, Comment } from "@/features/board/schema";
+import {
+  type Board,
+  type Comment,
+  BOARD_PAGE_SIZE,
+  boardSearchSchema,
+} from "@/features/board/schema";
+import { requestBoardList } from "@/features/board/api";
 import { useBoardState } from "@/state/useBoardState";
 import { LoadingComponent } from "@/components/ui/loading.component";
 
+const projectLoader = async () => {
+  const res = await requestBoardList(1, BOARD_PAGE_SIZE);
+  return res.result;
+};
+
 export const Route = createFileRoute("/home/dashboard")({
+  validateSearch: (search) => boardSearchSchema.parse(search),
   component: RouteComponent,
+  loader: projectLoader,
 });
 
 function RouteComponent() {
   const { openModal, closeTopModal } = useModal();
-  const [totalPages, setTotalPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [size, setSize] = useState(5);
+  const navigate = Route.useNavigate();
+  const { page, size } = Route.useSearch();
+  const preloadData = Route.useLoaderData();
   const {
     isFetching,
     data: result,
     refetch: search,
-  } = useBoardListHook(currentPage, size);
+  } = useBoardListHook(page, size, page === 1 ? preloadData : undefined);
 
   const sharedValue = useBoardState((state) => state.sharedValue);
+
+  const boards = result?.data || [];
+  const total = result?.total || 0;
+  const totalPages = Math.ceil(total / (result?.limit || size));
   const currentPageFromApi = result?.page || 1;
 
-  const onPageChange = (page: number) => {
-    setCurrentPage(page);
+  const onPageChange = (nextPage: number) => {
+    navigate({
+      search: (prev) => ({ ...prev, page: nextPage }),
+    });
   };
+
+  // SSE 트리거(댓글 등록/삭제 등)에 의해 갱신
   useEffect(() => {
-    search();
-  }, [currentPage, size]);
+    if (sharedValue) {
+      search();
+    }
+  }, [sharedValue]);
 
   const columns: Column<Board>[] = [
     {
@@ -53,18 +76,10 @@ function RouteComponent() {
       header: "작성일",
     },
   ];
-  const [data, setData] = useState<Board[]>([]);
+
   const onRowClick = (row: Board) => {
     runModal(row._id, row.comments);
   };
-
-  useEffect(() => {
-    if (result) {
-      setSize(result.limit);
-      setTotalPages(Math.ceil(result.total / result.limit));
-      setData(result.data || []);
-    }
-  }, [result]);
 
   const runModal = (_id?: string, comments?: Comment[]) => {
     openModal({
@@ -84,11 +99,6 @@ function RouteComponent() {
     });
   };
 
-  useEffect(() => {
-    if (sharedValue) {
-      search();
-    }
-  }, [sharedValue]);
   return (
     <div className=" bg-slate-50/50 p-6">
       {/* 상단 헤더 영역 */}
@@ -127,7 +137,7 @@ function RouteComponent() {
             <h3 className="text-sm font-semibold text-slate-700">
               게시글 목록{" "}
               <span className="ml-2 text-blue-500 font-normal">
-                {result?.total || 0}건
+                {total}건
               </span>
             </h3>
           </div>
@@ -137,7 +147,7 @@ function RouteComponent() {
             {/* 테이블 내부 여백 조절 */}
             <TableComponent
               columns={columns}
-              data={data}
+              data={boards}
               onRowClick={onRowClick}
             />
           </div>

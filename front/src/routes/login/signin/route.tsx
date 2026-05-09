@@ -10,6 +10,7 @@ import { useToast } from "@/context/toast.context";
 import { signinSchema } from "@/features/auth/signin.schema";
 import { useAuth } from "@/context/auth.context";
 import { LoadingComponent } from "@/components/ui/loading.component";
+import { BOARD_PAGE_SIZE } from "@/features/board/schema";
 
 export const Route = createFileRoute("/login/signin")({
   component: RouteComponent,
@@ -52,6 +53,7 @@ function RouteComponent() {
       setTimeout(() => {
         router.navigate({
           to: "/home/dashboard",
+          search: { page: 1, size: BOARD_PAGE_SIZE },
         });
       }, 1000);
     }
