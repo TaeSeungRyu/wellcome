@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useAuthDelete, useAuthDetail } from "./-/use.auth.hook";
+import { useAuthDelete, useAuthDetail } from "@/features/auth/hooks";
 import { useModal } from "@/context/modal.context";
 import { useEffect } from "react";
 import { useToast } from "@/context/toast.context";

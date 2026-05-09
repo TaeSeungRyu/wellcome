@@ -3,11 +3,11 @@ import {
   useAuthDetail,
   useAuthForm,
   useAuthUpdate,
-} from "./-/use.auth.hook";
+} from "@/features/auth/hooks";
 import InputText from "@/components/form/input.text";
 import { useModal } from "@/context/modal.context";
 import { useToast } from "@/context/toast.context";
-import type { Auth, AuthForm } from "./-/auth.schema";
+import type { Auth, AuthForm } from "@/features/auth/schema";
 import { useEffect } from "react";
 
 export const Route = createFileRoute("/home/auth/alter")({

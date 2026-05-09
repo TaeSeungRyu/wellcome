@@ -1,14 +1,18 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useAuthListHook } from "./-/use.auth.hook";
+import { useAuthListHook } from "@/features/auth/hooks";
 import { PagingComponent } from "@/components/ui/paging.component";
 import { TableComponent } from "@/components/ui/table.component";
 import type { Column } from "@/const/type";
-import { requestAuthList } from "./-/auth.repository";
+import { requestAuthList } from "@/features/auth/api";
 import InputText from "@/components/form/input.text";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
-import { AUTH_PAGE_SIZE, authSearchSchema, type Auth } from "./-/auth.schema";
+import {
+  AUTH_PAGE_SIZE,
+  authSearchSchema,
+  type Auth,
+} from "@/features/auth/schema";
 
 // 1. Loader 함수 정의 : 샘플
 const projectLoader = async () => {

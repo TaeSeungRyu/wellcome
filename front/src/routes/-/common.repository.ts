@@ -1,6 +1,6 @@
 import { API } from "@/const";
 import { api } from "@/services/api";
-import type { ApiResponse } from "../home/-/common.schema";
+import type { ApiResponse } from "@/shared/api/types";
 
 export interface ConstListResult {
   data: Record<string, string>;

@@ -1,6 +1,6 @@
 import { API } from "@/const";
 import { api } from "@/services/api";
-import type { ApiResponse } from "../../-/common.schema";
+import type { ApiResponse } from "@/shared/api/types";
 import type { Board, Comment } from "./board.schema";
 
 export interface BoardListResult {

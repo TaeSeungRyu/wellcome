@@ -10,7 +10,7 @@ import {
   requestUserUpdateWithFile,
   type UserListResult,
 } from "./user.repository";
-import { resultMapper } from "../../-/common.schema";
+import { resultMapper } from "@/shared/api/types";
 import { useForm } from "react-hook-form";
 import {
   type RoleOption,

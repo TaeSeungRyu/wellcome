@@ -1,7 +1,7 @@
 import { API, API_BASE_URL } from "@/const";
 import { api } from "@/services/api";
-import type { ApiResponse } from "../../-/common.schema";
-import type { Auth } from "../../auth/-/auth.schema";
+import type { ApiResponse } from "@/shared/api/types";
+import type { Auth } from "@/features/auth/schema";
 import type { User } from "./user.schema";
 
 export interface UserListResult {

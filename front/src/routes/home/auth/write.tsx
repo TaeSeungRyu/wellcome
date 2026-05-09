@@ -1,7 +1,11 @@
 import InputText from "@/components/form/input.text";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useAuthCreate, useAuthCodeExist, useAuthForm } from "./-/use.auth.hook";
-import type { Auth, AuthForm } from "./-/auth.schema";
+import {
+  useAuthCreate,
+  useAuthCodeExist,
+  useAuthForm,
+} from "@/features/auth/hooks";
+import type { Auth, AuthForm } from "@/features/auth/schema";
 import { useModal } from "@/context/modal.context";
 import { useEffect, useState } from "react";
 import { useToast } from "@/context/toast.context";

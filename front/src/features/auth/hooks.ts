@@ -7,9 +7,9 @@ import {
   requestAuthList,
   requestAuthUpdate,
   requestIsAuthCodeExist,
-} from "./auth.repository";
-import { resultMapper } from "../../-/common.schema";
-import { authSchema, type Auth } from "./auth.schema";
+} from "./api";
+import { resultMapper } from "@/shared/api/types";
+import { authSchema, type Auth } from "./schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 

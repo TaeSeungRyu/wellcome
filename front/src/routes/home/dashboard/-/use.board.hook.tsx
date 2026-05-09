@@ -10,7 +10,7 @@ import {
 } from "./board.repository";
 import { useForm } from "react-hook-form";
 import { type Board, boardSchema, commentSchema } from "./board.schema";
-import { resultMapper } from "../../-/common.schema";
+import { resultMapper } from "@/shared/api/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 

@@ -1,7 +1,7 @@
 import { API } from "@/const";
 import { api } from "@/services/api";
-import type { ApiResponse } from "../../-/common.schema";
-import type { Auth } from "./auth.schema";
+import type { ApiResponse } from "@/shared/api/types";
+import type { Auth } from "./schema";
 
 export interface AuthListResult {
   success?: boolean;
