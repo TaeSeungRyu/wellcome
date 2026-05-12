@@ -4,6 +4,7 @@ import {
   getAccessToken,
   setAccessToken,
 } from "@/context/auth.context";
+import { logger } from "@/shared/logger";
 
 interface RequestInitDefaults extends RequestInit {
   contentType?: "json" | "blob";
@@ -81,15 +82,15 @@ export class ApiClient {
         url += `?${queryParams}`;
       }
       return await _performFetch(url, options, currentToken);
-    } catch (err: any) {
-      if (err.message.includes("401")) {
+    } catch (err) {
+      if (err instanceof Error && err.message.includes("401")) {
         try {
           const newToken = await _refreshAccessToken();
           setAccessToken(newToken);
           // 2. 토큰 갱신 후 요청 재시도
           return await _performFetch(url, options, newToken);
         } catch (refreshErr) {
-          console.error("Token refresh or retry failed:", refreshErr);
+          logger.error("Token refresh or retry failed", refreshErr);
           clearTokens(); // 로컬 스토리지 토큰 제거
           throw new Error("Session expired. Please log in again.");
         }

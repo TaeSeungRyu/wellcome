@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useConstState } from "@/state/useConstState";
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorBoundaryFallback } from "@/components/layout/error.boundary.fallback";
+import { logger } from "@/shared/logger";
 
 export const Route = createFileRoute("/home")({
   component: HomeLayout,
@@ -48,8 +49,8 @@ function HomeLayout() {
     [constObject],
   );
 
-  const handleError = useCallback((error: any) => {
-    console.error("SSE Error 발생:", error);
+  const handleError = useCallback((error: unknown) => {
+    logger.error("SSE handler error", error);
   }, []);
   useSSEHook(username, token, handleMessage, handleError);
 

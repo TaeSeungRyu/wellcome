@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { EventSourcePolyfill } from "event-source-polyfill";
 import { API_BASE_URL } from "@/const";
+import { logger } from "@/shared/logger";
 export const useSSEHook = (
   id: string | null,
   token: string | null,
@@ -29,7 +30,7 @@ export const useSSEHook = (
     es.addEventListener("event", handleMessage); // type이 없는 경우
 
     es.onerror = (error) => {
-      console.error("SSE Error:", error);
+      logger.error("SSE error", error);
       onError?.(error);
     };
 

@@ -14,6 +14,7 @@ import ModalProvider from "./components/modal/modal.provider.tsx";
 import ToastProvider from "./components/toast/toast.provider.tsx";
 import { AuthProvider } from "./context/auth.context.tsx";
 import { globalToast } from "./context/toast.context.tsx";
+import { logger } from "./shared/logger.ts";
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorBoundaryFallback } from "./components/layout/error.boundary.fallback.tsx";
 import { Toaster } from "sonner";
@@ -42,16 +43,21 @@ const queryClient = new QueryClient({
         error instanceof Error
           ? error.message
           : "데이터 로드 중 에러가 발생했습니다.";
+      logger.error("query failed", { error, queryKey: query.queryKey });
       globalToast.error(message);
     },
   }),
   mutationCache: new MutationCache({
-    onError: (error) => {
+    onError: (error, _vars, _ctx, mutation) => {
       // 뮤테이션(등록, 수정, 삭제)은 대부분 즉각적인 피드백이 필요함
       const message =
         error instanceof Error
           ? error.message
           : "요청 처리 중 에러가 발생했습니다.";
+      logger.error("mutation failed", {
+        error,
+        mutationKey: mutation.options.mutationKey,
+      });
       globalToast.error(message);
     },
   }),
@@ -78,7 +84,7 @@ if (rootElement && !rootElement.innerHTML) {
       <ErrorBoundary
         FallbackComponent={ErrorBoundaryFallback}
         onError={(error, info) => {
-          console.error("전역 에러 캐치:", error, info);
+          logger.error("전역 에러 바운더리", { error, info });
         }}
         onReset={() => {}}
       >

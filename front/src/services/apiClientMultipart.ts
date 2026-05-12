@@ -92,8 +92,8 @@ export class ApiMultipartClient {
       };
 
       return await _performFetch(targetUrl, fetchOptions, currentToken);
-    } catch (err: any) {
-      if (err.message.includes("401")) {
+    } catch (err) {
+      if (err instanceof Error && err.message.includes("401")) {
         try {
           const newToken = await _refreshAccessToken();
           return await _performFetch(
@@ -107,7 +107,7 @@ export class ApiMultipartClient {
             },
             newToken,
           );
-        } catch (refreshErr) {
+        } catch (_refreshErr) {
           clearTokens();
           throw new Error("Session expired. Please log in again.");
         }

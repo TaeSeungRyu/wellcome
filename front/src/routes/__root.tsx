@@ -4,6 +4,7 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import { useEffect, useRef } from "react";
 import { useConstState } from "@/state/useConstState";
 import { requestConstList } from "@/shared/api/const";
+import { logger } from "@/shared/logger";
 
 export const Route = createRootRoute({
   component: () => {
@@ -21,7 +22,7 @@ export const Route = createRootRoute({
               isAccess.current = false;
             })
             .catch((error) => {
-              console.error("Failed to fetch const list:", error);
+              logger.error("Failed to fetch const list", error);
             });
         }
       }

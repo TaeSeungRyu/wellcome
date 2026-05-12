@@ -9,6 +9,7 @@ import type { Auth, AuthForm } from "@/features/auth/schema";
 import { useModal } from "@/context/modal.context";
 import { useEffect, useState } from "react";
 import { useToast } from "@/context/toast.context";
+import { logger } from "@/shared/logger";
 
 export const Route = createFileRoute("/home/auth/write")({
   component: RouteComponent,
@@ -100,7 +101,7 @@ function RouteComponent() {
         setIsCodeVerified(true);
       }
     } catch (err) {
-      console.error(err);
+      logger.error("auth code exist check failed", err);
       setIsCodeVerified(false);
     }
   };
