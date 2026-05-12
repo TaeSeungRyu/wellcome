@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import ToastComponent from "./toast.component";
+import ToastComponent from "./ToastContainer";
 import {
   setGlobalToast,
   ToastContext,

@@ -1,7 +1,7 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useUserListHook } from "@/features/user/hooks";
-import { TableComponent } from "@/components/ui/table.component";
-import { PagingComponent } from "@/components/ui/paging.component";
+import { TableComponent } from "@/components/ui/Table";
+import { PagingComponent } from "@/components/ui/Paging";
 import type { Column } from "@/const/type";
 import { requestUserList } from "@/features/user/api";
 import {

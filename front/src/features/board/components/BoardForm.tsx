@@ -1,10 +1,10 @@
-import InputText from "@/components/form/input.text";
+import InputText from "@/components/form/InputText";
 import type { BoardForm, Comment } from "../schema";
 import { useBoardAlter, useBoardForm } from "../hooks";
 import { useModal } from "@/context/modal.context";
 import { useEffect } from "react";
 import { useToast } from "@/context/toast.context";
-import { CommentFormComponent } from "./comment.form";
+import { CommentFormComponent } from "./CommentForm";
 
 export function BoardFormComponent({
   closeTopModal,

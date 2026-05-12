@@ -2,7 +2,7 @@ import { MENU_ITEMS } from "@/const";
 import { getUserName, useAuth } from "@/context/auth.context";
 import { useLocation, useRouter } from "@tanstack/react-router";
 import { useIsFetching } from "@tanstack/react-query";
-import { LoadingIndicator } from "./loading.indicator";
+import { LoadingIndicator } from "./LoadingIndicator";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 export default function HeaderComponent() {

@@ -3,13 +3,13 @@ import useSigninHook from "@/features/auth/signin.hooks";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import InputText from "@/components/form/input.text";
+import InputText from "@/components/form/InputText";
 import type { InputOption } from "@/components/form";
-import InputPassword from "@/components/form/input.password";
+import InputPassword from "@/components/form/InputPassword";
 import { useToast } from "@/context/toast.context";
 import { signinSchema } from "@/features/auth/signin.schema";
 import { useAuth } from "@/context/auth.context";
-import { LoadingComponent } from "@/components/ui/loading.component";
+import { LoadingComponent } from "@/components/ui/Loading";
 import { BOARD_PAGE_SIZE } from "@/features/board/schema";
 
 export const Route = createFileRoute("/login/signin")({

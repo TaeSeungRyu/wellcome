@@ -1,4 +1,4 @@
-import type { InputFieldProps } from ".";
+import type { InputFieldProps, SelectableOption } from ".";
 
 export default function InputRadio({
   name,
@@ -9,16 +9,16 @@ export default function InputRadio({
   watch,
   option,
 }: InputFieldProps) {
-  const list = watch?.(name) || [];
+  const list: SelectableOption[] = watch?.(name) || [];
 
-  const onSelect = (item: any, e: React.ChangeEvent<any>) => {
+  const onSelect = (item: SelectableOption, e: React.ChangeEvent<any>) => {
     if (option?.disabled) return;
     if (setValue) {
-      const updated = list.map((v: any) => ({
+      const updated = list.map((v) => ({
         ...v,
         selected: v.value === item.value,
       }));
-      setValue(name, updated, { shouldValidate: true });
+      setValue(name, updated as any, { shouldValidate: true });
     }
     register(name)
       .onChange(e)
@@ -42,7 +42,7 @@ export default function InputRadio({
       )}
 
       <div className="flex gap-2 w-fit">
-        {list.map((v: any) => (
+        {list.map((v) => (
           <div
             key={v.value}
             onClick={(e) => onSelect(v, e)}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { InputFieldProps } from ".";
+import type { InputFieldProps, SelectableOption } from ".";
 
 export default function InputSelect({
   name,
@@ -14,22 +14,22 @@ export default function InputSelect({
   const [open, setOpen] = useState(false);
 
   // 부모가 가진 실제 배열값
-  const list = watch?.(name) || [];
+  const list: SelectableOption[] = watch?.(name) || [];
 
   // 선택된 객체 찾기
-  const selectedItem = list.find((v: any) => v.selected);
+  const selectedItem = list.find((v) => v.selected);
 
   const displayLabel = selectedItem?.label ?? placeholder;
 
-  const onSelect = (item: any, e: React.ChangeEvent<any>) => {
+  const onSelect = (item: SelectableOption, e: React.ChangeEvent<any>) => {
     if (option?.disabled) return;
     if (setValue) {
       // 선택한 항목만 selected: true 로 업데이트
-      const updated = list.map((v: any) => ({
+      const updated = list.map((v) => ({
         ...v,
         selected: v.value === item.value,
       }));
-      setValue(name, updated, { shouldValidate: true });
+      setValue(name, updated as any, { shouldValidate: true });
     }
     setOpen(false);
     register(name)
@@ -76,7 +76,7 @@ export default function InputSelect({
           `}
           style={{ ...option?.style }}
         >
-          {list.map((v: any) => (
+          {list.map((v) => (
             <div
               key={v.value}
               className="p-2 hover:bg-gray-100 cursor-pointer"

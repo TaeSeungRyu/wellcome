@@ -7,7 +7,7 @@ import {
 import { useEffect, useState } from "react";
 import { useModal } from "@/context/modal.context";
 import { useToast } from "@/context/toast.context";
-import { UserFormView } from "@/features/user/components/form.view";
+import { UserFormView } from "@/features/user/components/UserFormView";
 
 export const Route = createFileRoute("/home/user/write")({
   component: RouteComponent,

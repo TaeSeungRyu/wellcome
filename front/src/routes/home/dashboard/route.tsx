@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useBoardListHook } from "@/features/board/hooks";
-import { PagingComponent } from "@/components/ui/paging.component";
+import { PagingComponent } from "@/components/ui/Paging";
 import { useModal } from "@/context/modal.context";
-import { BoardFormComponent } from "@/features/board/components/board.form";
-import { TableComponent } from "@/components/ui/table.component";
+import { BoardFormComponent } from "@/features/board/components/BoardForm";
+import { TableComponent } from "@/components/ui/Table";
 import type { Column } from "@/const/type";
 import {
   type Board,
@@ -14,7 +14,7 @@ import {
 } from "@/features/board/schema";
 import { requestBoardList } from "@/features/board/api";
 import { useBoardState } from "@/state/useBoardState";
-import { LoadingComponent } from "@/components/ui/loading.component";
+import { LoadingComponent } from "@/components/ui/Loading";
 
 const projectLoader = async () => {
   const res = await requestBoardList(1, BOARD_PAGE_SIZE);

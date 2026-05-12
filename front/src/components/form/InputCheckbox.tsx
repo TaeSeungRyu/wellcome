@@ -1,4 +1,4 @@
-import type { InputFieldProps } from ".";
+import type { InputFieldProps, SelectableOption } from ".";
 
 export default function InputCheckbox({
   name,
@@ -9,18 +9,18 @@ export default function InputCheckbox({
   watch,
   option,
 }: InputFieldProps) {
-  const list = watch?.(name) || [];
+  const list: SelectableOption[] = watch?.(name) || [];
   const error = errors?.[name];
 
-  const onToggle = (item: any, e: React.MouseEvent) => {
+  const onToggle = (item: SelectableOption, e: React.MouseEvent) => {
     if (option?.disabled || !setValue) return;
 
-    const updated = list.map((v: any) =>
+    const updated = list.map((v) =>
       v.value === item.value ? { ...v, selected: !v.selected } : v,
     );
 
     // setValue를 통해 RHF 상태 업데이트
-    setValue(name, updated, { shouldValidate: true });
+    setValue(name, updated as any, { shouldValidate: true });
     option?.onChange?.(e);
     // 만약 register의 onChange 트리거가 꼭 필요하다면 수동 호출 가능하지만,
     // 통상 setValue만으로 충분합니다.
@@ -40,7 +40,7 @@ export default function InputCheckbox({
       )}
 
       <div className={`flex ${direction} gap-1`}>
-        {list.map((v: any) => {
+        {list.map((v) => {
           const isSelected = v.selected;
           const isDisabled = option?.disabled;
 

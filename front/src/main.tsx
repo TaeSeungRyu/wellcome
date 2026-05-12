@@ -10,13 +10,13 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
-import ModalProvider from "./components/modal/modal.provider.tsx";
-import ToastProvider from "./components/toast/toast.provider.tsx";
+import ModalProvider from "./components/modal/ModalProvider.tsx";
+import ToastProvider from "./components/toast/ToastProvider.tsx";
 import { AuthProvider } from "./context/auth.context.tsx";
 import { globalToast } from "./context/toast.context.tsx";
 import { logger } from "./shared/logger.ts";
 import { ErrorBoundary } from "react-error-boundary";
-import { ErrorBoundaryFallback } from "./components/layout/error.boundary.fallback.tsx";
+import { ErrorBoundaryFallback } from "./components/layout/ErrorBoundaryFallback.tsx";
 import { Toaster } from "sonner";
 
 const router = createRouter({

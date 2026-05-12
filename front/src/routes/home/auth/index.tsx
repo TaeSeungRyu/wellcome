@@ -1,10 +1,10 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useAuthListHook } from "@/features/auth/hooks";
-import { PagingComponent } from "@/components/ui/paging.component";
-import { TableComponent } from "@/components/ui/table.component";
+import { PagingComponent } from "@/components/ui/Paging";
+import { TableComponent } from "@/components/ui/Table";
 import type { Column } from "@/const/type";
 import { requestAuthList } from "@/features/auth/api";
-import InputText from "@/components/form/input.text";
+import InputText from "@/components/form/InputText";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";

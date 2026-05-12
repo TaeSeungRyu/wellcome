@@ -1,6 +1,6 @@
 // ModalProvider.tsx
 import { useCallback, useState } from "react";
-import Modal from "./modal.component";
+import Modal from "./Modal";
 import {
   ModalContext,
   type ModalItem,
