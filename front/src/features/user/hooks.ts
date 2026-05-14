@@ -19,22 +19,13 @@ import {
   updatedUserSchema,
   userSchema,
 } from "./schema";
+import { buildUserPayload, type UserMutationInput } from "./payload";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState } from "react";
 
-const queryKey = ["requestUserList", "requestUserAlter"] as const;
+export type { UserMutationInput };
 
-// 폼/페이로드 공통 입력 타입 (생성/수정 양쪽에서 사용)
-export interface UserMutationInput {
-  username?: string;
-  password?: string;
-  name?: string;
-  email?: string;
-  phone?: string;
-  role?: RoleOption[];
-  file?: FileList;
-  profileImage?: string;
-}
+const queryKey = ["requestUserList", "requestUserAlter"] as const;
 
 //LIST 조회용 HOOK
 export const useUserListHook = (
@@ -154,18 +145,6 @@ export const useCheckExistUser = (username: string) => {
     },
     placeholderData: (prev) => prev,
   });
-};
-
-// 폼 데이터 → API payload 변환 (role 필터링 + 빈 문자열 정리)
-const buildUserPayload = (input: UserMutationInput) => {
-  const { file, role, ...rest } = input;
-  const payload: Record<string, unknown> = {
-    ...rest,
-    role: role?.filter((r) => r.selected).map((r) => r.value),
-  };
-  if (payload.phone === "") delete payload.phone;
-  if (payload.email === "") delete payload.email;
-  return { payload, file: file?.[0] };
 };
 
 export const useUserCreate = () => {
