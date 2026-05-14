@@ -40,11 +40,12 @@ export default defineConfig(({ mode }) => {
     test: {
       projects: [
         {
-          // unit tests: 순수 함수/유틸/훅 — node 환경
+          // unit + component tests: 순수 함수와 컴포넌트 모두 — jsdom 환경
           extends: true,
           test: {
             name: 'unit',
-            environment: 'node',
+            environment: 'jsdom',
+            setupFiles: ['./vitest.setup.ts'],
             include: ['src/**/*.test.{ts,tsx}'],
           }
         },
