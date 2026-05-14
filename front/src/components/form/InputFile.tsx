@@ -1,6 +1,6 @@
 import type { InputFieldProps } from ".";
 
-export default function InputFile({
+export function InputFile({
   name,
   register,
   label,

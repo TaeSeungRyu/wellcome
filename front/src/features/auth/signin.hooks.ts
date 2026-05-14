@@ -6,7 +6,7 @@ import { jwtDecode } from "jwt-decode";
 /**
  *  로그인용 훅 함수
  */
-const useSigninHook = () => {
+export const useSigninHook = () => {
   const { login } = useAuth();
 
   return useMutation({
@@ -27,4 +27,3 @@ const useSigninHook = () => {
     },
   });
 };
-export default useSigninHook;

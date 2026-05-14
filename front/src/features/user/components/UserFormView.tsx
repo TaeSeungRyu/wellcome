@@ -1,11 +1,11 @@
-import InputText from "@/components/form/InputText";
-import InputPassword from "@/components/form/InputPassword";
-import InputCheckbox from "@/components/form/InputCheckbox";
+import { InputText } from "@/components/form/InputText";
+import { InputPassword } from "@/components/form/InputPassword";
+import { InputCheckbox } from "@/components/form/InputCheckbox";
 import { formatPhoneNumber } from "@/services/util";
 import type { UserForm } from "../schema";
 import type { UseFormReturn } from "react-hook-form";
 import type { BaseSyntheticEvent } from "react";
-import InputFile from "@/components/form/InputFile";
+import { InputFile } from "@/components/form/InputFile";
 import { useUserImageUrl } from "../hooks";
 
 interface UserFormViewProps {

@@ -4,7 +4,7 @@ import { PagingComponent } from "@/components/ui/Paging";
 import { TableComponent } from "@/components/ui/Table";
 import type { Column } from "@/const/type";
 import { requestAuthList } from "@/features/auth/api";
-import InputText from "@/components/form/InputText";
+import { InputText } from "@/components/form/InputText";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";

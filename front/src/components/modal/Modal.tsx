@@ -10,7 +10,7 @@ interface ModalProps {
   closeOnEsc?: boolean;
 }
 
-export default function Modal({
+export function Modal({
   open,
   onClose,
   isTop,

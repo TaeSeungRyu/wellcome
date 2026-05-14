@@ -3,15 +3,15 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import "./styles.css";
-import reportWebVitals from "./reportWebVitals.ts";
+import { reportWebVitals } from "./reportWebVitals.ts";
 import {
   MutationCache,
   QueryCache,
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
-import ModalProvider from "./components/modal/ModalProvider.tsx";
-import ToastProvider from "./components/toast/ToastProvider.tsx";
+import { ModalProvider } from "./components/modal/ModalProvider.tsx";
+import { ToastProvider } from "./components/toast/ToastProvider.tsx";
 import { AuthProvider } from "./context/auth.context.tsx";
 import { globalToast } from "./context/toast.context.tsx";
 import { logger } from "./shared/logger.ts";

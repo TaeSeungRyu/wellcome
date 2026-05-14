@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import ToastComponent from "./ToastContainer";
+import { ToastContainer } from "./ToastContainer";
 import {
   setGlobalToast,
   ToastContext,
   type ToastItem,
 } from "@/context/toast.context";
 
-export default function ToastProvider({
+export function ToastProvider({
   children,
 }: {
   children: React.ReactNode;
@@ -44,7 +44,7 @@ export default function ToastProvider({
   return (
     <ToastContext.Provider value={{ showToast, updateToast, removeToast }}>
       {children}
-      <ToastComponent toasts={queue} />
+      <ToastContainer toasts={queue} />
     </ToastContext.Provider>
   );
 }

@@ -1,6 +1,6 @@
 import type { InputFieldProps } from ".";
 
-export default function InputText({
+export function InputText({
   name,
   placeholder,
   register,

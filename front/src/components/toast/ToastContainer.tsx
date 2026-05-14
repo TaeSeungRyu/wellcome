@@ -4,7 +4,7 @@ import { useToast, type ToastItem } from "../../context/toast.context";
 
 const ANIMATION_DURATION = 200;
 
-export default function ToastContainer({ toasts }: { toasts: ToastItem[] }) {
+export function ToastContainer({ toasts }: { toasts: ToastItem[] }) {
   const { updateToast, removeToast } = useToast();
 
   useEffect(() => {

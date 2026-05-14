@@ -1,4 +1,4 @@
-import InputText from "@/components/form/InputText";
+import { InputText } from "@/components/form/InputText";
 import type { Comment, CommentForm } from "../schema";
 import { useBoardCommentForm, useCommentAlter } from "../hooks";
 import { getUserName } from "@/context/auth.context";

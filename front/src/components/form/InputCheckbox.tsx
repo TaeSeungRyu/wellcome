@@ -1,6 +1,6 @@
 import type { InputFieldProps, SelectableOption } from ".";
 
-export default function InputCheckbox({
+export function InputCheckbox({
   name,
   label,
   register,

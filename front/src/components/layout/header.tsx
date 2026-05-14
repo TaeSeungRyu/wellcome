@@ -5,7 +5,7 @@ import { useIsFetching } from "@tanstack/react-query";
 import { LoadingIndicator } from "./LoadingIndicator";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
-export default function HeaderComponent() {
+export function Header() {
   const { logout } = useAuth();
   const isFetching = useIsFetching();
   const router = useRouter();

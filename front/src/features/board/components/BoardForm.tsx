@@ -1,4 +1,4 @@
-import InputText from "@/components/form/InputText";
+import { InputText } from "@/components/form/InputText";
 import type { BoardForm, Comment } from "../schema";
 import { useBoardAlter, useBoardForm } from "../hooks";
 import { useModal } from "@/context/modal.context";

@@ -1,6 +1,6 @@
-import HeaderComponent from "@/components/layout/Header";
+import { Header } from "@/components/layout/Header";
 import { getRole, getUserName, useAuth } from "@/context/auth.context";
-import AuthGuard from "@/context/auth.guard";
+import { AuthGuard } from "@/context/auth.guard";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { useSSEHook } from "@/shared/hooks/use-sse";
 import { useCallback, useEffect, useRef } from "react";
@@ -61,7 +61,7 @@ function HomeLayout() {
 
         {/* 2. 상단 헤더: 상단 고정 및 그림자 효과 */}
         <header className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
-          <HeaderComponent />
+          <Header />
         </header>
 
         {/* 3. 메인 컨텐츠 영역: 스크롤 가능 구역 */}

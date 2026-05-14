@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { InputFieldProps } from ".";
 
-export default function InputPassword({
+export function InputPassword({
   name,
   placeholder,
   register,

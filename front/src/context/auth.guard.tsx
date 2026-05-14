@@ -2,7 +2,7 @@ import { useRouter } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "./auth.context";
 
-export default function AuthGuard() {
+export function AuthGuard() {
   const { token } = useAuth();
   const router = useRouter();
   useEffect(() => {

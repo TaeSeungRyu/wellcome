@@ -4,7 +4,7 @@ import {
   useAuthForm,
   useAuthUpdate,
 } from "@/features/auth/hooks";
-import InputText from "@/components/form/InputText";
+import { InputText } from "@/components/form/InputText";
 import { useModal } from "@/context/modal.context";
 import { useToast } from "@/context/toast.context";
 import type { Auth, AuthForm } from "@/features/auth/schema";
