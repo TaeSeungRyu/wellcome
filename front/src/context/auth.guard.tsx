@@ -1,20 +1,20 @@
 import { useRouter } from "@tanstack/react-router";
-import { useContext, useEffect } from "react";
-import { AuthContext } from "./auth.context";
+import { useEffect } from "react";
+import { useAuth } from "./auth.context";
 
 export default function AuthGuard() {
-  const auth: any = useContext(AuthContext);
+  const { token } = useAuth();
   const router = useRouter();
   useEffect(() => {
-    const unsub = router.subscribe("onResolved", (_) => {
-      if (!auth.token) {
+    const unsub = router.subscribe("onResolved", () => {
+      if (!token) {
         router.navigate({
           to: "/login/signin",
         });
       }
     });
     return () => unsub();
-  }, [router]);
+  }, [router, token]);
 
   return null;
 }

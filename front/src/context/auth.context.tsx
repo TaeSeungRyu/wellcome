@@ -49,26 +49,34 @@ export const clearTokens = () => {
   localStorage.removeItem(REFRESH_TOKEN_KEY);
   localStorage.removeItem(ROLE);
 };
-export const AuthContext = createContext({
-  token: null as string | null,
+export interface AuthContextValue {
+  token: string | null;
   login: (
     accessToken: string,
     refreshToken: string,
     username: string,
     role: string,
-  ) => {
+  ) => void;
+  logout: (noNavigate?: boolean) => void;
+}
+
+const defaultAuthContext: AuthContextValue = {
+  token: null,
+  login: (accessToken, refreshToken, username, role) => {
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
     setUserName(username);
     setRole(role);
   },
-  logout: (noNavigate?: boolean) => {
+  logout: (noNavigate) => {
     clearTokens();
     if (!noNavigate) {
       location.href = SIGNIN_PATH; // 권한없으면 로그인페이지로
     }
   },
-});
+};
+
+export const AuthContext = createContext<AuthContextValue>(defaultAuthContext);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(getAccessToken());
