@@ -75,30 +75,44 @@ const queryClient = new QueryClient({
     },
   },
 });
-const rootElement = document.getElementById("app");
-if (rootElement && !rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(
-    <StrictMode>
-      <Toaster />
-      <ErrorBoundary
-        FallbackComponent={ErrorBoundaryFallback}
-        onError={(error, info) => {
-          logger.error("전역 에러 바운더리", { error, info });
-        }}
-        onReset={() => {}}
-      >
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <ToastProvider>
-              <ModalProvider>
-                <RouterProvider router={router} />
-              </ModalProvider>
-            </ToastProvider>
-          </AuthProvider>
-        </QueryClientProvider>
-      </ErrorBoundary>
-    </StrictMode>,
-  );
+// dev 모드 + VITE_USE_MOCK_API=true 일 때만 msw service worker로 API mock.
+// production 빌드에서는 import 자체가 tree-shake되어 worker 코드 포함 안 됨.
+async function enableApiMocking(): Promise<void> {
+  if (!import.meta.env.DEV) return;
+  if (import.meta.env.VITE_USE_MOCK_API !== "true") return;
+  const { worker } = await import("./test/browser");
+  await worker.start({
+    onUnhandledRequest: "bypass",
+    serviceWorker: { url: "/mockServiceWorker.js" },
+  });
 }
-reportWebVitals();
+
+enableApiMocking().then(() => {
+  const rootElement = document.getElementById("app");
+  if (rootElement && !rootElement.innerHTML) {
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(
+      <StrictMode>
+        <Toaster />
+        <ErrorBoundary
+          FallbackComponent={ErrorBoundaryFallback}
+          onError={(error, info) => {
+            logger.error("전역 에러 바운더리", { error, info });
+          }}
+          onReset={() => {}}
+        >
+          <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+              <ToastProvider>
+                <ModalProvider>
+                  <RouterProvider router={router} />
+                </ModalProvider>
+              </ToastProvider>
+            </AuthProvider>
+          </QueryClientProvider>
+        </ErrorBoundary>
+      </StrictMode>,
+    );
+  }
+  reportWebVitals();
+});

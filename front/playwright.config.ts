@@ -28,5 +28,8 @@ export default defineConfig({
     timeout: 120_000,
     stdout: "ignore",
     stderr: "pipe",
+    // msw service worker로 모든 API를 mock한다.
+    // 백엔드 의존 없이 풀 흐름을 E2E로 검증 가능.
+    env: { VITE_USE_MOCK_API: "true" },
   },
 });
