@@ -1,5 +1,11 @@
 import { Controller, Get, Param, Query, Sse } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
 import { Observable } from 'rxjs';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
@@ -8,6 +14,7 @@ import { SseMessageEvent } from './dto/sse-event.dto';
 import { SseService } from './sse.service';
 
 @ApiTags('SSE')
+@ApiBearerAuth()
 @Controller('events')
 export class SseController {
   constructor(private readonly service: SseService) {}

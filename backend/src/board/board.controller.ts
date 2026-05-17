@@ -10,6 +10,7 @@ import {
   Query,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiQuery,
@@ -26,6 +27,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 
 @ApiTags('Board')
+@ApiBearerAuth()
 @Controller('board')
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}

@@ -9,7 +9,13 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Request, Response } from 'express';
 import { AuditLog } from '../audit/decorators/audit-log.decorator';
@@ -21,6 +27,7 @@ import { LoginDto } from './dto/login.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 
 @ApiTags('Auth')
+@ApiBearerAuth()
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

@@ -16,6 +16,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiOperation,
@@ -35,16 +36,19 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 
 @ApiTags('User')
+@ApiBearerAuth()
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({
     summary: '사용자 단건 조회',
-    description: 'username으로 특정 사용자 정보를 조회합니다.',
+    description:
+      'username으로 특정 사용자 정보를 조회합니다. (super / admin 권한)',
   })
   @ApiQuery({ name: 'username', description: '조회할 사용자 아이디' })
   @ApiResponse({ status: 200, type: ResponseDto })
+  @Roles('super', 'admin')
   @Get('find')
   find(@Query('username') username: string): Promise<ResponseDto> {
     return this.userService.findByUsername(username);
@@ -52,9 +56,11 @@ export class UserController {
 
   @ApiOperation({
     summary: '사용자 목록 조회',
-    description: '페이지네이션으로 전체 사용자 목록을 조회합니다.',
+    description:
+      '페이지네이션으로 전체 사용자 목록을 조회합니다. (super / admin 권한)',
   })
   @ApiResponse({ status: 200, type: ResponseDto })
+  @Roles('super', 'admin')
   @Get('list')
   list(
     @Query('page') page: number,
