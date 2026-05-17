@@ -32,9 +32,9 @@ const signinHandler = http.post("/api/auth/login", async () => {
 
 // ─── 공통 상수 ────────────────────────────────────────────────────
 const constListHandler = http.get("/api/const/list", () => {
-  const body: ApiResponse<ConstListResult> = {
+  const body: ApiResponse<ConstListResult & { success: boolean }> = {
     message: "ok",
-    result: { data: {} },
+    result: { success: true, data: {} },
   };
   return HttpResponse.json(body);
 });

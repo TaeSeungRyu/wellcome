@@ -87,10 +87,14 @@ export class SseService {
           (event) =>
             topics.length === 0 || !event.topic || topics.includes(event.topic),
         ),
-        // 3) NestJS `@Sse` 가 요구하는 MessageEvent 형태로 매핑
+        // 3) NestJS `@Sse` 가 요구하는 MessageEvent 형태로 매핑.
+        //    type은 항상 'event'로 고정 — 프론트의 `addEventListener('event', ...)`
+        //    하나로 모든 도메인 이벤트를 받게 한다. 메시지 종류는 `data.event` 필드로
+        //    식별한다(예: auth.service가 data.event = "SSE_AUTH_CODE_DELETE"를 첨부).
+        //    topic은 controller의 `?topic=` 쿼리 필터(2번 filter)에서만 활용.
         map((event) => ({
           id: connectionTag,
-          type: event.topic ?? 'event',
+          type: 'event',
           data: event.data ?? {},
         })),
       );
