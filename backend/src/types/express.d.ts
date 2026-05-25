@@ -7,6 +7,11 @@ import { JwtPayload } from '../common/interfaces/jwt-payload.interface';
 declare global {
   namespace Express {
     interface User extends JwtPayload {}
+
+    interface Request {
+      /** LoggingInterceptor 가 부여하는 요청별 correlation ID (x-request-id) */
+      correlationId?: string;
+    }
   }
 }
 
